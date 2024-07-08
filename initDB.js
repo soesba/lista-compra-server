@@ -3,7 +3,7 @@
 const mongoose = require('mongoose');
 const initCollections = require('./initCollections');
 const conexion =  mongoose.connection.db;
-const listaTablasMaestras = ['TipoUnidad', 'Articulo'];
+const listaTablasMaestras = ['TipoEstablecimiento', 'TipoUnidad', 'Articulo'];
 
 module.exports.init = async function() {
   checkTablasMaestras();
