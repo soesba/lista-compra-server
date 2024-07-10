@@ -6,6 +6,7 @@
     "tipoUnidad": "6644cbba86c5a2b7bc02c2a2",
     "cantidad": 6,
     "precioUnidad": 0.083,
-    "precioTotal": 1.50
+    "precioTotal": 1.50,
+    "borrable": false
   }
 ]

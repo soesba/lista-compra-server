@@ -2,26 +2,31 @@
   {
     "_id": "6644cb9386c5a2b7bc02c2a0",
     "abreviatura": "kg",
-    "nombre": "kilo"
+    "nombre": "kilo",
+    "borrable": false
   },
   {
     "_id": "6644cbac86c5a2b7bc02c2a1",
     "abreviatura": "l",
-    "nombre": "litro"
+    "nombre": "litro",
+    "borrable": false
   },
   {
     "_id": "6644cbba86c5a2b7bc02c2a2",
     "abreviatura": "ud",
-    "nombre": "unidad"
+    "nombre": "unidad",
+    "borrable": false
   },
   {
     "_id": "6644cbc686c5a2b7bc02c2a3",
     "abreviatura": "gr",
-    "nombre": "gramo"
+    "nombre": "gramo",
+    "borrable": false
   },
   {
     "_id": "6644cbd586c5a2b7bc02c2a4",
     "abreviatura": "ml",
-    "nombre": "mililitro"
+    "nombre": "mililitro",
+    "borrable": false
   }
 ]

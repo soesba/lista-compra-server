@@ -2,26 +2,31 @@
     {
         "_id": "668bc28394e11a32b4278a84",
         "abreviatura": "super",
-        "nombre": "Supermercado"
+        "nombre": "Supermercado",
+        "borrable": false
     },
     {
         "_id": "668bc29fc5a573a80a2de6c4",
         "abreviatura": "gas",
-        "nombre": "Gasolinera"
+        "nombre": "Gasolinera",
+        "borrable": false
     },
     {
         "_id": "668bc2aa957c8c52c99ac4b4",
         "abreviatura": "far",
-        "nombre": "Farmacia"
+        "nombre": "Farmacia",
+        "borrable": false
     },
     {
         "_id": "668bc2b528cd7ed5011548aa",
         "abreviatura": "hiper",
-        "nombre": "Hipermercado"
+        "nombre": "Hipermercado",
+        "borrable": false
     },
     {
         "_id": "668bc2beca6c9ac5bcee192a",
         "abreviatura": "res",
-        "nombre": "Restaurante"
+        "nombre": "Restaurante",
+        "borrable": false
     }
 ]
