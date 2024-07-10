@@ -46,6 +46,10 @@ const ArticuloSchema = new Schema({
     fechaCreacion: {
         type: Date,
         required: true
+    },
+    borrable: {
+      type: boolean,
+      default: true
     }
 });
 
