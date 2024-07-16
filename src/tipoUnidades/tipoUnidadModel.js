@@ -13,20 +13,22 @@ const TipoUnidadSchema = new Schema({
         type: String,
         default: '',
         trim: true,
-        required: true
+        required: true,
+        index: true
     },
     abreviatura: {
       type: String,
       default: '',
       trim: true,
-      required: true
+      required: true,
+      index: true
     // },
     // fechaCreacion: {
     //     type: Date,
     //     required: true
     },
     borrable: {
-      type: boolean,
+      type: Boolean,
       default: true
     }
 });
@@ -38,4 +40,5 @@ TipoUnidadSchema.method("toJSON", function () {
     return object;
 });
 
+TipoUnidadSchema.index({ '$**': 'text' });
 module.exports = mongoose.model('TipoUnidad', TipoUnidadSchema, 'TipoUnidad');

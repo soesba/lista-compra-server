@@ -48,7 +48,7 @@ const ArticuloSchema = new Schema({
         required: true
     },
     borrable: {
-      type: boolean,
+      type: Boolean,
       default: true
     }
 });

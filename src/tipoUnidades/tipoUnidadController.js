@@ -21,6 +21,21 @@ module.exports.getById = function(req, res) {
         .catch(error => res.status(500).send({message: error}));
 }
 
+module.exports.getByAny = function(req, res) {
+    const texto = new RegExp(req.params.texto)
+    TipoUnidad.find({ $or: [
+            { $text: {$search: req.params.texto } },
+            { 'nombre': { $regex: texto, $options: 'i' } }, 
+            { 'abreviatura':  { $regex: texto, $options: 'i' } }
+        ]}).then(u => {
+        if (u) {
+            res.jsonp(u);                
+        }else {
+            res.status(500).send({message: 'TipoUnidad con algún campo ' + req.params.texto + ' no existe'});
+        }
+    }).catch(error => res.status(500).send({message: error}));
+}
+
 module.exports.delete = function(req, res) {
     TipoUnidad.deleteOne({'_id': req.params.id})
         .then(u => {
