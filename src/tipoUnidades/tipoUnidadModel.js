@@ -33,13 +33,12 @@ const TipoUnidadSchema = new Schema({
     }
 });
 
-// TipoUnidadSchema.method("toJSON", function () {
-//     const { __v, _id, ...object } = this.toObject();
-//     object.id = _id;
-//     object.fechaCreacion = moment(this.created).format('DD/MM/YYYY');
-//     console.log(object)
-//     return object;
-// });
+// Devolvemos objeto con nombre campo id amigable
+TipoUnidadSchema.method("toJSON", function () {
+    const { __v, _id, ...object } = this.toObject();
+    object.id = _id;
+    return object;
+});
 
 TipoUnidadSchema.pre('validate', function(next) {    
   console.log(this);

@@ -2,11 +2,10 @@
 
 var mongoose = require("mongoose");
 const TipoUnidad = require("./tipoUnidadModel");
-const { result } = require("lodash");
 
 module.exports.get = function (req, res) {
   TipoUnidad.find()
-    .then((c) => res.jsonp(c))
+    .then((result) => res.jsonp(result))
     .catch((error) => res.status(500).send({ message: error }));
 };
 
@@ -78,7 +77,7 @@ module.exports.insert = function (req, res) {
 module.exports.update = function(req, res) {    
     console.log("🚀 ~ req, res:", req, res)
     TipoUnidad.findOneAndUpdate( 
-        { _id:  mongoose.Types.ObjectId(req.body._id)},
+        { _id:  mongoose.Types.ObjectId(req.body.id)},
         { $set: { nombre: req.body.nombre, abreviatura: req.body.abreviatura } },
         { useFindAndModify: false, returnNewDocument: true },
         (err, result) => {
