@@ -4,12 +4,16 @@ const tipoUnidadController = require('./tipoUnidadController');
 
 module.exports = function (app) {
 
-    app.route('/tipoUnidad/').get(tipoUnidadController.get);
+    app.route('/tipoUnidad/get').get(tipoUnidadController.get);
 
-    app.route('/tipoUnidad/:id').get(tipoUnidadController.getById);
+    app.route('/tipoUnidad/getById/:id').get(tipoUnidadController.getById);
 
-    app.route('/tipoUnidades/:texto').get(tipoUnidadController.getByAny);
+    app.route('/tipoUnidad/getByAny/:texto').get(tipoUnidadController.getByAny);
 
-    app.route('/tipoUnidad/:id').delete(tipoUnidadController.delete);
+    app.route('/tipoUnidad/insert/').post(tipoUnidadController.insert);
+
+    app.route('/tipoUnidad/update/').put(tipoUnidadController.update);
+
+    app.route('/tipoUnidad/delete/:id').delete(tipoUnidadController.delete);
 
 }

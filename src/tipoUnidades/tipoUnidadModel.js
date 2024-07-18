@@ -33,11 +33,23 @@ const TipoUnidadSchema = new Schema({
     }
 });
 
-TipoUnidadSchema.method("toJSON", function () {
-    const { __v, _id, ...object } = this.toObject();
-    object.id = _id;
-    object.fechaCreacion = moment(this.created).format('DD/MM/YYYY');
-    return object;
+// TipoUnidadSchema.method("toJSON", function () {
+//     const { __v, _id, ...object } = this.toObject();
+//     object.id = _id;
+//     object.fechaCreacion = moment(this.created).format('DD/MM/YYYY');
+//     console.log(object)
+//     return object;
+// });
+
+TipoUnidadSchema.pre('validate', function(next) {    
+  console.log(this);
+  if (!this._id) {
+    this._id = mongoose.Types.ObjectId()
+  }
+  if(!this.fechaCreacion) {
+      this.fechaCreacion =  moment(new Date()).format('YYYY-MM-DD')
+  }
+  next();
 });
 
 TipoUnidadSchema.index({ '$**': 'text' });
