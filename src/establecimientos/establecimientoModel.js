@@ -2,7 +2,6 @@
 
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
-var moment = require('moment');
 
 var EstablecimientoSchema = new Schema({
     _id: {
@@ -27,7 +26,7 @@ var EstablecimientoSchema = new Schema({
         index: true
     },
     fechaCreacion: {
-        type: Date,
+        type: String,
         required: true
     },
     borrable: {
@@ -52,7 +51,7 @@ EstablecimientoSchema.pre('validate', function(next) {
         this.tipoEstablecimiento = mongoose.Types.ObjectId(this.tipoEstablecimiento)
       }
     if(!this.fechaCreacion) {
-        this.fechaCreacion =  moment(new Date()).format('YYYY/MM/DD')
+        this.fechaCreacion =  new Intl.DateTimeFormat('es-ES', {day: '2-digit', month: '2-digit', year: 'numeric'}).format()
     }
     next();
   });

@@ -2,7 +2,6 @@
 
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
-const moment = require('moment');
 
 const TipoUnidadSchema = new Schema({
     _id: {
@@ -24,7 +23,7 @@ const TipoUnidadSchema = new Schema({
       index: true
     },
     fechaCreacion: {
-        type: Date,
+        type: String,
         required: true
     },
     borrable: {
@@ -46,7 +45,7 @@ TipoUnidadSchema.pre('validate', function(next) {
     this._id = mongoose.Types.ObjectId()
   }
   if(!this.fechaCreacion) {
-      this.fechaCreacion =  moment(new Date()).format('YYYY/MM/DD')
+      this.fechaCreacion =  new Intl.DateTimeFormat('es-ES', {day: '2-digit', month: '2-digit', year: 'numeric'}).format()
   }
   next();
 });

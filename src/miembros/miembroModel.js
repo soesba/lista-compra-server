@@ -15,7 +15,7 @@ var MiembroSchema = new Schema({
         trim: true
     },
     fechaCreacion: {
-        type: Date,
+        type: String,
         required: true
     }
 });

@@ -35,11 +35,11 @@ var UserSchema = new Schema({
 		default: ''
 	},
 	fechaCreacion: {
-		type: Date,
+		type: String,
 		default: Date.now
 	},
 	ultimoAcceso: {
-		type: Date,
+		type: String,
         required: true
 	},
 });
