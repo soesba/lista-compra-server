@@ -2,6 +2,28 @@
 
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
+var DireccionSchema = new Schema({
+    _id: {
+        type: Schema.Types.ObjectId,
+        required: true
+    },
+    direccion: {
+        type: String,
+        required: true
+    },
+    codPostal: {
+        type: String,
+        required: false
+    },
+    poblacion: {
+        type: String,
+        required: false
+    },
+    favorita: {
+        type: Boolean,
+        default: false
+    }
+})
 
 var EstablecimientoSchema = new Schema({
     _id: {
@@ -25,6 +47,7 @@ var EstablecimientoSchema = new Schema({
         trim: true,
         index: true
     },
+    direcciones: [DireccionSchema],
     fechaCreacion: {
         type: String,
         required: true

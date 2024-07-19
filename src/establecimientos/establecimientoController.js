@@ -5,6 +5,7 @@ const Establecimiento = require("./establecimientoModel");
 
 module.exports.get = function (req, res) {
   Establecimiento.find()
+    .populate('tipoEstablecimiento')
     .then((result) => res.jsonp(result))
     .catch((error) => res.status(500).send({ message: error }));
 };

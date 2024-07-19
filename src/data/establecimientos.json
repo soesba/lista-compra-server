@@ -2,7 +2,9 @@
   {    
   "_id": "6644c5d186c5a2b7bc02c29f",
   "tipoEstablecimiento": "668bc28394e11a32b4278a84",
-  "nombre":   "Mercadona",
+  "nombre": "Mercadona",
+  "notas": "",
+  "direcciones": [],
   "borrable": false
   }
 ]
