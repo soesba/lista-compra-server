@@ -13,7 +13,8 @@ const ArticuloSchema = new Schema({
         type: String,
         default: '',
         trim: true,
-        required: true
+        required: true,
+        index: true
     },
     // nombreTicket: {
     //   type: String,
@@ -23,7 +24,8 @@ const ArticuloSchema = new Schema({
     descripcion: {
       type: String,
       default: '',
-      trim: true
+      trim: true,
+      index: true
     },
     // tipoUnidad: {
     //   type: Schema.Types.ObjectId,
@@ -62,11 +64,11 @@ ArticuloSchema.method("toJSON", function () {
 
 ArticuloSchema.pre('validate', function(next) {    
   console.log(this);
-  if (this._id) {
-    this._id = mongoose.Types.ObjectId(this._id)
+  if (!this._id) {
+    this._id = mongoose.Types.ObjectId()
   }
   if(!this.fechaCreacion) {
-      this.fechaCreacion =  moment(new Date()).format('YYYY-MM-DD')
+      this.fechaCreacion =  moment(new Date()).format('YYYY/MM/DD')
   }
   next();
 });

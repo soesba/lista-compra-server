@@ -22,10 +22,10 @@ const TipoUnidadSchema = new Schema({
       trim: true,
       required: true,
       index: true
-    // },
-    // fechaCreacion: {
-    //     type: Date,
-    //     required: true
+    },
+    fechaCreacion: {
+        type: Date,
+        required: true
     },
     borrable: {
       type: Boolean,
@@ -46,10 +46,9 @@ TipoUnidadSchema.pre('validate', function(next) {
     this._id = mongoose.Types.ObjectId()
   }
   if(!this.fechaCreacion) {
-      this.fechaCreacion =  moment(new Date()).format('YYYY-MM-DD')
+      this.fechaCreacion =  moment(new Date()).format('YYYY/MM/DD')
   }
   next();
 });
 
-TipoUnidadSchema.index({ '$**': 'text' });
 module.exports = mongoose.model('TipoUnidad', TipoUnidadSchema, 'TipoUnidad');

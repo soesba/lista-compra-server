@@ -13,13 +13,15 @@ const TipoEstablecimientoSchema = new Schema({
         type: String,
         default: '',
         trim: true,
-        required: true
+        required: true,
+        index: true
     },
     abreviatura: {
       type: String,
       default: '',
       trim: true,
-      required: true
+      required: true,
+      index: true
     },
     fechaCreacion: {
         type: Date,
@@ -31,13 +33,21 @@ const TipoEstablecimientoSchema = new Schema({
     }
 });
 
+// Devolvemos objeto con nombre campo id amigable
+TipoEstablecimientoSchema.method("toJSON", function () {
+    const { __v, _id, ...object } = this.toObject();
+    object.id = _id;
+    return object;
+});
+
+
 TipoEstablecimientoSchema.pre('validate', function(next) {    
     console.log(this);
-    // if (this._id) {
-    //   this._id = mongoose.Types.ObjectId(this._id)
-    // }
+    if (!this._id) {
+      this._id = mongoose.Types.ObjectId()
+    }
     if(!this.fechaCreacion) {
-        this.fechaCreacion =  moment(new Date()).format('YYYY-MM-DD')
+        this.fechaCreacion =  moment(new Date()).format('YYYY/MM/DD')
     }
     next();
   });

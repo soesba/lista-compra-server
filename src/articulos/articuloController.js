@@ -12,33 +12,23 @@ module.exports.get = function(req, res) {
 module.exports.getById = function(req, res) {    
     Articulo.findOne({'_id': req.params.id})
         .then(result => {
-            if (result) {
-                res.jsonp(result);                
-            }else {
-                res.status(500).send({message: 'Articulo con id ' + req.params.id + ' no existe'});
-            }
+          res.jsonp(result);
         })
         .catch(error => res.status(500).send({message: error}));
 };
 
 module.exports.getByAny = function (req, res) {
-const texto = new RegExp(req.params.texto);
-Articulo.find({
-    $or: [
-    { $text: { $search: req.params.texto } },
-    { nombre: { $regex: texto, $options: "i" } },
-    { descripcion: { $regex: texto, $options: "i" } },
-    ],
-})
+  const texto = new RegExp(req.params.texto);
+  Articulo.find({
+      $or: [
+      { nombre: { $regex: texto, $options: "i" } },
+      { descripcion: { $regex: texto, $options: "i" } },
+      ],
+  })
     .then((result) => {
-    if (result) {
+      if (result) {
         res.jsonp(result);
-    } else {
-        res.status(500).send({
-        message:
-            "Articulo con algún campo " + req.params.texto + " no existe",
-        });
-    }
+      }
     })
     .catch((error) => res.status(500).send({ message: error }));
 };

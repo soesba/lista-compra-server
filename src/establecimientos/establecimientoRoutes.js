@@ -1,13 +1,19 @@
 'use strict';
 
-var establecimientoController = require('./establecimientoController');
+const establecimientoController = require('./establecimientoController');
 
 module.exports = function (app) {
 
-    app.route('/establecimientos/').get(establecimientoController.get);
+    app.route('/establecimiento/get').get(establecimientoController.get);
 
-    app.route('/establecimiento/:id').get(establecimientoController.getById);
+    app.route('/establecimiento/getById/:id').get(establecimientoController.getById);
 
-    app.route('/establecimiento/:id').delete(establecimientoController.delete);
+    app.route('/establecimiento/getByAny/:texto').get(establecimientoController.getByAny);
+
+    app.route('/establecimiento/insert/').post(establecimientoController.insert);
+
+    app.route('/establecimiento/update/').put(establecimientoController.update);
+
+    app.route('/establecimiento/delete/:id').delete(establecimientoController.delete);
 
 }

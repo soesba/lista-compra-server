@@ -23,7 +23,7 @@ var MiembroSchema = new Schema({
 MiembroSchema.method("toJSON", function () {
     const { __v, _id, ...object } = this.toObject();
     object.id = _id;
-    object.fechaCreacion = moment(this.created).format('DD/MM/YYYY');
+    object.fechaCreacion = moment(this.created).format('YYYY/MM/DD');
     return object;
 });
 
