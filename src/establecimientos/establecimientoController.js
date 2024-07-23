@@ -4,39 +4,51 @@ var mongoose = require("mongoose");
 const Establecimiento = require("./establecimientoModel");
 
 module.exports.get = function (req, res) {
-  Establecimiento.aggregate([
-    { $lookup: {
-      from: "TipoEstablecimiento",
-      localField: "tipoEstablecimiento",
-      foreignField: "_id",
-      as: "tipoEstablecimiento"
-    }}
-  ]).then((result) => {
-    result.forEach(item => {
-      if (item.tipoEstablecimiento.length !== 0){
-        const tipoEstablecimiento = item.tipoEstablecimiento[0]
-        item.tipoEstablecimiento = tipoEstablecimiento
-      }
-    })
-    res.jsonp(result)
-  }).catch((error) => res.status(500).send({ message: error }));
+  // NOTA: si usamos aggregate no se ejecuta la transformacion toJSON del model
+  // Establecimiento.aggregate([
+  //   { $lookup: {
+  //     from: "TipoEstablecimiento",
+  //     localField: "tipoEstablecimiento",
+  //     foreignField: "_id",
+  //     as: "tipoEstablecimiento"
+  //   }}
+  // ]).then((result) => {
+  //   result.forEach(item => {
+  //     item.id = item._id
+  //     if (item.tipoEstablecimiento.length !== 0){
+  //       const tipoEstablecimiento = item.tipoEstablecimiento[0]
+  //       item.tipoEstablecimiento = tipoEstablecimiento
+  //     }
+  //   })
+  //   res.jsonp(result)
+  // }).catch((error) => res.status(500).send({ message: error }));
+  Establecimiento.find()
+    .populate('tipoEstablecimiento')
+    .then((result) => res.jsonp(result))
+    .catch((error) => res.status(500).send({ message: error }));
 };
 
 module.exports.getById = function (req, res) {
-  Establecimiento.aggregate([
-    { $match: { _id: req.params.id } },
-    { $lookup: {
-      from: "TipoEstablecimiento",
-      localField: "tipoEstablecimiento",
-      foreignField: "_id",
-      as: "tipoEstablecimiento"
-    }}])
+  // Establecimiento.aggregate([
+  //   { $match: { _id: req.params.id } },
+  //   { $lookup: {
+  //     from: "TipoEstablecimiento",
+  //     localField: "tipoEstablecimiento",
+  //     foreignField: "_id",
+  //     as: "tipoEstablecimiento"
+  //   }}])
+  //   .then((result) => {
+  //     if (result.length !== 0 && result[0].tipoEstablecimiento.length !== 0) {
+  //       const tipoEstablecimiento = result[0].tipoEstablecimiento[0]
+  //       result[0].tipoEstablecimiento = tipoEstablecimiento
+  //     }
+  //     res.jsonp(result);
+  //   })
+    // .catch((error) => res.status(500).send({ message: error }));
+    Establecimiento.findOne({ _id: req.params.id })
+    .populate('tipoEstablecimiento')
     .then((result) => {
-      if (result.length !== 0 && result[0].tipoEstablecimiento.length !== 0) {
-        const tipoEstablecimiento = result[0].tipoEstablecimiento[0]
-        result[0].tipoEstablecimiento = tipoEstablecimiento
-      }
-      res.jsonp(result);
+        res.jsonp(result);
     })
     .catch((error) => res.status(500).send({ message: error }));
 };
@@ -49,12 +61,13 @@ module.exports.getByAny = function (req, res) {
       { abreviatura: { $regex: texto, $options: "i" } },
     ],
   })
-    .then((result) => {
-      if (result) {
-        res.jsonp(result);
-      }
-    })
-    .catch((error) => res.status(500).send({ message: error }));
+  .populate('tipoEstablecimiento')
+  .then((result) => {
+    if (result) {
+      res.jsonp(result);
+    }
+  })
+  .catch((error) => res.status(500).send({ message: error }));
 };
 
 module.exports.insert = function (req, res) {
@@ -86,11 +99,12 @@ module.exports.insert = function (req, res) {
     .catch((error) => res.status(500).send({ message: error }));
 };
 
-module.exports.update = function(req, res) {    
-    console.log("🚀 ~ req, res:", req, res)
+module.exports.update = function(req, res) {
+    // const imageData = req.body.logo;
+    // const imageBuffer = Buffer.from(imageData.content, "base64");
     Establecimiento.findOneAndUpdate( 
         { _id:  mongoose.Types.ObjectId(req.body.id)},
-        { $set: { nombre: req.body.nombre, abreviatura: req.body.abreviatura } },
+        { $set: { nombre: req.body.nombre, abreviatura: req.body.abreviatura, logo: req.body.logo } },
         { useFindAndModify: false, returnNewDocument: true },
         (err, result) => {
             if (err) {

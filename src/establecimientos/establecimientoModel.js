@@ -25,6 +25,17 @@ var DireccionSchema = new Schema({
     }
 })
 
+var LogoSchema = new Schema({
+    type: {
+        type: String,
+        default:''
+    },
+    content: {
+        type: String,
+        default: ''
+    }
+})
+
 var EstablecimientoSchema = new Schema({
     _id: {
         type: Schema.Types.ObjectId,
@@ -40,6 +51,10 @@ var EstablecimientoSchema = new Schema({
         default: '',
         trim: true,
         index: true
+    },
+    logo: {
+        type: LogoSchema,
+        default: null
     },
     notas: {
         type: String,
@@ -62,6 +77,10 @@ var EstablecimientoSchema = new Schema({
 EstablecimientoSchema.method("toJSON", function () {
     const { __v, _id, ...object } = this.toObject();
     object.id = _id;
+    object.tipoEstablecimiento = {
+        id: object.tipoEstablecimiento._id,
+        nombre: object.tipoEstablecimiento.nombre
+    }
     return object;
 });
 
