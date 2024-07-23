@@ -4,16 +4,39 @@ var mongoose = require("mongoose");
 const Establecimiento = require("./establecimientoModel");
 
 module.exports.get = function (req, res) {
-  Establecimiento.find()
-    .populate('tipoEstablecimiento')
-    .then((result) => res.jsonp(result))
-    .catch((error) => res.status(500).send({ message: error }));
+  Establecimiento.aggregate([
+    { $lookup: {
+      from: "TipoEstablecimiento",
+      localField: "tipoEstablecimiento",
+      foreignField: "_id",
+      as: "tipoEstablecimiento"
+    }}
+  ]).then((result) => {
+    result.forEach(item => {
+      if (item.tipoEstablecimiento.length !== 0){
+        const tipoEstablecimiento = item.tipoEstablecimiento[0]
+        item.tipoEstablecimiento = tipoEstablecimiento
+      }
+    })
+    res.jsonp(result)
+  }).catch((error) => res.status(500).send({ message: error }));
 };
 
 module.exports.getById = function (req, res) {
-  Establecimiento.findOne({ _id: req.params.id })
+  Establecimiento.aggregate([
+    { $match: { _id: req.params.id } },
+    { $lookup: {
+      from: "TipoEstablecimiento",
+      localField: "tipoEstablecimiento",
+      foreignField: "_id",
+      as: "tipoEstablecimiento"
+    }}])
     .then((result) => {
-        res.jsonp(result);
+      if (result.length !== 0 && result[0].tipoEstablecimiento.length !== 0) {
+        const tipoEstablecimiento = result[0].tipoEstablecimiento[0]
+        result[0].tipoEstablecimiento = tipoEstablecimiento
+      }
+      res.jsonp(result);
     })
     .catch((error) => res.status(500).send({ message: error }));
 };
