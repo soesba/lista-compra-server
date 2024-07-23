@@ -58,7 +58,7 @@ module.exports.getByAny = function (req, res) {
   Establecimiento.find({
     $or: [
       { nombre: { $regex: texto, $options: "i" } },
-      { abreviatura: { $regex: texto, $options: "i" } },
+      { tipoEstablecimiento: { $regex: texto, $options: "i" } },
     ],
   })
   .populate('tipoEstablecimiento')
@@ -72,13 +72,14 @@ module.exports.getByAny = function (req, res) {
 
 module.exports.insert = function (req, res) {
   const establecimiento = new Establecimiento(req.body);
+  console.log("🚀 ~ establecimiento:", establecimiento)
   Establecimiento.findOne({
     $or: [
       { nombre: establecimiento.nombre },
-      { abreviatura: establecimiento.abreviatura },
+      { tipoEstablecimiento: establecimiento.tipoEstablecimiento },
     ],
-  })
-    .then((u) => {
+  }).then((u) => {
+      console.log("🚀 ~ u:", u)
       if (u) {
         res.status(409).send({
           respuesta: 409,
