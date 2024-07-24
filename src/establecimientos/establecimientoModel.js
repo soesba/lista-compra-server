@@ -81,6 +81,11 @@ EstablecimientoSchema.method("toJSON", function () {
         id: object.tipoEstablecimiento._id,
         nombre: object.tipoEstablecimiento.nombre
     }
+    object.direcciones = object.direcciones.map(item => {
+        item.id = item._id;
+        delete item._id
+        return item;
+    })
     return object;
 });
 

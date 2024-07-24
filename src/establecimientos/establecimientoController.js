@@ -70,11 +70,17 @@ module.exports.getByAny = function (req, res) {
   .catch((error) => res.status(500).send({ message: error }));
 };
 
-module.exports.insert = function (req, res) {
+module.exports.insert = function (req, res) {  
+  req.body.direcciones =  req.body.direcciones.map(element => {
+    if (!element._id) {
+      element._id =  mongoose.Types.ObjectId()
+    }
+    return element
+  });
   const establecimiento = new Establecimiento(req.body);
   console.log("🚀 ~ establecimiento:", establecimiento)
   Establecimiento.findOne({
-    $or: [
+    $and: [
       { nombre: establecimiento.nombre },
       { tipoEstablecimiento: establecimiento.tipoEstablecimiento },
     ],
@@ -83,7 +89,7 @@ module.exports.insert = function (req, res) {
       if (u) {
         res.status(409).send({
           respuesta: 409,
-          message: "Ya existe un registro con alguno de los datos introducidos",
+          message: "Ya existe un registro con los datos introducidos",
         });
       } else {
         establecimiento.save().then((response) => {
@@ -103,9 +109,15 @@ module.exports.insert = function (req, res) {
 module.exports.update = function(req, res) {
     // const imageData = req.body.logo;
     // const imageBuffer = Buffer.from(imageData.content, "base64");
+    req.body.direcciones =  req.body.direcciones.map(element => {
+      if (!element._id) {
+        element._id =  mongoose.Types.ObjectId()
+      }
+      return element
+    });    
     Establecimiento.findOneAndUpdate( 
         { _id:  mongoose.Types.ObjectId(req.body.id)},
-        { $set: { nombre: req.body.nombre, abreviatura: req.body.abreviatura, logo: req.body.logo } },
+        { $set: { nombre: req.body.nombre, abreviatura: req.body.abreviatura, logo: req.body.logo, direcciones: req.body.direcciones } },
         { useFindAndModify: false, returnNewDocument: true },
         (err, result) => {
             if (err) {
