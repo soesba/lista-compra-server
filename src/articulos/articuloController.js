@@ -35,17 +35,12 @@ module.exports.getByAny = function (req, res) {
 
 module.exports.insert = function (req, res) {
     const articulo = new Articulo(req.body);
-    Articulo.findOne({
-      $or: [
-        { nombre: articulo.nombre },
-        { descripcion: articulo.descripcion },
-      ],
-    })
+    Articulo.findOne({nombre: articulo.nombre })
       .then((u) => {
         if (u) {
           res.status(409).send({
             respuesta: 409,
-            message: "Ya existe un registro con alguno de los datos introducidos",
+            message: "Ya existe un registro con ese nombre",
           });
         } else {
           articulo.save().then((response) => {

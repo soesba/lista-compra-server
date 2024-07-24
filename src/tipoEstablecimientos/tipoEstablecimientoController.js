@@ -36,7 +36,7 @@ module.exports.getByAny = function (req, res) {
 module.exports.insert = function (req, res) {
   const tipoEstablecimiento = new TipoEstablecimiento(req.body);
   TipoEstablecimiento.findOne({
-    $or: [
+    $and: [
       { nombre: tipoEstablecimiento.nombre },
       { abreviatura: tipoEstablecimiento.abreviatura },
     ],
@@ -45,7 +45,7 @@ module.exports.insert = function (req, res) {
       if (u) {
         res.status(409).send({
           respuesta: 409,
-          message: "Ya existe un registro con alguno de los datos introducidos",
+          message: "Ya existe un registro con los datos introducidos",
         });
       } else {
         tipoEstablecimiento.save().then((response) => {
