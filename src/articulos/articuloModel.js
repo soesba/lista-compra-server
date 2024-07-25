@@ -64,7 +64,6 @@ ArticuloSchema.set('toJSON', {
 });
 
 ArticuloSchema.pre("validate", function (next) {
-  console.log(this);
   if (!this._id) {
     this._id = mongoose.Types.ObjectId();
   }

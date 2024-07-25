@@ -41,16 +41,7 @@ TipoUnidadSchema.set('toJSON', {
   virtuals: true
 });
 
-
-// // Devolvemos objeto con nombre campo id amigable
-// TipoUnidadSchema.method("toJSON", function () {
-//     const { __v, _id, ...object } = this.toObject();
-//     object.id = _id;
-//     return object;
-// });
-
-TipoUnidadSchema.pre('validate', function(next) {    
-  console.log(this);
+TipoUnidadSchema.pre('validate', function(next) {  
   if (!this._id) {
     this._id = mongoose.Types.ObjectId()
   }

@@ -34,9 +34,7 @@ function crearColeccionArticulo () {
     const Articulo = mongoose.model('Articulo')
     const nuevoArticulo = new Articulo(item);
     nuevoArticulo.tipoUnidad = mongoose.Types.ObjectId(item._id)
-    console.log('LOG~ ~ nuevoArticulo:', nuevoArticulo)
     const resultado = await nuevoArticulo.save();
-    console.log('Documento insertado:', resultado);
   })
 }
 
@@ -45,9 +43,7 @@ function crearColeccionTipoUnidad () {
     const TipoUnidad = mongoose.model('TipoUnidad')
     const nuevoTipoUnidad = new TipoUnidad(item);
     nuevoTipoUnidad.tipoUnidad = mongoose.Types.ObjectId(item._id)
-    console.log('LOG~ ~ nuevoTipoUnidad:', nuevoTipoUnidad)
     const resultado = await nuevoTipoUnidad.save();
-    console.log('Documento insertado:', resultado);
   })
 }
 
@@ -56,9 +52,7 @@ function crearColeccionTipoEstablecimiento () {
     const TipoEstablecimiento = mongoose.model('TipoEstablecimiento')
     const nuevoTipoEstablecimiento = new TipoEstablecimiento(item);
     nuevoTipoEstablecimiento.tipoUnidad = mongoose.Types.ObjectId(item._id)
-    console.log('LOG~ ~ nuevoTipoEstablecimiento:', nuevoTipoEstablecimiento)
     const resultado = await nuevoTipoEstablecimiento.save();
-    console.log('Documento insertado:', resultado);
   })
 }
 
@@ -67,8 +61,6 @@ function crearColeccionEstablecimiento () {
     const Establecimiento = mongoose.model('Establecimiento')
     const nuevoEstablecimiento = new Establecimiento(item);
     nuevoEstablecimiento.tipoUnidad = mongoose.Types.ObjectId(item._id)
-    console.log('LOG~ ~ nuevoEstablecimiento:', nuevoEstablecimiento)
     const resultado = await nuevoEstablecimiento.save();
-    console.log('Documento insertado:', resultado);
   })
 }

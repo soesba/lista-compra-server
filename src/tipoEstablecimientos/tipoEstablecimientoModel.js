@@ -41,14 +41,6 @@ TipoEstablecimientoSchema.set('toJSON', {
   virtuals: true
 });
 
-// Devolvemos objeto con nombre campo id amigable
-// TipoEstablecimientoSchema.method("toJSON", function () {
-//     const { __v, _id, ...object } = this.toObject();
-//     object.id = _id;
-//     return object;
-// });
-
-
 TipoEstablecimientoSchema.pre('validate', function(next) {    
     if (!this._id) {
       this._id = mongoose.Types.ObjectId()

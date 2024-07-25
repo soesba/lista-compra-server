@@ -63,7 +63,6 @@ module.exports.insert = function (req, res) {
 };
 
 module.exports.update = function(req, res) {    
-    console.log("🚀 ~ req, res:", req, res)
     TipoUnidad.findOneAndUpdate( 
         { _id:  mongoose.Types.ObjectId(req.body.id)},
         { $set: { nombre: req.body.nombre, abreviatura: req.body.abreviatura } },

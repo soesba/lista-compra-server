@@ -1,18 +1,18 @@
 "use strict";
 
 var mongoose = require("mongoose");
-const Articulo = require("./articuloModel");
+const Compra = require("./compraModel");
 
 module.exports.get = function (req, res) {
-  Articulo.find()
-    .populate("tiposUnidad")
+  Compra.find()
+    .populate("establecimiento")
     .then((result) => res.jsonp(result))
     .catch((error) => res.status(500).send({ message: error }));
 };
 
 module.exports.getById = function (req, res) {
-  Articulo.findOne({ _id: req.params.id })
-    .populate("tiposUnidad")
+  Compra.findOne({ _id: req.params.id })
+    .populate("establecimiento")
     .then((result) => {
       res.jsonp(result);
     })
@@ -21,13 +21,13 @@ module.exports.getById = function (req, res) {
 
 module.exports.getByAny = function (req, res) {
   const texto = new RegExp(req.params.texto);
-  Articulo.find({
+  Compra.find({
     $or: [
       { nombre: { $regex: texto, $options: "i" } },
       { descripcion: { $regex: texto, $options: "i" } },
     ],
   })
-    .populate("tiposUnidad")
+    .populate("establecimiento")
     .then((result) => {
       if (result) {
         res.jsonp(result);
@@ -37,8 +37,8 @@ module.exports.getByAny = function (req, res) {
 };
 
 module.exports.insert = function (req, res) {
-  const articulo = new Articulo(req.body);
-  Articulo.findOne({ nombre: articulo.nombre })
+  const compra = new Compra(req.body);
+  Compra.findOne({ nombre: compra.nombre })
     .then((u) => {
       if (u) {
         res.status(409).send({
@@ -46,12 +46,12 @@ module.exports.insert = function (req, res) {
           message: "Ya existe un registro con ese nombre",
         });
       } else {
-        articulo.save().then((response) => {
+        compra.save().then((response) => {
           if (response) {
             res.jsonp(response);
           } else {
             res.status(500).send({
-              message: "Error al crear el registro de articulo",
+              message: "Error al crear el registro de compra",
             });
           }
         });
@@ -61,13 +61,13 @@ module.exports.insert = function (req, res) {
 };
 
 module.exports.update = function (req, res) {
-  Articulo.findOneAndUpdate(
+  Compra.findOneAndUpdate(
     { _id: mongoose.Types.ObjectId(req.body.id) },
     { $set: { nombre: req.body.nombre, descripcion: req.body.descripcion, tiposUnidad: req.body.tiposUnidad } },
     { useFindAndModify: false, returnNewDocument: true },
     (err, result) => {
       if (err) {
-        return res.status(500).send({ message: err + " en Articulo" });
+        return res.status(500).send({ message: err + " en Compra" });
       } else {
         res.jsonp(result);
       }
@@ -76,14 +76,14 @@ module.exports.update = function (req, res) {
 };
 
 module.exports.delete = function (req, res) {
-  Articulo.deleteOne({ _id: req.params.id })
+  Compra.deleteOne({ _id: req.params.id })
     .then((result) => {
       if (result) {
         res.jsonp(result);
       } else {
         res
           .status(500)
-          .send({ message: "Articulo con id " + req.params.id + " no existe" });
+          .send({ message: "Compra con id " + req.params.id + " no existe" });
       }
     })
     .catch((error) => res.status(500).send({ message: error }));
