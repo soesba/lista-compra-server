@@ -73,21 +73,30 @@ var EstablecimientoSchema = new Schema({
     }
 });
 
+// Duplicate the ID field.
+EstablecimientoSchema.virtual('id').get(function(){
+    return this._id.toHexString();
+  });
+  // Ensure virtual fields are serialised.
+  EstablecimientoSchema.set('toJSON', {
+    virtuals: true
+  });
+
 // Devolvemos objeto con nombre campo id amigable
-EstablecimientoSchema.method("toJSON", function () {
-    const { __v, _id, ...object } = this.toObject();
-    object.id = _id;
-    object.tipoEstablecimiento = {
-        id: object.tipoEstablecimiento._id,
-        nombre: object.tipoEstablecimiento.nombre
-    }
-    object.direcciones = object.direcciones.map(item => {
-        item.id = item._id;
-        delete item._id
-        return item;
-    })
-    return object;
-});
+// EstablecimientoSchema.method("toJSON", function () {
+//     const { __v, _id, ...object } = this.toObject();
+//     object.id = _id;
+//     object.tipoEstablecimiento = {
+//         id: object.tipoEstablecimiento._id,
+//         nombre: object.tipoEstablecimiento.nombre
+//     }
+//     object.direcciones = object.direcciones.map(item => {
+//         item.id = item._id;
+//         delete item._id
+//         return item;
+//     })
+//     return object;
+// });
 
 EstablecimientoSchema.pre('validate', function(next) {    
     console.log(this);

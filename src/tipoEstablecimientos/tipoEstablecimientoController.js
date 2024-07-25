@@ -12,7 +12,7 @@ module.exports.get = function (req, res) {
 module.exports.getById = function (req, res) {
   TipoEstablecimiento.findOne({ _id: req.params.id })
     .then((result) => {
-        res.jsonp(result);
+      res.jsonp(result);
     })
     .catch((error) => res.status(500).send({ message: error }));
 };
@@ -62,32 +62,41 @@ module.exports.insert = function (req, res) {
     .catch((error) => res.status(500).send({ message: error }));
 };
 
-module.exports.update = function(req, res) {    
-    console.log("🚀 ~ req, res:", req, res)
-    TipoEstablecimiento.findOneAndUpdate( 
-        { _id:  mongoose.Types.ObjectId(req.body.id)},
-        { $set: { nombre: req.body.nombre, abreviatura: req.body.abreviatura } },
-        { useFindAndModify: false, returnNewDocument: true },
-        (err, result) => {
-            if (err) {
-                return res.status(500).send({message: err + " en Tipo Establecimiento"})
-            } else {
-                res.jsonp(result)
-            }
-        }
-    )
-}
+module.exports.update = function (req, res) {
+  TipoEstablecimiento.findOneAndUpdate(
+    { _id: mongoose.Types.ObjectId(req.body.id) },
+    { $set: { nombre: req.body.nombre, abreviatura: req.body.abreviatura } },
+    { useFindAndModify: false, returnNewDocument: true },
+    (err, result) => {
+      if (err) {
+        return res
+          .status(500)
+          .send({ message: err + " en Tipo Establecimiento" });
+      } else {
+        res.jsonp(result);
+      }
+    }
+  );
+};
 
 module.exports.delete = function (req, res) {
-  TipoEstablecimiento.deleteOne({ _id: req.params.id })
-    .then((result) => {
-      if (result) {
-        res.jsonp(result);
-      } else {
-        res.status(500).send({
-          message: "TipoEstablecimiento con id " + req.params.id + " no existe",
-        });
-      }
-    })
-    .catch((error) => res.status(500).send({ message: error }));
+  const tipoEstablecimientoId = req.params.id
+  const Establecimiento = require("../establecimientos/establecimientoModel");
+  Establecimiento.find({
+    tipoEstablecimiento: { $all: [mongoose.Types.ObjectId(tipoEstablecimientoId)] }
+  }).then(result => {
+    if (result.length !== 0) {
+      res.status(409).send({ respuesta: 409, message: "El tipo de establecimiento está en uso" });
+    } else {
+      TipoEstablecimiento.deleteOne({ _id: req.params.id }).then((result) => {
+        if (result) {
+          res.jsonp(result);
+        } else {
+          res.status(500).send({
+            message: "TipoEstablecimiento con id " + req.params.id + " no existe",
+          });
+        }
+      }).catch((error) => res.status(500).send({ message: error }));
+    }
+  }).catch((error) => res.status(500).send({ message: error }));   
 };

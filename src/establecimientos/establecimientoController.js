@@ -78,14 +78,12 @@ module.exports.insert = function (req, res) {
     return element
   });
   const establecimiento = new Establecimiento(req.body);
-  console.log("🚀 ~ establecimiento:", establecimiento)
   Establecimiento.findOne({
     $and: [
       { nombre: establecimiento.nombre },
       { tipoEstablecimiento: establecimiento.tipoEstablecimiento },
     ],
   }).then((u) => {
-      console.log("🚀 ~ u:", u)
       if (u) {
         res.status(409).send({
           respuesta: 409,
@@ -117,7 +115,7 @@ module.exports.update = function(req, res) {
     });    
     Establecimiento.findOneAndUpdate( 
         { _id:  mongoose.Types.ObjectId(req.body.id)},
-        { $set: { nombre: req.body.nombre, abreviatura: req.body.abreviatura, logo: req.body.logo, direcciones: req.body.direcciones } },
+        { $set: { nombre: req.body.nombre, abreviatura: req.body.abreviatura, logo: req.body.logo, direcciones: req.body.direcciones, tipoEstablecimiento: req.body.tipoEstablecimiento } },
         { useFindAndModify: false, returnNewDocument: true },
         (err, result) => {
             if (err) {

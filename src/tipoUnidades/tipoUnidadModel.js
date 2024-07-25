@@ -32,12 +32,22 @@ const TipoUnidadSchema = new Schema({
     }
 });
 
-// Devolvemos objeto con nombre campo id amigable
-TipoUnidadSchema.method("toJSON", function () {
-    const { __v, _id, ...object } = this.toObject();
-    object.id = _id;
-    return object;
+// Duplicate the ID field.
+TipoUnidadSchema.virtual('id').get(function(){
+  return this._id.toHexString();
 });
+// Ensure virtual fields are serialised.
+TipoUnidadSchema.set('toJSON', {
+  virtuals: true
+});
+
+
+// // Devolvemos objeto con nombre campo id amigable
+// TipoUnidadSchema.method("toJSON", function () {
+//     const { __v, _id, ...object } = this.toObject();
+//     object.id = _id;
+//     return object;
+// });
 
 TipoUnidadSchema.pre('validate', function(next) {    
   console.log(this);
