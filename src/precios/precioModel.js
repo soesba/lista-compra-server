@@ -4,8 +4,13 @@ const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 
 const UnidadMedidaSchema = new Schema({
-  tipoUnidadId: {
+  _id: {
     type: Schema.Types.ObjectId,
+    required: true,
+    ref: "TipoUnidad"
+  },
+  nombre:{
+    type: String,
     required: true
   },
   valor: {
@@ -38,7 +43,7 @@ const PrecioSchema = new Schema({
     ref: "Establecimiento",
   },
   unidadesMedida: {
-    type: Array<UnidadMedidaSchema>[]
+    type: [UnidadMedidaSchema]
   },  
   fechaCompra: {
     type: String,
