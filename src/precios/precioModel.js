@@ -83,13 +83,13 @@ PrecioSchema.pre("validate", function (next) {
       year: "numeric",
     }).format();
   }
-  if (this.fechaCompra) {
-    this.fechaCompra = new Intl.DateTimeFormat('es-ES', {
-      day: "2-digit",
-      month: "2-digit",
-      year: "numeric",
-    }).format(this.fechaCompra)
-  }
+  // if (this.fechaCompra) {
+  //   this.fechaCompra = new Intl.DateTimeFormat('es-ES', {
+  //     day: "2-digit",
+  //     month: "2-digit",
+  //     year: "numeric",
+  //   }).format(this.fechaCompra)
+  // }
   next();
 });
 

@@ -36,6 +36,12 @@ module.exports.getByAny = function (req, res) {
 
 module.exports.insert = function (req, res) {
   const precio = new Precio(req.body);
+  if (precio.unidadesMedida.length !== 0) {
+    precio.unidadesMedida = precio.unidadesMedida.map(item => {
+      item._id = mongoose.Types.ObjectId(item.id)
+      return item
+    })
+  }
   Precio.findOne({ articulo: precio.articulo, marca: precio.marca, establecimiento: precio.establecimiento, fechaCompra: precio.fechaCompra })
     .then((u) => {
       if (u) {
