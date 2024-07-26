@@ -3,29 +3,43 @@
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 
-const CompraSchema = new Schema({
+const UnidadMedidaSchema = new Schema({
+  tipoUnidadId: {
+    type: Schema.Types.ObjectId,
+    required: true
+  },
+  valor: {
+    type: Number,
+    required: true
+  }
+});
+
+const PrecioSchema = new Schema({
   _id: {
     type: Schema.Types.ObjectId,
+    required: true
+  },
+  articulo: {
+    type: Schema.Types.ObjectId,
     required: true,
+    ref: "Articulo"
   },
-  factura: {
-    type: String,
-    default: '',
-    index: true
-  },
-  totalCompra: {
+  precio: {
     type: Number,
     default: 0
   },
-  articulos: {
-    type: Array,
-    default: []
+  marca: {
+    type: String,
+    default: 0
   },
   establecimiento: {
     type: Schema.Types.ObjectId,
     required: true,
     ref: "Establecimiento",
   },
+  unidadesMedida: {
+    type: Array<UnidadMedidaSchema>[]
+  },  
   fechaCompra: {
     type: String,
     required: true,
@@ -36,24 +50,24 @@ const CompraSchema = new Schema({
   },
   notas: {
     type: String,
-    required: true,
+    default: '',
   },
   borrable: {
     type: Boolean,
     default: true,
-  },
+  }
 });
 
 // Duplicate the ID field.
-CompraSchema.virtual('id').get(function(){
+PrecioSchema.virtual('id').get(function(){
   return this._id.toHexString();
 });
 // Ensure virtual fields are serialised.
-CompraSchema.set('toJSON', {
+PrecioSchema.set('toJSON', {
   virtuals: true
 });
 
-CompraSchema.pre("validate", function (next) {
+PrecioSchema.pre("validate", function (next) {
   if (!this._id) {
     this._id = mongoose.Types.ObjectId();
   }
@@ -64,7 +78,14 @@ CompraSchema.pre("validate", function (next) {
       year: "numeric",
     }).format();
   }
+  if (this.fechaCompra) {
+    this.fechaCompra = new Intl.DateTimeFormat('es-ES', {
+      day: "2-digit",
+      month: "2-digit",
+      year: "numeric",
+    }).format(this.fechaCompra)
+  }
   next();
 });
 
-module.exports = mongoose.model("Compra", CompraSchema, "Compra");
+module.exports = mongoose.model("Precio", PrecioSchema, "Precio");

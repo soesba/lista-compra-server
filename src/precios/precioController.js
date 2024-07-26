@@ -1,18 +1,18 @@
 "use strict";
 
 var mongoose = require("mongoose");
-const Compra = require("./compraModel");
+const Precio = require("./precioModel");
 
 module.exports.get = function (req, res) {
-  Compra.find()
-    .populate("establecimiento")
+  Precio.find()
+    .populate("establecimiento", "_id nombre")
     .then((result) => res.jsonp(result))
     .catch((error) => res.status(500).send({ message: error }));
 };
 
 module.exports.getById = function (req, res) {
-  Compra.findOne({ _id: req.params.id })
-    .populate("establecimiento")
+  Precio.findOne({ _id: req.params.id })
+    .populate("establecimiento", "_id nombre")
     .then((result) => {
       res.jsonp(result);
     })
@@ -21,13 +21,11 @@ module.exports.getById = function (req, res) {
 
 module.exports.getByAny = function (req, res) {
   const texto = new RegExp(req.params.texto);
-  Compra.find({
+  Precio.find({
     $or: [
-      { nombre: { $regex: texto, $options: "i" } },
-      { descripcion: { $regex: texto, $options: "i" } },
+      { marca: { $regex: texto, $options: "i" } }
     ],
-  })
-    .populate("establecimiento")
+  }).populate("establecimiento", "_id nombre")
     .then((result) => {
       if (result) {
         res.jsonp(result);
@@ -37,21 +35,22 @@ module.exports.getByAny = function (req, res) {
 };
 
 module.exports.insert = function (req, res) {
-  const compra = new Compra(req.body);
-  Compra.findOne({ nombre: compra.nombre })
+  const precio = new Precio(req.body);
+  console.log("🚀 ~ precio:", precio)
+  Precio.findOne({ articulo: precio.articulo, marca: precio.marca, establecimiento: precio.establecimiento, fechaCompra: precio.fechaCompra })
     .then((u) => {
       if (u) {
         res.status(409).send({
           respuesta: 409,
-          message: "Ya existe un registro con ese nombre",
+          message: "Ya existe un registro con esos datos",
         });
       } else {
-        compra.save().then((response) => {
+        precio.save().then((response) => {
           if (response) {
             res.jsonp(response);
           } else {
             res.status(500).send({
-              message: "Error al crear el registro de compra",
+              message: "Error al crear el registro de precio",
             });
           }
         });
@@ -61,13 +60,13 @@ module.exports.insert = function (req, res) {
 };
 
 module.exports.update = function (req, res) {
-  Compra.findOneAndUpdate(
+  Precio.findOneAndUpdate(
     { _id: mongoose.Types.ObjectId(req.body.id) },
-    { $set: { nombre: req.body.nombre, descripcion: req.body.descripcion, tiposUnidad: req.body.tiposUnidad } },
-    { useFindAndModify: false, returnNewDocument: true },
+    { $set: req.body },
+    { useFindAndModify: false, returnNewDocument: true, returnOriginal: false },
     (err, result) => {
       if (err) {
-        return res.status(500).send({ message: err + " en Compra" });
+        return res.status(500).send({ message: err + " en Precio" });
       } else {
         res.jsonp(result);
       }
@@ -76,14 +75,14 @@ module.exports.update = function (req, res) {
 };
 
 module.exports.delete = function (req, res) {
-  Compra.deleteOne({ _id: req.params.id })
+  Precio.deleteOne({ _id: req.params.id })
     .then((result) => {
       if (result) {
         res.jsonp(result);
       } else {
         res
           .status(500)
-          .send({ message: "Compra con id " + req.params.id + " no existe" });
+          .send({ message: "Precio con id " + req.params.id + " no existe" });
       }
     })
     .catch((error) => res.status(500).send({ message: error }));
