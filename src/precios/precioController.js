@@ -19,17 +19,44 @@ module.exports.getById = function (req, res) {
     .catch((error) => res.status(500).send({ message: error }));
 };
 
-module.exports.getByAny = function (req, res) {
+module.exports.getByAny = async function (req, res) {
   const texto = new RegExp(req.params.texto);
-  Precio.find({
-    $or: [
-      { marca: { $regex: texto, $options: "i" } }
-    ],
-  }).populate("establecimiento", "_id nombre")
-    .then((result) => {
-      if (result) {
-        res.jsonp(result);
+  const primerFiltro = await Precio.aggregate([
+    { $lookup : {
+      from : 'Establecimiento', 
+      localField : "establecimiento", 
+      foreignField : "_id", 
+      as : "establecimiento_lookup",
+      pipeline: [
+        { $match: { nombre: { $regex: texto, $options: "i" } } },
+        { $project: { raiz: { id: '$_id', nombre: '$nombre', _id: '$_id' } }},
+        { $replaceRoot: { newRoot: "$raiz" } }
+      ]
       }
+    },
+    { $lookup : {
+      from : 'Articulo', 
+      localField : "articulo", 
+      foreignField : "_id", 
+      as : "articulo_lookup",
+      pipeline: [
+        { $match: { nombre: { $regex: texto, $options: "i" } } },
+        { $project: { raiz: { id: '$_id', nombre: '$nombre', _id: '$_id' } }},
+        { $replaceRoot: { newRoot: "$raiz" } }
+      ]
+      }
+    },
+    {
+      $match: { 
+        $or: [ 
+        { "establecimiento_lookup": { $ne: [] } },
+        { "articulo_lookup": { $ne: [] } }
+        
+      ]}
+    }])
+    
+    Precio.populate(primerFiltro, { path: "establecimiento", select: { _id:1, nombre: 1 }}).then((result) => {
+      res.jsonp(result);
     })
     .catch((error) => res.status(500).send({ message: error }));
 };

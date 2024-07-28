@@ -77,7 +77,6 @@ module.exports.update = function (req, res) {
     },
     { useFindAndModify: false, returnNewDocument: true },
     (err, result) => {
-      console.log("🚀 ~ result:", result)
       if (err) {
         return res.status(500).send({ message: err + ' en Articulo' })
       } else {
