@@ -6,6 +6,7 @@ const Precio = require("./precioModel");
 module.exports.get = function (req, res) {
   Precio.find()
     .populate("establecimiento", "_id nombre")
+    .populate("articulo", "_id nombre")
     .then((result) => res.jsonp(result))
     .catch((error) => res.status(500).send({ message: error }));
 };
@@ -13,6 +14,7 @@ module.exports.get = function (req, res) {
 module.exports.getById = function (req, res) {
   Precio.findOne({ _id: req.params.id })
     .populate("establecimiento", "_id nombre")
+    .populate("articulo", "_id nombre")
     .then((result) => {
       res.jsonp(result);
     })
@@ -55,7 +57,9 @@ module.exports.getByAny = async function (req, res) {
       ]}
     }])
     
-    Precio.populate(primerFiltro, { path: "establecimiento", select: { _id:1, nombre: 1 }}).then((result) => {
+    Precio.populate(primerFiltro, { path: "establecimiento", select: { _id:1, nombre: 1 }})
+    populate(primerFiltro, { path: "articulo", select: { _id:1, nombre: 1 }})
+    .then((result) => {
       res.jsonp(result);
     })
     .catch((error) => res.status(500).send({ message: error }));
