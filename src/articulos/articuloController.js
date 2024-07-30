@@ -66,13 +66,18 @@ module.exports.insert = function (req, res) {
 }
 
 module.exports.update = function (req, res) {
+  const tiposUnidad = req.body.tiposUnidad.map(item => {
+    item._id = mongoose.Types.ObjectId(item.id)
+    return item
+  })
+
   Articulo.findOneAndUpdate(
     { _id: mongoose.Types.ObjectId(req.body.id) },
     {
       $set: {
         nombre: req.body.nombre,
         descripcion: req.body.descripcion,
-        tiposUnidad: req.body.tiposUnidad,
+        tiposUnidad: tiposUnidad,
       },
     },
     { useFindAndModify: false, returnNewDocument: true },
