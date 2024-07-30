@@ -8,7 +8,9 @@ module.exports = function (app) {
 
     app.route('/precio/getById/:id').get(compraController.getById);
 
-    app.route('/precio/getByAny/:texto').get(compraController.getByAny);
+    app.route('/precio/getByArticuloId/:articuloId').get(compraController.getByArticuloId);
+
+    app.route('/precio/getByAny/:texto').get(compraController.getByAny);    
 
     app.route('/precio/insert/').post(compraController.insert);
 

@@ -21,6 +21,16 @@ module.exports.getById = function (req, res) {
     .catch((error) => res.status(500).send({ message: error }));
 };
 
+module.exports.getByArticuloId = async function (req, res) {
+  Precio.find({ articulo: req.params.articuloId })
+  .populate("establecimiento", "_id nombre")
+  .populate("articulo", "_id nombre")
+  .then((result) => {
+    res.jsonp(result);
+  })
+  .catch((error) => res.status(500).send({ message: error }));
+};
+
 module.exports.getByAny = async function (req, res) {
   const texto = new RegExp(req.params.texto);
   const primerFiltro = await Precio.aggregate([
