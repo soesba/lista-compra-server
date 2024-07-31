@@ -2,8 +2,22 @@
 
 var mongoose = require("mongoose");
 const Precio = require("./precioModel");
+const { json } = require( "body-parser" );
 
-module.exports.get = function (req, res) {
+module.exports.get = async function (req, res) {
+  // const primerFiltro = await Precio.aggregate([
+  //   { $group: { _id: "$articulo", doc:{ "$first": "$$ROOT" }}},
+  //   { $replaceRoot: { newRoot: "$doc" }},
+  //   { $addFields: { id: '$_id' } }
+  // ])
+  // Precio.populate(primerFiltro, { path: "establecimiento", select: { _id:1, nombre: 1 }}, (err, segundoFiltro) => {
+  //   Precio.populate(segundoFiltro, { path: "articulo", select: { _id:1, nombre: 1 }}, (err, result) => {
+  //     if (err) {
+  //       res.status(500).send({ message: error });
+  //     }
+  //     res.jsonp(result);
+  //   })
+  // });
   Precio.find()
     .populate("establecimiento", "_id nombre")
     .populate("articulo", "_id nombre")
@@ -66,13 +80,12 @@ module.exports.getByAny = async function (req, res) {
         
       ]}
     }])
-    
-    Precio.populate(primerFiltro, { path: "establecimiento", select: { _id:1, nombre: 1 }})
-    populate(primerFiltro, { path: "articulo", select: { _id:1, nombre: 1 }})
-    .then((result) => {
-      res.jsonp(result);
+    Precio.populate(primerFiltro, { path: "establecimiento", select: { _id:1, nombre: 1 }}, (err, result) => {
+      Precio.populate(result, { path: "articulo", select: { _id:1, nombre: 1 }}).then((result) => {
+        res.jsonp(result);
+      })
+      .catch((error) => res.status(500).send({ message: error }));
     })
-    .catch((error) => res.status(500).send({ message: error }));
 };
 
 module.exports.insert = function (req, res) {

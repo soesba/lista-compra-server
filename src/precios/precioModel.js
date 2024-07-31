@@ -64,12 +64,28 @@ const PrecioSchema = new Schema({
 });
 
 // Duplicate the ID field.
-PrecioSchema.virtual('id').get(function(){
-  return this._id.toHexString();
-});
+PrecioSchema.virtual('id')
+  .get(
+    function () {
+      return this._id.toHexString();
+    }
+  )
+  .set(
+    function (v) {
+      console.log("🚀 ~ v:", v, this)
+      this.id = this._id;
+    }
+  );
+
+
 // Ensure virtual fields are serialised.
 PrecioSchema.set('toJSON', {
-  virtuals: true
+  virtuals: true,
+  versionKey: true 
+});
+PrecioSchema.set('toObject', {
+  virtuals: true,
+  versionKey: true 
 });
 
 PrecioSchema.pre("validate", function (next) {
