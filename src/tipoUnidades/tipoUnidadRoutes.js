@@ -10,6 +10,8 @@ module.exports = function (app) {
 
     app.route('/tipoUnidad/getByAny/:texto').get(tipoUnidadController.getByAny);
 
+    app.route('/tipoUnidad/getDesplegable').get(tipoUnidadController.getDesplegable);
+
     app.route('/tipoUnidad/insert/').post(tipoUnidadController.insert);
 
     app.route('/tipoUnidad/update/').put(tipoUnidadController.update);

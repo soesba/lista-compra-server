@@ -9,6 +9,8 @@ module.exports = function (app) {
     app.route('/establecimiento/getById/:id').get(establecimientoController.getById);
 
     app.route('/establecimiento/getByAny/:texto').get(establecimientoController.getByAny);
+    
+    app.route('/establecimiento/getDesplegable').get(establecimientoController.getDesplegable);
 
     app.route('/establecimiento/insert/').post(establecimientoController.insert);
 

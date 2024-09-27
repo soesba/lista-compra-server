@@ -36,6 +36,23 @@ module.exports.getByAny = function (req, res) {
     .catch((error) => res.status(500).send({ message: error }))
 }
 
+module.exports.getDesplegable = function (req, res) {
+  Articulo.aggregate([
+    {
+      "$project":{
+        _id: 0,
+        "id": "$_id",
+        "nombre": "$nombre"
+      }
+    }
+  ]).then((result) => {
+      if (result) {
+        res.jsonp(result)
+      }
+    })
+    .catch((error) => res.status(500).send({ message: error }))
+}
+
 module.exports.insert = function (req, res) {
   const articulo = new Articulo(req.body)
   Articulo.findOne({ nombre: articulo.nombre })

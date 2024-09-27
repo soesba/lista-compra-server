@@ -33,6 +33,23 @@ module.exports.getByAny = function (req, res) {
     .catch((error) => res.status(500).send({ message: error }));
 };
 
+module.exports.getDesplegable = function (req, res) {
+  TipoEstablecimiento.aggregate([
+    {
+      "$project":{
+        _id: 0,
+        "id": "$_id",
+        "nombre": "$nombre"
+      }
+    }
+  ]).then((result) => {
+      if (result) {
+        res.jsonp(result)
+      }
+    })
+    .catch((error) => res.status(500).send({ message: error }))
+}
+
 module.exports.insert = function (req, res) {
   const tipoEstablecimiento = new TipoEstablecimiento(req.body);
   TipoEstablecimiento.findOne({

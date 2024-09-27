@@ -70,6 +70,23 @@ module.exports.getByAny = function (req, res) {
   .catch((error) => res.status(500).send({ message: error }));
 };
 
+module.exports.getDesplegable = function (req, res) {
+  Establecimiento.aggregate([
+    {
+      "$project":{
+        _id: 0,
+        "id": "$_id",
+        "nombre": "$nombre"
+      }
+    }
+  ]).then((result) => {
+      if (result) {
+        res.jsonp(result)
+      }
+    })
+    .catch((error) => res.status(500).send({ message: error }))
+}
+
 module.exports.insert = function (req, res) {  
   req.body.direcciones =  req.body.direcciones.map(element => {
     if (!element._id) {

@@ -10,6 +10,8 @@ module.exports = function (app) {
 
     app.route('/tipoEstablecimiento/getByAny/:texto').get(tipoEstablecimientoController.getByAny);
 
+    app.route('/tipoEstablecimiento/getDesplegable').get(tipoEstablecimientoController.getDesplegable);
+
     app.route('/tipoEstablecimiento/insert/').post(tipoEstablecimientoController.insert);
 
     app.route('/tipoEstablecimiento/update/').put(tipoEstablecimientoController.update);

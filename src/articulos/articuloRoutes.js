@@ -10,6 +10,8 @@ module.exports = function (app) {
 
     app.route('/articulo/getByAny/:texto').get(articuloController.getByAny);
 
+    app.route('/articulo/getDesplegable').get(articuloController.getDesplegable);
+
     app.route('/articulo/insert/').post(articuloController.insert);
 
     app.route('/articulo/update/').put(articuloController.update);
