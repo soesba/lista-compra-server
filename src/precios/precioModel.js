@@ -24,11 +24,6 @@ const PrecioSchema = new Schema({
     type: Schema.Types.ObjectId,
     required: true
   },
-  articulo: {
-    type: Schema.Types.ObjectId,
-    required: true,
-    ref: "Articulo"
-  },
   precio: {
     type: Number,
     default: 0
@@ -100,4 +95,5 @@ PrecioSchema.pre("validate", function (next) {
   next();
 });
 
-module.exports = mongoose.model("Precio", PrecioSchema, "Precio");
+const PrecioModel = mongoose.model("Precio", PrecioSchema, "Precio");
+module.exports = { PrecioModel, PrecioSchema }

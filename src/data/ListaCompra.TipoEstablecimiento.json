@@ -1,0 +1,42 @@
+[{
+  "_id": "668bc28394e11a32b4278a84",
+  "nombre": "Supermercado",
+  "abreviatura": "super",
+  "borrable": false,
+  "fechaCreacion": "19/07/2024"
+},
+{
+  "_id": "668bc29fc5a573a80a2de6c4",
+  "nombre": "Gasolinera",
+  "abreviatura": "gas",
+  "borrable": false,
+  "fechaCreacion": "19/07/2024"
+},
+{
+  "_id": "668bc2b528cd7ed5011548aa",
+  "nombre": "Hipermercado",
+  "abreviatura": "hiper",
+  "borrable": false,
+  "fechaCreacion": "19/07/2024"
+},
+{
+  "_id": "668bc2aa957c8c52c99ac4b4",
+  "nombre": "Farmacia",
+  "abreviatura": "far",
+  "borrable": false,
+  "fechaCreacion": "19/07/2024"
+},
+{
+  "_id": "668bc2beca6c9ac5bcee192a",
+  "nombre": "Restaurante",
+  "abreviatura": "res",
+  "borrable": false,
+  "fechaCreacion": "19/07/2024"
+},
+{
+  "_id": "66a20a8f1f61371b8c57e01d",
+  "nombre": "sdfsfsdf",
+  "abreviatura": "sdfsdfsdf",
+  "borrable": true,
+  "fechaCreacion": "25/07/2024"
+}]

@@ -1,0 +1,425 @@
+[{
+  "_id": "669a2b02ae03dc0310b87517",
+  "nombre": "Pan centeno",
+  "descripcion": "Pan de centeno de mi desayuno",
+  "borrable": false,
+  "fechaCreacion": "19/07/2024",
+  "tiposUnidad": [
+    {
+      "_id": "6644cb9386c5a2b7bc02c2a0"
+    },
+    {
+      "_id": "6644cbba86c5a2b7bc02c2a2"
+    }
+  ]
+},
+{
+  "_id": "66a1100de00b063678cf4cd8",
+  "nombre": "Leche desnatada",
+  "descripcion": "Leche desnatada de litro",
+  "borrable": true,
+  "fechaCreacion": "24/07/2024",
+  "tiposUnidad": [
+    {
+      "_id": "6644cbac86c5a2b7bc02c2a1"
+    }
+  ],
+  "precios": [{
+    "_id": "66a3795dea0d2b41dcb669e8",
+    "unidadesMedida": [
+      {
+        "nombre": "litro",
+        "valor": 1,
+        "_id": "6644cbac86c5a2b7bc02c2a1"
+      }
+    ],
+    "precio": 0.8,
+    "marca": "Hacendado",
+    "notas": "",
+    "borrable": true,
+    "establecimiento": "6644c5d186c5a2b7bc02c29f",
+    "fechaCompra": "17/07/2024",
+    "fechaCreacion": "26/07/2024"
+  },
+  {
+    "_id": "66a3ad4fcaf7750acc1df0bb",
+    "precio": 0.8,
+    "marca": "Milbona",
+    "notas": "",
+    "borrable": true,
+    "establecimiento": "66a104aef78db43594f5fadc",
+    "unidadesMedida": [
+      {
+        "nombre": "litro",
+        "valor": 1,
+        "_id":"66a3ad4fcaf7750acc1df0b9"
+      }
+    ],
+    "fechaCompra": "05/07/2024",
+    "fechaCreacion": "26/07/2024"
+  }]
+},
+{
+  "_id":"66a1115ee00b063678cf4cdf",
+  "nombre": "Papel higiénico",
+  "descripcion": "",
+  "borrable": true,
+  "fechaCreacion": "24/07/2024",
+  "tiposUnidad": [
+    {
+      "_id": "6644cbba86c5a2b7bc02c2a2"
+    }
+  ]
+},
+{
+  "_id": "66a11248e00b063678cf4cec",
+  "nombre": "Leche semidesnatada",
+  "descripcion": "Leche semidesnatada de litro",
+  "borrable": true,
+  "fechaCreacion": "24/07/2024",
+  "tiposUnidad": [
+    {
+      "_id": "6644cbac86c5a2b7bc02c2a1"
+    }
+  ]
+},
+{
+  "_id": "66a11256e00b063678cf4cf0",
+  "nombre": "Leche brick semidesnatada",
+  "descripcion": "Leche brick pequeño de Sofía",
+  "borrable": true,
+  "fechaCreacion": "24/07/2024",
+  "tiposUnidad": [
+    {
+      "_id": "6644cbac86c5a2b7bc02c2a1"
+    }
+  ]
+},
+{
+  "_id": "66a117dae00b063678cf4d0b",
+  "nombre": "Servilletas",
+  "descripcion": "Servilletas de doble capa",
+  "borrable": true,
+  "fechaCreacion": "24/07/2024"
+},
+{
+  "_id": "66a36b31dc4fc8555ce01d21",
+  "nombre": "Pan tostado",
+  "descripcion": "",
+  "tiposUnidad": [
+    {
+      "_id": "6644cbc686c5a2b7bc02c2a3"
+    },
+    {
+      "_id": "6644cbba86c5a2b7bc02c2a2"
+    }
+  ],
+  "borrable": true,
+  "fechaCreacion": "26/07/2024",
+  "precios": [{
+    "_id": "66a3a3b5ea0d2b41dcb66dfa",
+    "unidadesMedida": [
+      {
+        "nombre": "gramo",
+        "valor": 550,
+        "_id":"6644cbc686c5a2b7bc02c2a3"
+      },
+      {
+        "nombre": "unidad",
+        "valor": 48,
+        "_id":"6644cbba86c5a2b7bc02c2a2"
+      }
+    ],
+    "precio": 1.9,
+    "marca": "Hacendado",
+    "notas": "",
+    "borrable": true,
+    "establecimiento": "6644c5d186c5a2b7bc02c29f",
+    "fechaCompra": "17/07/2024",
+    "fechaCreacion": "26/07/2024"
+  }]
+},
+{
+  "_id": "66a740c34d3f6a1708caf9d7",
+  "nombre": "Vinagre limpieza",
+  "descripcion": "",
+  "tiposUnidad": [
+    {
+      "_id": "6644cbac86c5a2b7bc02c2a1"
+    }
+  ],
+  "borrable": true,
+  "fechaCreacion": "29/07/2024",
+  "precios":[{
+    "_id": "66a791ef6172ec38887c55c8",
+      "precio": 0.9,
+    "marca": "Hacendado",
+    "notas": "",
+    "borrable": true,
+    "establecimiento": "6644c5d186c5a2b7bc02c29f",
+     "unidadesMedida": [
+      {
+        "nombre": "litro",
+        "valor": 1,
+        "_id":"66a791ef6172ec38887c55c6"
+      }
+    ],
+    "fechaCompra": "18/07/2024",
+    "fechaCreacion": "29/07/2024"
+  },
+  {
+    "_id": "66a793436172ec38887c55e2",
+      "precio": 0.79,
+    "marca": "W5",
+    "notas": "",
+    "borrable": true,
+    "establecimiento": "66a104aef78db43594f5fadc",
+     "unidadesMedida": [
+      {
+        "nombre": "litro",
+        "valor": 1,
+        "_id":"66a793436172ec38887c55e0"
+      }
+    ],
+    "fechaCompra": "28/05/2024",
+    "fechaCreacion": "29/07/2024"
+  }]
+},
+{
+  "_id": "66a7438a4d3f6a1708caf9fc",
+  "nombre": "Gamuza atrapapolvo",
+  "descripcion": "",
+  "tiposUnidad": [
+    {
+      "_id": "6644cbba86c5a2b7bc02c2a2"
+    }
+  ],
+  "borrable": true,
+  "fechaCreacion": "29/07/2024",
+  "precios": [{
+    "_id": "66a78198c8d6bb5900985d59",
+    "precio": 1.85,
+    "marca": "Hacendado",
+    "notas": "",
+    "borrable": true,
+    "establecimiento": "6644c5d186c5a2b7bc02c29f",
+     "unidadesMedida": [
+      {
+        "nombre": "unidad",
+        "valor": 30,
+        "_id":"66a781a5c8d6bb5900985d64"
+      }
+    ],
+    "fechaCompra": "18/07/2024",
+    "fechaCreacion": "29/07/2024"
+  }]
+},
+{
+  "_id": "66a757f14d3f6a1708cafa28",
+  "nombre": "Mayonesa light",
+  "descripcion": "",
+  "tiposUnidad": [
+    {
+      "_id": "6644cbc686c5a2b7bc02c2a3"
+    }
+  ],
+  "borrable": true,
+  "fechaCreacion": "29/07/2024"
+},
+{
+  "_id": "66a758814d3f6a1708cafa32",
+  "nombre": "Toallitas bebé",
+  "descripcion": "",
+  "tiposUnidad": [
+    {
+      "_id": "6644cbba86c5a2b7bc02c2a2"
+    }
+  ],
+  "borrable": true,
+  "fechaCreacion": "29/07/2024"
+},
+{
+  "_id": "66a759344d3f6a1708cafa3c",
+  "nombre": "Patatas fritas artesanas",
+  "descripcion": "Bolsa snack",
+  "tiposUnidad": [
+    {
+      "_id": "6644cbc686c5a2b7bc02c2a3"
+    }
+  ],
+  "borrable": true,
+  "fechaCreacion": "29/07/2024"
+},
+{
+  "_id": "66a75a12bd910132ecf8657c",
+  "nombre": "Mantequilla sin sal añadida",
+  "descripcion": "",
+  "tiposUnidad": [
+    {
+      "_id": "6644cbc686c5a2b7bc02c2a3"
+    }
+  ],
+  "borrable": true,
+  "fechaCreacion": "29/07/2024"
+},
+{
+  "_id": "66a75aaa4965255740d37013",
+  "nombre": "Pañuelos papel caja",
+  "descripcion": "",
+  "tiposUnidad": [
+    {
+      "_id": "6644cbba86c5a2b7bc02c2a2"
+    }
+  ],
+  "borrable": true,
+  "fechaCreacion": "29/07/2024"
+},
+{
+  "_id": "66a75bbcc8d6bb5900985ca8",
+  "nombre": "Masa pizza fresca",
+  "descripcion": "",
+  "tiposUnidad": [
+    {
+      "_id": "6644cbc686c5a2b7bc02c2a3"
+    },
+    {
+      "_id": "6644cbba86c5a2b7bc02c2a2"
+    }
+  ],
+  "borrable": true,
+  "fechaCreacion": "29/07/2024"
+},
+{
+  "_id": "66a8a1f66172ec38887c57bc",
+  "nombre": "Guisantes congelados",
+  "descripcion": "",
+  "tiposUnidad": [
+    {
+      "_id": "6644cb9386c5a2b7bc02c2a0"
+    }
+  ],
+  "borrable": true,
+  "fechaCreacion": "30/07/2024",
+  "precios": [{
+    "_id": "66a8a21c6172ec38887c57cc",
+      "precio": 1.49,
+    "marca": "Freshona",
+    "notas": "",
+    "borrable": true,
+    "establecimiento": "66a104aef78db43594f5fadc",
+     "unidadesMedida": [
+      {
+        "nombre": "kilo",
+        "valor": 1,
+        "_id":"66a8a21c6172ec38887c57ca"
+      }
+    ],
+    "fechaCompra": "29/07/2024",
+    "fechaCreacion": "30/07/2024"
+  }]
+},
+{
+  "_id": "66a8dcb1136f9c0a80213902",
+  "nombre": "Café soluble",
+  "descripcion": "",
+  "tiposUnidad": [
+    {
+      "_id": "6644cbc686c5a2b7bc02c2a3"
+    }
+  ],
+  "borrable": true,
+  "fechaCreacion": "30/07/2024",
+  "precios":[{
+    "_id": "66a8dd6f136f9c0a80213913",
+      "precio": 3.59,
+    "marca": "Bellarom",
+    "notas": "",
+    "borrable": true,
+    "establecimiento": "66a104aef78db43594f5fadc",
+     "unidadesMedida": [
+      {
+        "nombre": "gramo",
+        "valor": 200,
+        "_id":"66aa1a55dbf30c00f437e364"
+      }
+    ],
+    "fechaCompra": "29/07/2024",
+    "fechaCreacion": "30/07/2024"
+  },
+  {
+    "_id": "66a8dea6136f9c0a80213924",
+      "precio": 2.85,
+    "marca": "Bellarom",
+    "notas": "",
+    "borrable": true,
+    "establecimiento": "66a104aef78db43594f5fadc",
+     "unidadesMedida": [
+      {
+        "nombre": "gramo",
+        "valor": 200,
+        "_id":"66aa1a96dbf30c00f437e3a6"
+      }
+    ],
+    "fechaCompra": "07/06/2024",
+    "fechaCreacion": "30/07/2024"
+  }]
+},
+{
+  "_id": "66a8e158136f9c0a80213997",
+  "nombre": "Yogur natural",
+  "descripcion": "",
+  "tiposUnidad": [
+    {
+      "_id": "6644cbc686c5a2b7bc02c2a3"
+    },
+    {
+      "_id": "6644cbba86c5a2b7bc02c2a2"
+    }
+  ],
+  "borrable": true,
+  "fechaCreacion": "30/07/2024",
+  "precios":[{
+    "_id": "66a8e1a8136f9c0a802139a8",
+      "precio": 1.39,
+    "marca": "Milbona",
+    "notas": "",
+    "borrable": true,
+    "establecimiento": "66a104aef78db43594f5fadc",
+     "unidadesMedida": [
+      {
+        "nombre": "gramo",
+        "valor": 1000,
+        "_id":"66a8e1a8136f9c0a802139a5"
+      },
+      {
+        "nombre": "unidad",
+        "valor": 8,
+        "_id":"66a8e1a8136f9c0a802139a6"
+      }
+    ],
+    "fechaCompra": "29/07/2024",
+    "fechaCreacion": "30/07/2024"
+  },
+  {
+    "_id": "66f3e430ccd5ad1828116f65",
+      "precio": 1.05,
+    "marca": "Hacendado",
+    "notas": "",
+    "borrable": true,
+    "establecimiento": "6644c5d186c5a2b7bc02c29f",
+     "unidadesMedida": [
+      {
+        "nombre": "gramo",
+        "valor": 750,
+        "_id":"66f3e430ccd5ad1828116f62"
+      },
+      {
+        "nombre": "unidad",
+        "valor": 6,
+        "_id":"66f3e430ccd5ad1828116f63"
+      }
+    ],
+    "fechaCompra": "20/09/2024",
+    "fechaCreacion": "25/09/2024"
+  }]
+}]

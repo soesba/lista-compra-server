@@ -1,9 +1,9 @@
 'use strict';
 
-const ArticuloData = require('./src/data/articulos.json');
-const TipoUnidadesData = require('./src/data/tipoUnidades.json');
-const TipoEstablecimientosData = require('./src/data/tipoEstablecimientos.json');
-const EstablecimientosData = require('./src/data/establecimientos.json')
+const ArticuloData = require('./src/data/ListaCompra.Articulo.json');
+const TipoUnidadesData = require('./src/data/ListaCompra.TipoUnidad.json');
+const TipoEstablecimientosData = require('./src/data/ListaCompra.TipoEstablecimiento.json');
+const EstablecimientosData = require('./src/data/ListaCompra.Establecimiento.json')
 const mongoose = require('mongoose');
 const conexion =  mongoose.connection.db;
 

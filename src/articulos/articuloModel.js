@@ -2,6 +2,7 @@
 
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
+const Precios = require('../precios/precioModel');
 
 const ArticuloSchema = new Schema({
   _id: {
@@ -26,24 +27,7 @@ const ArticuloSchema = new Schema({
     required: true,
     ref: "TipoUnidad",
   }],
-  // tipoUnidad: {
-  //   type: Schema.Types.ObjectId,
-  //   default: '',
-  //   trim: true,
-  //   required: true
-  // },
-  // cantidad: {
-  //   type: Number,
-  //   required: true
-  // },
-  // precioUnidad: {
-  //   type: Number,
-  //   required: true
-  // },
-  // precioTotal: {
-  //   type: Number,
-  //   required: true
-  // },
+  precios: [Precios.PrecioSchema],
   fechaCreacion: {
     type: String,
     required: true,

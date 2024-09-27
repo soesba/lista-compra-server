@@ -20,7 +20,6 @@ module.exports.get = async function (req, res) {
   // });
   Precio.find()
     .populate("establecimiento", "_id nombre")
-    .populate("articulo", "_id nombre")
     .then((result) => res.jsonp(result))
     .catch((error) => res.status(500).send({ message: error }));
 };
@@ -28,21 +27,10 @@ module.exports.get = async function (req, res) {
 module.exports.getById = function (req, res) {
   Precio.findOne({ _id: req.params.id })
     .populate("establecimiento", "_id nombre")
-    .populate("articulo", "_id nombre")
     .then((result) => {
       res.jsonp(result);
     })
     .catch((error) => res.status(500).send({ message: error }));
-};
-
-module.exports.getByArticuloId = async function (req, res) {
-  Precio.find({ articulo: req.params.articuloId })
-  .populate("establecimiento", "_id nombre")
-  .populate("articulo", "_id nombre")
-  .then((result) => {
-    res.jsonp(result);
-  })
-  .catch((error) => res.status(500).send({ message: error }));
 };
 
 module.exports.getByAny = async function (req, res) {
@@ -60,32 +48,16 @@ module.exports.getByAny = async function (req, res) {
       ]
       }
     },
-    { $lookup : {
-      from : 'Articulo', 
-      localField : "articulo", 
-      foreignField : "_id", 
-      as : "articulo_lookup",
-      pipeline: [
-        { $match: { nombre: { $regex: texto, $options: "i" } } },
-        { $project: { raiz: { id: '$_id', nombre: '$nombre', _id: '$_id' } }},
-        { $replaceRoot: { newRoot: "$raiz" } }
-      ]
-      }
-    },
     {
       $match: { 
         $or: [ 
-        { "establecimiento_lookup": { $ne: [] } },
-        { "articulo_lookup": { $ne: [] } }
+        { "establecimiento_lookup": { $ne: [] } }
         
       ]}
     }])
-    Precio.populate(primerFiltro, { path: "establecimiento", select: { _id:1, nombre: 1 }}, (err, result) => {
-      Precio.populate(result, { path: "articulo", select: { _id:1, nombre: 1 }}).then((result) => {
-        res.jsonp(result);
-      })
-      .catch((error) => res.status(500).send({ message: error }));
-    })
+    Precio.populate(primerFiltro, { path: "establecimiento", select: { _id:1, nombre: 1 }}, (err, result) => {      
+      res.jsonp(result);      
+    }).catch((error) => res.status(500).send({ message: error }));
 };
 
 module.exports.insert = function (req, res) {
@@ -96,7 +68,7 @@ module.exports.insert = function (req, res) {
       return item
     })
   }
-  Precio.findOne({ articulo: precio.articulo, marca: precio.marca, establecimiento: precio.establecimiento, fechaCompra: precio.fechaCompra })
+  Precio.findOne({ marca: precio.marca, establecimiento: precio.establecimiento, fechaCompra: precio.fechaCompra })
     .then((u) => {
       if (u) {
         res.status(409).send({

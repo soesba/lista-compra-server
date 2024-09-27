@@ -1,0 +1,35 @@
+[{
+  "_id": "6644cb9386c5a2b7bc02c2a0",
+  "nombre": "kilo",
+  "abreviatura": "kg",
+  "borrable": false,
+  "fechaCreacion": "19/07/2024"
+},
+{
+  "_id": "6644cbac86c5a2b7bc02c2a1",
+  "nombre": "litro",
+  "abreviatura": "l",
+  "borrable": false,
+  "fechaCreacion": "19/07/2024"
+},
+{
+  "_id": "6644cbba86c5a2b7bc02c2a2",
+  "nombre": "unidad",
+  "abreviatura": "ud",
+  "borrable": false,
+  "fechaCreacion": "19/07/2024"
+},
+{
+  "_id": "6644cbc686c5a2b7bc02c2a3",
+  "nombre": "gramo",
+  "abreviatura": "gr",
+  "borrable": false,
+  "fechaCreacion": "19/07/2024"
+},
+{
+  "_id": "6644cbd586c5a2b7bc02c2a4",
+  "nombre": "mililitro",
+  "abreviatura": "ml",
+  "borrable": false,
+  "fechaCreacion": "19/07/2024"
+}]

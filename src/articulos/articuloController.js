@@ -6,13 +6,26 @@ const Articulo = require('./articuloModel')
 module.exports.get = function (req, res) {
   Articulo.find()
     .populate('tiposUnidad')
-    .then((result) => res.jsonp(result))
-    .catch((error) => res.status(500).send({ message: error }))
+    .populate({
+      path: 'precios.establecimiento',
+      model: 'Establecimiento'
+    })
+    .then((result) => {
+      return res.jsonp(result)
+    })
+    .catch((error) => {
+      console.log("🚀 ~ error:", error)
+      res.status(500).send({ message: error })
+    })
 }
 
 module.exports.getById = function (req, res) {
   Articulo.findOne({ _id: req.params.id })
     .populate('tiposUnidad')
+    .populate({
+      path: 'precios.establecimiento',
+      model: 'Establecimiento'
+    })
     .then((result) => {
       res.jsonp(result)
     })
@@ -28,6 +41,10 @@ module.exports.getByAny = function (req, res) {
     ],
   })
     .populate('tiposUnidad')
+    .populate({
+      path: 'precios.establecimiento',
+      model: 'Establecimiento'
+    })
     .then((result) => {
       if (result) {
         res.jsonp(result)
