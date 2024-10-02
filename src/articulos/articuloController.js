@@ -70,13 +70,6 @@ module.exports.insert = function (req, res) {
             res.jsonp(result);
           }
         })
-        // articulo.save().then((response) => {
-        //   if (response) {
-        //     res.jsonp(response)
-        //   } else {
-        //     res.status(500).send({ message: 'Error al crear el registro de articulo' })
-        //   }
-        // })
       }
     })
     .catch((error) => res.status(500).send({ message: error }))

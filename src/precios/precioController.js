@@ -45,6 +45,7 @@ module.exports.getByArticuloId = async function (req, res) {
   .catch((error) => res.status(500).send({ message: error }));
 };
 
+
 module.exports.getByAny = async function (req, res) {
   const texto = new RegExp(req.params.texto);
   const primerFiltro = await Precio.aggregate([
