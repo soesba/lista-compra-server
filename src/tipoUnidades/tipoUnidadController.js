@@ -97,21 +97,34 @@ module.exports.update = function(req, res) {
 module.exports.delete = function (req, res) {
   const tipoUnidadId = req.params.id
   const Articulo = require("../articulos/articuloModel");
+  const TipoUnidadEquivalencia = require('../tipoUnidadEquivalencia/tipoUnidadEquivalenciaModel');
+  
   Articulo.find({ 
     tiposUnidad: { $all: [mongoose.Types.ObjectId(tipoUnidadId)]   } 
   }).then((result) => {
     if (result.length !== 0) {
       res.status(409).send({ respuesta: 409, message: "El tipo de unidad está en uso" });
     } else {
-      TipoUnidad.deleteOne({ _id: req.params.id })
-      .then((result) => {
+      TipoUnidadEquivalencia.findOne({
+        $or: [
+          { from: tipoUnidadId },
+          { to: tipoUnidadId },
+        ],
+      }).then(result => {
         if (result) {
-          res.jsonp(result);
+          res.status(409).send({ respuesta: 409, message: "El tipo de unidad está en uso" });
         } else {
-          res.status(500).send({ message: "TipoUnidad con id " + req.params.id + " no existe" });
+          TipoUnidad.deleteOne({ _id: req.params.id })
+          .then((result) => {
+            if (result) {
+              res.jsonp(result);
+            } else {
+              res.status(500).send({ message: "TipoUnidad con id " + req.params.id + " no existe" });
+            }
+          })
+          .catch((error) => res.status(500).send({ message: error }));
         }
       })
-      .catch((error) => res.status(500).send({ message: error }));
     }
   })
   .catch((error) => res.status(500).send({ message: error }));  
