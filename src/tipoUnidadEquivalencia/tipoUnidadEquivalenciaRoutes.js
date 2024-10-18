@@ -10,6 +10,8 @@ module.exports = function (app) {
 
     app.route('/tipoUnidadEquivalencia/getByFrom/:from').get(tipoUnidadEquivalenciaController.getByFrom);
 
+    app.route('/tipoUnidadEquivalencia/getByFromMultiple/:from').get(tipoUnidadEquivalenciaController.getByFromMultiple);
+
     // app.route('/tipoUnidadEquivalencia/getDesplegable').get(tipoUnidadEquivalenciaController.getDesplegable);
 
     app.route('/tipoUnidadEquivalencia/insert/').post(tipoUnidadEquivalenciaController.insert);

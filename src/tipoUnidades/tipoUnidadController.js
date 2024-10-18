@@ -11,7 +11,6 @@ module.exports.get = function (req, res) {
 
 module.exports.getById = function (req, res) {
   TipoUnidad.findOne({ _id: req.params.id })
-  .populate("tipoUnidad", "_id nombre")
     .then((result) => {
         res.jsonp(result);
     })

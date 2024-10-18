@@ -9,10 +9,6 @@ const UnidadMedidaSchema = new Schema({
     required: true,
     ref: "TipoUnidad"
   },
-  nombre:{
-    type: String,
-    required: true
-  },
   valor: {
     type: Number,
     required: true
@@ -69,14 +65,34 @@ PrecioSchema.virtual('id').get(function () {
 });
 
 
+UnidadMedidaSchema.virtual('id').get(function () {
+  return this._id.toHexString();
+});
+
+
 // Ensure virtual fields are serialised.
 PrecioSchema.set('toJSON', {
   virtuals: true,
-  versionKey: true 
+  versionKey: true ,
+  transform: (doc, result) => {
+    return {
+      ...result,
+      id: result._id,
+    }
+  }
 });
 PrecioSchema.set('toObject', {
   virtuals: true,
   versionKey: true 
+});
+
+UnidadMedidaSchema.set('toJSON', {
+  transform: (doc, result) => {
+    return {
+      ...result,
+      id: result._id,
+    }
+  }
 });
 
 PrecioSchema.pre("validate", function (next) {
@@ -90,14 +106,24 @@ PrecioSchema.pre("validate", function (next) {
       year: "numeric",
     }).format();
   }
-  // if (this.fechaCompra) {
-  //   this.fechaCompra = new Intl.DateTimeFormat('es-ES', {
-  //     day: "2-digit",
-  //     month: "2-digit",
-  //     year: "numeric",
-  //   }).format(this.fechaCompra)
-  // }
   next();
 });
+
+PrecioSchema.pre("find", function (next) {
+  this
+  .populate("establecimiento", "_id nombre")
+  .populate("articulo", "_id nombre");
+  console.log(this.unidadesMedida);
+  next();
+})
+
+PrecioSchema.post("aggregate", function (result) {
+  result.forEach(item => {
+    item.id = item._id;
+    delete item._id;
+    delete item.__v
+  })
+  
+})
 
 module.exports = mongoose.model("Precio", PrecioSchema, "Precio");

@@ -94,7 +94,8 @@ DireccionSchema.set('toJSON', {
       id: result._id,
     }
   },
-})
+});
+
 EstablecimientoSchema.pre('validate', function (next) {
   if (!this._id) {
     this._id = mongoose.Types.ObjectId()

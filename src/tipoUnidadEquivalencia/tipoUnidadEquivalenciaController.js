@@ -5,16 +5,12 @@ const TipoUnidadEquivalencia = require("./tipoUnidadEquivalenciaModel");
 
 module.exports.get = function (req, res) {
   TipoUnidadEquivalencia.find()
-    .populate("from", "_id nombre")
-    .populate("to", "_id nombre")
     .then((result) => res.jsonp(result))
     .catch((error) => res.status(500).send({ message: error }));
 };
 
 module.exports.getById = function (req, res) {
   TipoUnidadEquivalencia.findOne({ _id: req.params.id })
-    .populate("from", "_id nombre")
-    .populate("to", "_id nombre")
     .then((result) => {
         res.jsonp(result);
     })
@@ -23,9 +19,35 @@ module.exports.getById = function (req, res) {
 
 module.exports.getByFrom = function (req, res) {
   TipoUnidadEquivalencia.find({ from: req.params.from })
-    .populate("from", "_id nombre")
-    .populate("to", "_id nombre")
     .then((result) => {
+      if (result) {
+        res.jsonp(result);
+      }
+    })
+    .catch((error) => res.status(500).send({ message: error }));
+};
+
+module.exports.getByFromMultiple = function (req, res) {
+  const fromToObjectId = req.params.from.map(x =>
+    mongoose.Types.ObjectId(x)
+  )
+  TipoUnidadEquivalencia.find({ 
+    from: { $in: fromToObjectId } 
+  }).then((result) => {
+      if (result) {
+        res.jsonp(result);
+      }
+    })
+    .catch((error) => res.status(500).send({ message: error }));
+};
+
+module.exports.getByAny = function (req, res) {
+  TipoUnidadEquivalencia.find({
+    $or: [
+      { from: req.params.id },
+      { to: req.params.id },
+    ],
+  }).then((result) => {
       if (result) {
         res.jsonp(result);
       }
@@ -100,7 +122,7 @@ module.exports.delete = function (req, res) {
       if (result) {
         res.jsonp(result);
       } else {
-        res.status(500).send({ message: "TipoUnidadEquivalencia con id " + req.params.id + " no existe" });
+        res.status(500).send({ message: "Equivalencia con id " + req.params.id + " no existe" });
       }
     })
     .catch((error) => res.status(500).send({ message: error }));

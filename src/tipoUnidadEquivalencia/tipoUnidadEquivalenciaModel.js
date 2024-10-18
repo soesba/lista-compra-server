@@ -54,4 +54,19 @@ TipoUnidadEquivalenciaSchema.pre('validate', function(next) {
   next();
 });
 
+TipoUnidadEquivalenciaSchema.pre("find", function (next) {
+  this
+  .populate("from", "_id nombre")
+  .populate("to", "_id nombre")
+  next();
+})
+
+TipoUnidadEquivalenciaSchema.pre("findOne", function (next) {
+  this
+  .populate("from", "_id nombre")
+  .populate("to", "_id nombre")
+  next();
+})
+
+
 module.exports = mongoose.model('TipoUnidadEquivalencia', TipoUnidadEquivalenciaSchema, 'TipoUnidadEquivalencia');
