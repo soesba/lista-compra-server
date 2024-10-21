@@ -2,6 +2,22 @@
 
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
+const EquivalenciaSchema = new Schema({
+  _id: {
+    type: Schema.Types.ObjectId,
+    required: true
+  },
+  to: {
+    type: Schema.Types.ObjectId,
+    required: true,
+    ref: "TipoUnidad"
+  },
+  factor: {
+    type: Number,
+    default: '1',
+    required: true
+  }
+})
 
 const TipoUnidadSchema = new Schema({
     _id: {
@@ -22,6 +38,7 @@ const TipoUnidadSchema = new Schema({
       required: true,
       index: true
     },
+    equivalencias: [EquivalenciaSchema],
     fechaCreacion: {
         type: String,
         required: true
@@ -36,9 +53,20 @@ const TipoUnidadSchema = new Schema({
 TipoUnidadSchema.virtual('id').get(function(){
   return this._id.toHexString();
 });
+EquivalenciaSchema.virtual('id').get(function(){
+  return this._id.toHexString();
+});
 // Ensure virtual fields are serialised.
 TipoUnidadSchema.set('toJSON', {
   virtuals: true
+});
+EquivalenciaSchema.set('toJSON', {
+  transform: (doc, result) => {
+    return {
+      ...result,
+      id: result._id,
+    }
+  },
 });
 
 TipoUnidadSchema.pre('validate', function(next) {  
