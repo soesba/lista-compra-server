@@ -113,7 +113,6 @@ PrecioSchema.pre("find", function (next) {
   this
   .populate("establecimiento", "_id nombre")
   .populate("articulo", "_id nombre");
-  console.log(this.unidadesMedida);
   next();
 })
 
