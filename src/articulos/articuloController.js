@@ -3,11 +3,45 @@
 var mongoose = require('mongoose')
 const Articulo = require('./articuloModel')
 
-module.exports.get = function (req, res) {
-  Articulo.find()
-    .populate('tiposUnidad')
-    .then((result) => res.jsonp(result))
-    .catch((error) => res.status(500).send({ message: error }))
+module.exports.get = async function (req, res) {
+  const articulos = await Articulo.find().lean();
+  Articulo.aggregate([
+    {
+      $match: { _id: { $in: articulos.map(p => p._id) } } // Filtrar por los pedidos encontrados
+    },
+    {
+      $lookup: {
+        from: 'Precio', 
+        localField: '_id', 
+        foreignField: 'articulo', 
+        as: 'itemsRelacionados'
+      }
+    },
+    {
+      $addFields: {
+        tienePrecios: { $gt: [{ $size: "$itemsRelacionados" }, 0] } // `true` si el tamaño es mayor que 0
+      }
+    },
+    {
+      $project: {
+        itemsRelacionados: 0  // Opcional: Ocultar el arreglo de items relacionados
+      }
+    }
+  ]).then((result) => {
+    if (result) {
+      console.log('LOG~ ~ file: articuloController.js:32 ~ ]).then ~ result:', result)
+      res.jsonp(result)
+    }
+  })
+  .catch((error) => res.status(500).send({ message: error }))
+
+    // Articulo.find()
+    // .populate('tiposUnidad')
+    // .then((result) => { 
+    //   console.log(result); 
+    //   return res.jsonp(result);
+    // })
+    // .catch((error) => res.status(500).send({ message: error }))
 }
 
 module.exports.getById = function (req, res) {

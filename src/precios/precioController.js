@@ -77,9 +77,7 @@ module.exports.getById = async function (req, res) {
   ]);
 
   Precio.populate(filtroUM, { path: "establecimiento", select: { _id:1, nombre: 1 }}, (err, filtroEstablecimiento) => {
-    console.log("LOG ~ Precio.populate ~ filtroEstablecimiento:", filtroEstablecimiento)
     Precio.populate(filtroEstablecimiento, { path: "articulo", select: { _id:1, nombre: 1 }}, (err, result) => {
-      console.log("LOG ~ Precio.populate ~ result:", result)
       if (err) {
         res.status(500).send({ message: error });
       }

@@ -26,6 +26,10 @@ const ArticuloSchema = new Schema({
     required: true,
     ref: "TipoUnidad",
   }],
+  tienePrecios: {
+    type: Boolean,
+    default: false
+  },
   // tipoUnidad: {
   //   type: Schema.Types.ObjectId,
   //   default: '',

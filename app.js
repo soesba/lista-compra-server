@@ -48,7 +48,7 @@ function startServer(config) {
         })
     })
     .catch((err) => {
-        console.log("Error", err);
+        console.log("Unable to connect to the server. Error ", err);
         mongoose.disconnect();
     })
 }
