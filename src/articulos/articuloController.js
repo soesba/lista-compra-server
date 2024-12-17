@@ -19,17 +19,19 @@ module.exports.get = async function (req, res) {
     },
     {
       $addFields: {
-        tienePrecios: { $gt: [{ $size: "$itemsRelacionados" }, 0] } // `true` si el tamaño es mayor que 0
+        tienePrecios: { $gt: [{ $size: "$itemsRelacionados" }, 0] }, // `true` si el tamaño es mayor que 0
+        id: "$_id"
       }
     },
     {
       $project: {
-        itemsRelacionados: 0  // Opcional: Ocultar el arreglo de items relacionados
+        itemsRelacionados: 0,  // Opcional: Ocultar el arreglo de items relacionados,
+        _id: 0
       }
     }
   ]).then((result) => {
+    console.log('LOG~ ~ file: articuloController.js:33 ~ ]).then ~ result:', result)
     if (result) {
-      console.log('LOG~ ~ file: articuloController.js:32 ~ ]).then ~ result:', result)
       res.jsonp(result)
     }
   })
@@ -80,6 +82,7 @@ module.exports.getDesplegable = function (req, res) {
       }
     }
   ]).then((result) => {
+      console.log('LOG~ ~ file: articuloController.js:82 ~ ]).then ~ result:', result)
       if (result) {
         res.jsonp(result)
       }

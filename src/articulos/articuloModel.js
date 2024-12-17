@@ -62,9 +62,16 @@ const ArticuloSchema = new Schema({
 ArticuloSchema.virtual('id').get(function(){
   return this._id.toHexString();
 });
+
 // Ensure virtual fields are serialised.
 ArticuloSchema.set('toJSON', {
-  virtuals: true
+  virtuals: true,
+  transform: (doc, result) => {
+    return {
+      ...result,
+      id: result._id,
+    }
+  }
 });
 
 ArticuloSchema.pre("validate", function (next) {
@@ -80,5 +87,15 @@ ArticuloSchema.pre("validate", function (next) {
   }
   next();
 });
+
+// ArticuloSchema.post("aggregate", function (result) {
+//   result.forEach(item => {
+//     item.id = item._id;
+//     delete item._id;
+//     delete item.__v
+//   });  
+//   console.log(result);
+// });
+  
 
 module.exports = mongoose.model("Articulo", ArticuloSchema, "Articulo");
