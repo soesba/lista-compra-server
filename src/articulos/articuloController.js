@@ -30,20 +30,11 @@ module.exports.get = async function (req, res) {
       }
     }
   ]).then((result) => {
-    console.log('LOG~ ~ file: articuloController.js:33 ~ ]).then ~ result:', result)
     if (result) {
       res.jsonp(result)
     }
   })
   .catch((error) => res.status(500).send({ message: error }))
-
-    // Articulo.find()
-    // .populate('tiposUnidad')
-    // .then((result) => { 
-    //   console.log(result); 
-    //   return res.jsonp(result);
-    // })
-    // .catch((error) => res.status(500).send({ message: error }))
 }
 
 module.exports.getById = function (req, res) {
@@ -82,7 +73,6 @@ module.exports.getDesplegable = function (req, res) {
       }
     }
   ]).then((result) => {
-      console.log('LOG~ ~ file: articuloController.js:82 ~ ]).then ~ result:', result)
       if (result) {
         res.jsonp(result)
       }

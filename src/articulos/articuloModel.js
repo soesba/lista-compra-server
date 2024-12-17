@@ -88,14 +88,4 @@ ArticuloSchema.pre("validate", function (next) {
   next();
 });
 
-// ArticuloSchema.post("aggregate", function (result) {
-//   result.forEach(item => {
-//     item.id = item._id;
-//     delete item._id;
-//     delete item.__v
-//   });  
-//   console.log(result);
-// });
-  
-
 module.exports = mongoose.model("Articulo", ArticuloSchema, "Articulo");
