@@ -28,7 +28,7 @@ module.exports.getByFrom = function (req, res) {
 };
 
 module.exports.getByFromMultiple = function (req, res) {
-  const fromToObjectId = req.params.from.map(x =>
+  const fromToObjectId = req.params.from.split(',').map(x =>
     mongoose.Types.ObjectId(x)
   )
   TipoUnidadEquivalencia.find({ 
