@@ -37,11 +37,43 @@ module.exports.get = async function (req, res) {
   .catch((error) => res.status(500).send({ message: error }))
 }
 
-module.exports.getById = function (req, res) {
-  Articulo.findOne({ _id: req.params.id })
-    .populate('tiposUnidad')
-    .then((result) => {
-      res.jsonp(result)
+module.exports.getById = async function (req, res) {
+  Articulo.aggregate([
+      {
+        $match: { _id: mongoose.Types.ObjectId(req.params.id) } // Filtrar por los pedidos encontrados
+      },
+      {
+        $lookup: {
+          from: 'Precio', 
+          localField: '_id', 
+          foreignField: 'articulo', 
+          as: 'itemsRelacionados'
+        }
+      },
+      {
+        $lookup: {
+          from: 'TipoUnidad', 
+          localField: 'tiposUnidad', 
+          foreignField: '_id', 
+          as: 'tiposUnidad'
+        }
+      },
+      {
+        $addFields: {
+          tienePrecios: { $gt: [{ $size: "$itemsRelacionados" }, 0] }, // `true` si el tamaño es mayor que 0
+          id: "$_id"
+        }
+      },
+      {
+        $project: {
+          itemsRelacionados: 0,  // Opcional: Ocultar el arreglo de items relacionados,
+          _id: 0
+        }
+      }
+    ]).then((result) => {
+      if (result) {
+        res.jsonp(result)
+      }
     })
     .catch((error) => res.status(500).send({ message: error }))
 }
