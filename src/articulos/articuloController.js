@@ -71,8 +71,8 @@ module.exports.getById = async function (req, res) {
         }
       }
     ]).then((result) => {
-      if (result) {
-        res.jsonp(result)
+      if (result[0]) {
+        res.jsonp(result[0])
       }
     })
     .catch((error) => res.status(500).send({ message: error }))

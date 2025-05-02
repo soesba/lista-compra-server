@@ -87,6 +87,9 @@ module.exports.getById = async function (req, res) {
 }
 
 module.exports.getByArticuloId = async function (req, res) {
+  if (!req.params.articuloId) {
+    return res.status(400).send({ message: 'El id del articulo es requerido' })
+  }
   const filtroUM =  await Precio.aggregate([
     { $match: { articulo: mongoose.Types.ObjectId(req.params.articuloId) } },
     {
@@ -138,7 +141,11 @@ module.exports.getByArticuloId = async function (req, res) {
         um: 0
       }
     }
-  ]);
+  ], (err) => {
+    if (err) {
+      res.status(500).send({ message: error });
+    }
+  });
   Precio.populate(filtroUM, { path: "establecimiento", select: { _id:1, nombre: 1 }}, (err, filtroEstablecimiento) => {
     Precio.populate(filtroEstablecimiento, { path: "articulo", select: { _id:1, nombre: 1 }}, (err, result) => {
       if (err) {
