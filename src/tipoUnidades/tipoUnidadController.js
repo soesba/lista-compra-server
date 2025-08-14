@@ -51,18 +51,11 @@ module.exports.getDesplegable = function (req, res) {
 }
 
 module.exports.insert = function (req, res) {
-  req.body.equivalencias =  req.body.equivalencias.map(element => {
-    if (!element._id) {
-      element._id =  mongoose.Types.ObjectId()
-    }
-    return element
-  });   
-  const tipoUnidad = new TipoUnidad(req.body);  
+  const tipoUnidad = new TipoUnidad(req.body);
   TipoUnidad.findOne({
     $or: [
       { nombre: tipoUnidad.nombre },
-      { abreviatura: tipoUnidad.abreviatura },
-      { equivalencias: tipoUnidad.equivalencias }
+      { abreviatura: tipoUnidad.abreviatura }
     ],
   })
     .then((u) => {
@@ -86,16 +79,10 @@ module.exports.insert = function (req, res) {
     .catch((error) => res.status(500).send({ message: error }));
 };
 
-module.exports.update = function(req, res) {    
-    req.body.equivalencias =  req.body.equivalencias.map(element => {
-      if (!element._id) {
-        element._id =  mongoose.Types.ObjectId()
-      }
-      return element
-    });
-    TipoUnidad.findOneAndUpdate( 
+module.exports.update = function(req, res) {
+    TipoUnidad.findOneAndUpdate(
         { _id:  mongoose.Types.ObjectId(req.body.id)},
-        { $set: { nombre: req.body.nombre, abreviatura: req.body.abreviatura, equivalencias: req.body.equivalencias } },
+        { $set: { nombre: req.body.nombre, abreviatura: req.body.abreviatura } },
         { useFindAndModify: false, returnNewDocument: true },
         (err, result) => {
             if (err) {
@@ -111,9 +98,9 @@ module.exports.delete = function (req, res) {
   const tipoUnidadId = req.params.id
   const Articulo = require("../articulos/articuloModel");
   const TipoUnidadEquivalencia = require('../tipoUnidadEquivalencia/tipoUnidadEquivalenciaModel');
-  
-  Articulo.find({ 
-    tiposUnidad: { $all: [mongoose.Types.ObjectId(tipoUnidadId)]   } 
+
+  Articulo.find({
+    tiposUnidad: { $all: [mongoose.Types.ObjectId(tipoUnidadId)]   }
   }).then((result) => {
     if (result.length !== 0) {
       res.status(409).send({ respuesta: 409, message: "El tipo de unidad está en uso" });
@@ -140,5 +127,5 @@ module.exports.delete = function (req, res) {
       })
     }
   })
-  .catch((error) => res.status(500).send({ message: error }));  
+  .catch((error) => res.status(500).send({ message: error }));
 };

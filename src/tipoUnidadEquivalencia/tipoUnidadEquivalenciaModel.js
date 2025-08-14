@@ -44,7 +44,7 @@ TipoUnidadEquivalenciaSchema.set('toJSON', {
   virtuals: true
 });
 
-TipoUnidadEquivalenciaSchema.pre('validate', function(next) {  
+TipoUnidadEquivalenciaSchema.pre('validate', function(next) {
   if (!this._id) {
     this._id = mongoose.Types.ObjectId()
   }

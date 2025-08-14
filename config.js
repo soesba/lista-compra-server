@@ -27,19 +27,19 @@ module.exports.getGlobbedFiles = function(globPatterns, removeRoot) {
 		globPatterns.forEach(function(globPattern) {
 			output = _.union(output, _this.getGlobbedFiles(globPattern, removeRoot));
 		})
-	} 
+	}
 	else if (_.isString(globPatterns)) {
 
 		if (urlRegex.test(globPatterns)) {
 			output.push(globPatterns);
-		} 
+		}
 		else {
             let files = glob(globPatterns, { sync: true });
             if (removeRoot) {
                 files = files.map(function(file) {
                     return file.replace(removeRoot, '');
                 })
-            }        
+            }
             output = _.union(output, files);
         }
 	}

@@ -12,7 +12,7 @@ module.exports = function (app) {
 
     app.route('/tipoUnidadEquivalencia/getByFromMultiple/:from').get(tipoUnidadEquivalenciaController.getByFromMultiple);
 
-    // app.route('/tipoUnidadEquivalencia/getDesplegable').get(tipoUnidadEquivalenciaController.getDesplegable);
+    app.route('/tipoUnidadEquivalencia/save/').post(tipoUnidadEquivalenciaController.save);
 
     app.route('/tipoUnidadEquivalencia/insert/').post(tipoUnidadEquivalenciaController.insert);
 

@@ -71,7 +71,7 @@ module.exports.getDesplegable = function (req, res) {
     .catch((error) => res.status(500).send({ message: error }))
 }
 
-module.exports.insert = function (req, res) {  
+module.exports.insert = function (req, res) {
   req.body.direcciones =  req.body.direcciones.map(element => {
     if (!element._id) {
       element._id =  mongoose.Types.ObjectId()
@@ -113,8 +113,8 @@ module.exports.update = function(req, res) {
         element._id =  mongoose.Types.ObjectId()
       }
       return element
-    });    
-    Establecimiento.findOneAndUpdate( 
+    });
+    Establecimiento.findOneAndUpdate(
         { _id:  mongoose.Types.ObjectId(req.body.id)},
         { $set: { nombre: req.body.nombre, abreviatura: req.body.abreviatura, logo: req.body.logo, direcciones: req.body.direcciones, tipoEstablecimiento: req.body.tipoEstablecimiento } },
         { useFindAndModify: false, returnNewDocument: true },

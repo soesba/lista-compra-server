@@ -31,8 +31,8 @@ module.exports.getByFromMultiple = function (req, res) {
   const fromToObjectId = req.params.from.split(',').map(x =>
     mongoose.Types.ObjectId(x)
   )
-  TipoUnidadEquivalencia.find({ 
-    from: { $in: fromToObjectId } 
+  TipoUnidadEquivalencia.find({
+    from: { $in: fromToObjectId }
   }).then((result) => {
       if (result) {
         res.jsonp(result);
@@ -55,25 +55,50 @@ module.exports.getByAny = function (req, res) {
     .catch((error) => res.status(500).send({ message: error }));
 };
 
-// module.exports.getDesplegable = function (req, res) {
-//   TipoUnidadEquivalencia.aggregate([
-//     {
-//       "$project":{
-//         _id: 0,
-//         "id": "$_id",
-//         "nombre": "$nombre"
-//       }
-//     }
-//   ]).then((result) => {
-//       if (result) {
-//         res.jsonp(result)
-//       }
-//     })
-//     .catch((error) => res.status(500).send({ message: error }))
-// }
+module.exports.save = function (req, res) {
+  const operaciones = req.body.map(op => {
+    if (op.id) {
+      if (op.markedForDeletion) {
+        // Eliminar si tiene _id y está marcado para borrado
+        return {
+          deleteOne: {
+            filter: { _id: op.id }
+          }
+        };
+      } else {
+        // Actualizar si existe
+        delete op.markedForDeletion; // Eliminar la propiedad para evitar problemas en la actualización
+        return {
+          updateOne: {
+            filter: { _id: op.id },
+            update: { $set: op }
+          }
+        };
+      }
+    } else {
+      // Insertar si no tiene _id
+      delete op.markedForDeletion; // Eliminar la propiedad para evitar problemas en la inserción
+      return {
+        insertOne: {
+          document: op
+        }
+      };
+    }
+  });
+  TipoUnidadEquivalencia.bulkWrite(operaciones)
+    .then((result) => {
+      if (result) {
+        res.jsonp(result);
+      } else {
+        res.status(500).send({ message: "Error al guardar las equivalencias" });
+      }
+    })
+    .catch((error) => res.status(500).send({ message: error }));
+}
 
 module.exports.insert = function (req, res) {
   const tipoUnidadEquivalencia = new TipoUnidadEquivalencia(req.body);
+  console.log('LOG~ ~ :77 ~ req.body:', req.body)
   TipoUnidadEquivalencia.findOne({
     $and: [
       { from: tipoUnidadEquivalencia.from },
@@ -101,8 +126,9 @@ module.exports.insert = function (req, res) {
     .catch((error) => res.status(500).send({ message: error }));
 };
 
-module.exports.update = function(req, res) {    
-  TipoUnidadEquivalencia.findOneAndUpdate( 
+module.exports.update = function(req, res) {
+  console.log('LOG~ ~ :105 ~ req.body:', req.body)
+  TipoUnidadEquivalencia.findOneAndUpdate(
       { _id:  mongoose.Types.ObjectId(req.body.id)},
       { $set: { from: req.body.from, to: req.body.to, factor: req.body.factor } },
       { useFindAndModify: false, returnNewDocument: true },
