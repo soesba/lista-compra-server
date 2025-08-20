@@ -11,9 +11,9 @@ module.exports.get = async function (req, res) {
     },
     {
       $lookup: {
-        from: 'Precio', 
-        localField: '_id', 
-        foreignField: 'articulo', 
+        from: 'Precio',
+        localField: '_id',
+        foreignField: 'articulo',
         as: 'itemsRelacionados'
       }
     },
@@ -34,47 +34,60 @@ module.exports.get = async function (req, res) {
       res.jsonp(result)
     }
   })
-  .catch((error) => res.status(500).send({ message: error }))
+    .catch((error) => res.status(500).send({ message: error }))
 }
 
 module.exports.getById = async function (req, res) {
   Articulo.aggregate([
-      {
-        $match: { _id: mongoose.Types.ObjectId(req.params.id) } // Filtrar por los pedidos encontrados
-      },
-      {
-        $lookup: {
-          from: 'Precio', 
-          localField: '_id', 
-          foreignField: 'articulo', 
-          as: 'itemsRelacionados'
-        }
-      },
-      {
-        $lookup: {
-          from: 'TipoUnidad', 
-          localField: 'tiposUnidad', 
-          foreignField: '_id', 
-          as: 'tiposUnidad'
-        }
-      },
-      {
-        $addFields: {
-          tienePrecios: { $gt: [{ $size: "$itemsRelacionados" }, 0] }, // `true` si el tamaño es mayor que 0
-          id: "$_id"
-        }
-      },
-      {
-        $project: {
-          itemsRelacionados: 0,  // Opcional: Ocultar el arreglo de items relacionados,
-          _id: 0
-        }
+    {
+      $match: { _id: mongoose.Types.ObjectId(req.params.id) } // Filtrar por los pedidos encontrados
+    },
+    {
+      $lookup: {
+        from: 'Precio',
+        localField: '_id',
+        foreignField: 'articulo',
+        as: 'itemsRelacionados'
       }
-    ]).then((result) => {
-      if (result[0]) {
-        res.jsonp(result[0])
+    },
+    {
+      $lookup: {
+        from: 'TipoUnidad',
+        let: { tiposUnidadIds: '$tiposUnidad' },
+        pipeline: [
+          {
+            $match: {
+              $expr: {
+                $in: ['$_id', '$$tiposUnidadIds']
+              }
+            }
+          },
+          {
+            $addFields: {
+              id: '$_id'
+            }
+          }
+        ],
+        as: 'tiposUnidad'
       }
-    })
+    },
+    {
+      $addFields: {
+        tienePrecios: { $gt: [{ $size: "$itemsRelacionados" }, 0] }, // `true` si el tamaño es mayor que 0
+        id: "$_id"
+      }
+    },
+    {
+      $project: {
+        itemsRelacionados: 0,  // Opcional: Ocultar el arreglo de items relacionados,
+        _id: 0
+      }
+    }
+  ]).then((result) => {
+    if (result[0]) {
+      res.jsonp(result[0])
+    }
+  })
     .catch((error) => res.status(500).send({ message: error }))
 }
 
@@ -98,17 +111,17 @@ module.exports.getByAny = function (req, res) {
 module.exports.getDesplegable = function (req, res) {
   Articulo.aggregate([
     {
-      "$project":{
+      "$project": {
         _id: 0,
         "id": "$_id",
         "nombre": "$nombre"
       }
     }
   ]).then((result) => {
-      if (result) {
-        res.jsonp(result)
-      }
-    })
+    if (result) {
+      res.jsonp(result)
+    }
+  })
     .catch((error) => res.status(500).send({ message: error }))
 }
 
@@ -122,7 +135,7 @@ module.exports.insert = function (req, res) {
           message: 'Ya existe un registro con ese nombre',
         })
       } else {
-        articulo.save({returnNewDocument: true }, (err, result) => {
+        articulo.save({ returnNewDocument: true }, (err, result) => {
           if (err) {
             res.status(500).send({ message: 'Error al crear el registro de articulo' })
           } else {

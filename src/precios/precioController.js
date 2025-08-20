@@ -23,7 +23,7 @@ module.exports.get = async function (req, res) {
 }
 
 module.exports.getById = async function (req, res) {
-  const filtroUM =  await Precio.aggregate([
+  const filtroUM = await Precio.aggregate([
     { $match: { _id: mongoose.Types.ObjectId(req.params.id) } },
     {
       $lookup: {
@@ -76,8 +76,8 @@ module.exports.getById = async function (req, res) {
     }
   ]);
 
-  Precio.populate(filtroUM, { path: "establecimiento", select: { _id:1, nombre: 1 }}, (err, filtroEstablecimiento) => {
-    Precio.populate(filtroEstablecimiento, { path: "articulo", select: { _id:1, nombre: 1 }}, (err, result) => {
+  Precio.populate(filtroUM, { path: "establecimiento", select: { _id: 1, nombre: 1 } }, (err, filtroEstablecimiento) => {
+    Precio.populate(filtroEstablecimiento, { path: "articulo", select: { _id: 1, nombre: 1 } }, (err, result) => {
       if (err) {
         res.status(500).send({ message: error });
       }
@@ -90,7 +90,7 @@ module.exports.getByArticuloId = async function (req, res) {
   if (!req.params.articuloId) {
     return res.status(400).send({ message: 'El id del articulo es requerido' })
   }
-  const filtroUM =  await Precio.aggregate([
+  const filtroUM = await Precio.aggregate([
     { $match: { articulo: mongoose.Types.ObjectId(req.params.articuloId) } },
     {
       $lookup: {
@@ -110,28 +110,33 @@ module.exports.getByArticuloId = async function (req, res) {
     {
       $set: {
         unidadesMedida: {
-          $map: {
-            input: '$unidadesMedida',
-            as: 'unidad',
-            in: {
-              $mergeObjects: [
-                '$$unidad',
-                {
-                  $arrayElemAt: [
+          $sortArray: {
+            input: {
+              $map: {
+                input: '$unidadesMedida',
+                as: 'unidad',
+                in: {
+                  $mergeObjects: [
+                    '$$unidad',
                     {
-                      $filter: {
-                        input: '$um',
-                        as: 'unidadFiltrada',
-                        cond: { $eq: ['$$unidad._id', '$$unidadFiltrada._id'] },
-                      },
-                    }, 0
+                      $arrayElemAt: [
+                        {
+                          $filter: {
+                            input: '$um',
+                            as: 'unidadFiltrada',
+                            cond: { $eq: ['$$unidad._id', '$$unidadFiltrada._id'] },
+                          },
+                        }, 0
+                      ]
+                    },
+                    {
+                      "id": "$$unidad._id"
+                    }
                   ]
-                },
-                {
-                  "id": "$$unidad._id"
                 }
-              ]
-            }
+              }
+            },
+            sortBy: { nombre: 1 } // Orden ascendente por el campo 'nombre'
           }
         }
       }
@@ -146,8 +151,8 @@ module.exports.getByArticuloId = async function (req, res) {
       res.status(500).send({ message: error });
     }
   });
-  Precio.populate(filtroUM, { path: "establecimiento", select: { _id:1, nombre: 1 }}, (err, filtroEstablecimiento) => {
-    Precio.populate(filtroEstablecimiento, { path: "articulo", select: { _id:1, nombre: 1 }}, (err, result) => {
+  Precio.populate(filtroUM, { path: "establecimiento", select: { _id: 1, nombre: 1 } }, (err, filtroEstablecimiento) => {
+    Precio.populate(filtroEstablecimiento, { path: "articulo", select: { _id: 1, nombre: 1 } }, (err, result) => {
       if (err) {
         res.status(500).send({ message: error });
       }
@@ -223,8 +228,8 @@ module.exports.getByAny = async function (req, res) {
 module.exports.insert = function (req, res) {
   const precio = new Precio(req.body)
   if (precio.unidadesMedida.length !== 0) {
-    precio.unidadesMedida = precio.unidadesMedida.map((item) => {
-      item._id = mongoose.Types.ObjectId(item.id)
+    precio.unidadesMedida = req.body.unidadesMedida.map((item) => {
+      item._id = item.id
       return item
     })
   }
