@@ -18,10 +18,14 @@ function checkTablasMaestras () {
       if (numeroRegistros === 0) {
         console.log(`La colección '${item}' no tiene registros.`);
         initCollections.initCollection(item);
+      } else {
+        initCollections.checkDataConsistency(item)
       }
     } else {
       console.log(`La colección '${item}' no existe.`);
       initCollections.initCollection(item);
     }
   })
+  initCollections.checkDataConsistency('Precio')
+  initCollections.checkDataConsistency('Equivalencias');
 }
