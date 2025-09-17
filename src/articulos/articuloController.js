@@ -40,7 +40,7 @@ module.exports.get = async function (req, res) {
 module.exports.getById = async function (req, res) {
   Articulo.aggregate([
     {
-      $match: { _id: mongoose.Types.ObjectId(req.params.id) } // Filtrar por los pedidos encontrados
+      $match: { _id: mongoose.Types.ObjectId(req.params.id) } // Filtrar por id
     },
     {
       $lookup: {
@@ -149,7 +149,7 @@ module.exports.insert = function (req, res) {
 
 module.exports.update = function (req, res) {
   const tiposUnidad = req.body.tiposUnidad.map(item => {
-    item._id = mongoose.Types.ObjectId(item.id)
+    item = mongoose.Types.ObjectId(item)
     return item
   })
 

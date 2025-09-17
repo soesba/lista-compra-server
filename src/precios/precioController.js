@@ -242,7 +242,6 @@ module.exports.insert = function (req, res) {
     .then((u) => {
       if (u) {
         res.status(409).send({
-          respuesta: 409,
           message: 'Ya existe un registro con esos datos',
         })
       } else {
