@@ -2,7 +2,7 @@
   "name": "server",
   "version": "1.0.0",
   "description": "Servidor aplicacion Econohogar",
-  "main": "app.tjs",
+  "main": "app.js",
   "scripts": {
     "start": "node app.js",
     "start:dev": "nodemon --inspect app.js",

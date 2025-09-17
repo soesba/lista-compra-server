@@ -98,7 +98,6 @@ module.exports.save = function (req, res) {
 
 module.exports.insert = function (req, res) {
   const tipoUnidadEquivalencia = new TipoUnidadEquivalencia(req.body);
-  console.log('LOG~ ~ :77 ~ req.body:', req.body)
   TipoUnidadEquivalencia.findOne({
     $and: [
       { from: tipoUnidadEquivalencia.from },
@@ -127,7 +126,6 @@ module.exports.insert = function (req, res) {
 };
 
 module.exports.update = function(req, res) {
-  console.log('LOG~ ~ :105 ~ req.body:', req.body)
   TipoUnidadEquivalencia.findOneAndUpdate(
       { _id:  mongoose.Types.ObjectId(req.body.id)},
       { $set: { from: req.body.from, to: req.body.to, factor: req.body.factor } },
