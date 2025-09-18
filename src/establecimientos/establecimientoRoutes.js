@@ -4,18 +4,18 @@ const establecimientoController = require('./establecimientoController');
 
 module.exports = function (app) {
 
-    app.route('/establecimiento/get').get(establecimientoController.get);
+    app.get('/api/establecimientos', establecimientoController.get); // Obtener todos
 
-    app.route('/establecimiento/getById/:id').get(establecimientoController.getById);
+    app.get('/api/establecimientos/:id', establecimientoController.getById); // Obtener por ID
 
-    app.route('/establecimiento/getByAny/:texto').get(establecimientoController.getByAny);
-    
-    app.route('/establecimiento/getDesplegable').get(establecimientoController.getDesplegable);
+    app.get('/api/establecimientos/search/:texto', establecimientoController.getByAny); // Buscar por texto
 
-    app.route('/establecimiento/insert/').post(establecimientoController.insert);
+    app.get('/api/establecimientos/desplegable', establecimientoController.getDesplegable); // Para dropdowns
 
-    app.route('/establecimiento/update/').put(establecimientoController.update);
+    app.post('/api/establecimientos', establecimientoController.insert); // Crear nuevo
 
-    app.route('/establecimiento/delete/:id').delete(establecimientoController.delete);
+    app.put('/api/establecimientos/:id', establecimientoController.update); // Actualizar por ID
+
+    app.delete('/api/establecimientos/:id', establecimientoController.delete); // Eliminar por ID
 
 }

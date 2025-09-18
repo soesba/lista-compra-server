@@ -4,18 +4,18 @@ const tipoUnidadController = require('./tipoUnidadController');
 
 module.exports = function (app) {
 
-    app.route('/tipoUnidad/get').get(tipoUnidadController.get);
+  app.get('/api/tipos-unidad', tipoUnidadController.get); // Obtener todos
 
-    app.route('/tipoUnidad/getById/:id').get(tipoUnidadController.getById);
+  app.get('/api/tipos-unidad/:id', tipoUnidadController.getById); // Obtener por ID
 
-    app.route('/tipoUnidad/getByAny/:texto').get(tipoUnidadController.getByAny);
+  app.get('/api/tipos-unidad/search/:texto', tipoUnidadController.getByAny); // Buscar por texto
 
-    app.route('/tipoUnidad/getDesplegable').get(tipoUnidadController.getDesplegable);
+  app.get('/api/tipos-unidad/desplegable', tipoUnidadController.getDesplegable); // Para dropdowns
 
-    app.route('/tipoUnidad/insert/').post(tipoUnidadController.insert);
+  app.post('/api/tipos-unidad', tipoUnidadController.insert); // Crear nuevo
 
-    app.route('/tipoUnidad/update/').put(tipoUnidadController.update);
+  app.put('/api/tipos-unidad/:id', tipoUnidadController.update); // Actualizar por ID
 
-    app.route('/tipoUnidad/delete/:id').delete(tipoUnidadController.delete);
+  app.delete('/api/tipos-unidad/:id', tipoUnidadController.delete); // Eliminar por ID
 
 }

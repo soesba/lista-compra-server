@@ -4,18 +4,18 @@ const tipoEstablecimientoController = require('./tipoEstablecimientoController')
 
 module.exports = function (app) {
 
-    app.route('/tipoEstablecimiento/get').get(tipoEstablecimientoController.get);
+  app.get('/api/tipo-establecimientos', tipoEstablecimientoController.get); // Obtener todos
 
-    app.route('/tipoEstablecimiento/getById/:id').get(tipoEstablecimientoController.getById);
+  app.get('/api/tipo-establecimientos/:id', tipoEstablecimientoController.getById); // Obtener por ID
 
-    app.route('/tipoEstablecimiento/getByAny/:texto').get(tipoEstablecimientoController.getByAny);
+  app.get('/api/tipo-establecimientos/search/:texto', tipoEstablecimientoController.getByAny); // Buscar por texto
 
-    app.route('/tipoEstablecimiento/getDesplegable').get(tipoEstablecimientoController.getDesplegable);
+  app.get('/api/tipo-establecimientos/desplegable', tipoEstablecimientoController.getDesplegable); // Para dropdowns
 
-    app.route('/tipoEstablecimiento/insert/').post(tipoEstablecimientoController.insert);
+  app.post('/api/tipo-establecimientos', tipoEstablecimientoController.insert); // Crear nuevo
 
-    app.route('/tipoEstablecimiento/update/').put(tipoEstablecimientoController.update);
+  app.put('/api/tipo-establecimientos/:id', tipoEstablecimientoController.update); // Actualizar por ID
 
-    app.route('/tipoEstablecimiento/delete/:id').delete(tipoEstablecimientoController.delete);
+  app.delete('/api/tipo-establecimientos/:id', tipoEstablecimientoController.delete); // Eliminar por ID
 
 }

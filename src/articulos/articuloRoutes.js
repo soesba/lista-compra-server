@@ -4,18 +4,17 @@ const articuloController = require('./articuloController');
 
 module.exports = function (app) {
 
-    app.route('/articulo/get').get(articuloController.get);
+    app.get('/api/articulos', articuloController.get); // Obtener todos
 
-    app.route('/articulo/getById/:id').get(articuloController.getById);
+    app.get('/api/articulos/:id', articuloController.getById); // Obtener por ID
 
-    app.route('/articulo/getByAny/:texto').get(articuloController.getByAny);
+    app.get('/api/articulos/search/:texto', articuloController.getByAny); // Buscar por texto
 
-    app.route('/articulo/getDesplegable').get(articuloController.getDesplegable);
+    app.get('/api/articulos/desplegable', articuloController.getDesplegable); // Para dropdowns
 
-    app.route('/articulo/insert/').post(articuloController.insert);
+    app.post('/api/articulos', articuloController.insert); // Crear nuevo
 
-    app.route('/articulo/update/').put(articuloController.update);
+    app.put('/api/articulos/:id', articuloController.update); // Actualizar por ID
 
-    app.route('/articulo/delete/:id').delete(articuloController.delete);
-
+    app.delete('/api/articulos/:id', articuloController.delete); // Eliminar por ID
 }

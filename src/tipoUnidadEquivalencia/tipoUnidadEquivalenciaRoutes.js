@@ -4,20 +4,20 @@ const tipoUnidadEquivalenciaController = require('./tipoUnidadEquivalenciaContro
 
 module.exports = function (app) {
 
-    app.route('/tipoUnidadEquivalencia/get').get(tipoUnidadEquivalenciaController.get);
+    app.get('/api/tipos-unidad-equivalencia', tipoUnidadEquivalenciaController.get); // Obtener todos
 
-    app.route('/tipoUnidadEquivalencia/getById/:id').get(tipoUnidadEquivalenciaController.getById);
+    app.get('/api/tipos-unidad-equivalencia/:id', tipoUnidadEquivalenciaController.getById); // Obtener por ID
 
-    app.route('/tipoUnidadEquivalencia/getByFrom/:from').get(tipoUnidadEquivalenciaController.getByFrom);
+    app.get('/api/tipos-unidad-equivalencia/from/:from', tipoUnidadEquivalenciaController.getByFrom); // Por unidad origen
 
-    app.route('/tipoUnidadEquivalencia/getByFromMultiple/:from').get(tipoUnidadEquivalenciaController.getByFromMultiple);
+    app.get('/api/tipos-unidad-equivalencia/from-multiple/:from', tipoUnidadEquivalenciaController.getByFromMultiple); // Por múltiples unidades
 
-    app.route('/tipoUnidadEquivalencia/save/').post(tipoUnidadEquivalenciaController.save);
+    app.post('/api/tipos-unidad-equivalencia', tipoUnidadEquivalenciaController.insert); // Crear nuevo
 
-    app.route('/tipoUnidadEquivalencia/insert/').post(tipoUnidadEquivalenciaController.insert);
+    app.post('/api/tipos-unidad-equivalencia/save', tipoUnidadEquivalenciaController.save); // Guardar (si es distinto de insert)
 
-    app.route('/tipoUnidadEquivalencia/update/').put(tipoUnidadEquivalenciaController.update);
+    app.put('/api/tipos-unidad-equivalencia/:id', tipoUnidadEquivalenciaController.update); // Actualizar por ID
 
-    app.route('/tipoUnidadEquivalencia/delete/:id').delete(tipoUnidadEquivalenciaController.delete);
+    app.delete('/api/tipos-unidad-equivalencia/:id', tipoUnidadEquivalenciaController.delete); // Eliminar por ID
 
 }

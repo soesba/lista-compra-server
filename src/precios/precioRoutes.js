@@ -4,18 +4,18 @@ const compraController = require('./precioController');
 
 module.exports = function (app) {
 
-    app.route('/precio/get').get(compraController.get);
+  app.get('/api/precios', compraController.get); // Obtener todos
 
-    app.route('/precio/getById/:id').get(compraController.getById);
+  app.get('/api/precios/:id', compraController.getById); // Obtener por ID
 
-    app.route('/precio/getByArticuloId/:articuloId').get(compraController.getByArticuloId);
+  app.get('/api/precios/articulo/:articuloId', compraController.getByArticuloId); // Por artículo
 
-    app.route('/precio/getByAny/:texto').get(compraController.getByAny);    
+  app.get('/api/precios/search/:texto', compraController.getByAny); // Búsqueda
 
-    app.route('/precio/insert/').post(compraController.insert);
+  app.post('/api/precios', compraController.insert); // Crear nuevo
 
-    app.route('/precio/update/').put(compraController.update);
+  app.put('/api/precios/:id', compraController.update); // Actualizar por ID
 
-    app.route('/precio/delete/:id').delete(compraController.delete);
+  app.delete('/api/precios/:id', compraController.delete); // Eliminar por ID
 
 }
