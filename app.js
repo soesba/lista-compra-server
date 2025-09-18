@@ -16,7 +16,7 @@ function setEnvironment() {
         console.log('\nNODE_ENV is not defined, using default environment: development\n');
     }
 
-    if (!fs.existsSync('.env.' + process.env.NODE_ENV + '.local')) {
+    if (process.env.NODE_ENV === 'development' && !fs.existsSync('.env.' + process.env.NODE_ENV + '.local')) {
         console.error('No configuration file found for "' + process.env.NODE_ENV + '" environment');
 
         process.exit(1);
