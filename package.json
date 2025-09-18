@@ -4,8 +4,8 @@
   "description": "Servidor aplicacion Econohogar",
   "main": "app.js",
   "scripts": {
-    "start": "node app.js",
-    "start:dev": "nodemon --inspect app.js",
+    "start": "set NODE_ENV=development&& node app.js",
+    "start:prod": "set NODE_ENV=production&& node app.js",
     "lint": "eslint src/js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -14,6 +14,7 @@
   "dependencies": {
     "body-parser": "^1.19.0",
     "cors": "^2.8.5",
+    "dotenv": "^17.2.2",
     "express": "^4.17.1",
     "getlorem": "^1.0.1",
     "glob": "^7.1.6",

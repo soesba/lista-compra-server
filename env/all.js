@@ -6,6 +6,7 @@ module.exports = {
 		description: 'Aplicacion para el el seguimiento de los precios de compra',
 		keywords: 'gastos, control, precios, compra, economía'
 	},
+  uriDb: process.env.URI_DB,
 	port: process.env.PORT || 3030,
 	log: {
 		strategy: 'console',

@@ -4,8 +4,7 @@ let _ = require('lodash');
 let glob = require('glob');
 
 module.exports = _.extend(
-	require('./env/all'),
-	require('./env/' + process.env.NODE_ENV) || 'dev'
+	require('./env/all')
 );
 
 
