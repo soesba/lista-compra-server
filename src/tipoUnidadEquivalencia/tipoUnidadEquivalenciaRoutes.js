@@ -4,20 +4,22 @@ const tipoUnidadEquivalenciaController = require('./tipoUnidadEquivalenciaContro
 
 module.exports = function (app) {
 
-    app.get('/api/tipos-unidad-equivalencia', tipoUnidadEquivalenciaController.get); // Obtener todos
+  app.get('/api/tipos-unidad-equivalencia/search/:texto', tipoUnidadEquivalenciaController.getByAny); // Buscar por texto
 
-    app.get('/api/tipos-unidad-equivalencia/:id', tipoUnidadEquivalenciaController.getById); // Obtener por ID
+  app.get('/api/tipos-unidad-equivalencia/from/:from', tipoUnidadEquivalenciaController.getByFrom); // Por unidad origen
 
-    app.get('/api/tipos-unidad-equivalencia/from/:from', tipoUnidadEquivalenciaController.getByFrom); // Por unidad origen
+  app.get('/api/tipos-unidad-equivalencia/from-multiple/:from', tipoUnidadEquivalenciaController.getByFromMultiple); // Por múltiples unidades
 
-    app.get('/api/tipos-unidad-equivalencia/from-multiple/:from', tipoUnidadEquivalenciaController.getByFromMultiple); // Por múltiples unidades
+  app.get('/api/tipos-unidad-equivalencia/:id', tipoUnidadEquivalenciaController.getById); // Obtener por ID
 
-    app.post('/api/tipos-unidad-equivalencia', tipoUnidadEquivalenciaController.insert); // Crear nuevo
+  app.get('/api/tipos-unidad-equivalencia', tipoUnidadEquivalenciaController.get); // Obtener todos
 
-    app.post('/api/tipos-unidad-equivalencia/save', tipoUnidadEquivalenciaController.save); // Guardar (si es distinto de insert)
+  app.post('/api/tipos-unidad-equivalencia', tipoUnidadEquivalenciaController.insert); // Crear nuevo
 
-    app.put('/api/tipos-unidad-equivalencia/:id', tipoUnidadEquivalenciaController.update); // Actualizar por ID
+  app.post('/api/tipos-unidad-equivalencia/save', tipoUnidadEquivalenciaController.save); // Guardar (si es distinto de insert)
 
-    app.delete('/api/tipos-unidad-equivalencia/:id', tipoUnidadEquivalenciaController.delete); // Eliminar por ID
+  app.put('/api/tipos-unidad-equivalencia/:id', tipoUnidadEquivalenciaController.update); // Actualizar por ID
+
+  app.delete('/api/tipos-unidad-equivalencia/:id', tipoUnidadEquivalenciaController.delete); // Eliminar por ID
 
 }

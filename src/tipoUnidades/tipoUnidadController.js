@@ -34,6 +34,7 @@ module.exports.getByAny = function (req, res) {
 };
 
 module.exports.getDesplegable = function (req, res) {
+  console.log('LOG~ ~ :37 ~ req:', req)
   TipoUnidad.aggregate([
     {
       "$project":{
