@@ -3,6 +3,8 @@ const jwt = require("jsonwebtoken");
 const bcrypt = require('bcryptjs');
 var mongoose = require('mongoose');
 var Usuario = mongoose.model('Usuario');
+const TOKEN_SECRET = process.env.TOKEN_SECRET || 'your-secret-key';
+const REFRESH_TOKEN_SECRET = process.env.REFRESH_TOKEN_SECRET || 'your-refresh-token-secret'; // Add a separate secret for refresh tokens
 
 module.exports.login = function (req, res) {
   try {
@@ -18,8 +20,10 @@ module.exports.login = function (req, res) {
           const validPassword = await bcrypt.compare(password, response.password);
           if (!validPassword) return res.status(400).send('Contraseña incorrecta');
           // Generar un token JWT
-          const token = jwt.sign({ username: response.username }, process.env.TOKEN_SECRET, { expiresIn: '1h' });
-          res.header('auth-token', token).send(token);
+          const token = jwt.sign({ username: response.username }, TOKEN_SECRET, { expiresIn: '1h' });
+          // Generar un token de refresco
+          const refreshToken = jwt.sign({ userId: response._id }, REFRESH_TOKEN_SECRET, { expiresIn: '7d' });
+          res.send({ token, refreshToken });
         } else {
           res.status(401).send({ message: 'Nombre de usuario o contraseña incorrectos' });
         }

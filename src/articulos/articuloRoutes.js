@@ -1,5 +1,5 @@
 'use strict';
-
+const verifyToken = require('../utils/verifyToken.js').verifyToken;
 const articuloController = require('./articuloController');
 
 module.exports = function (app) {
@@ -10,7 +10,7 @@ module.exports = function (app) {
 
   app.get('/api/articulos/:id', articuloController.getById); // Obtener por ID
 
-  app.get('/api/articulos', articuloController.get); // Obtener todos
+  app.get('/api/articulos', verifyToken, (req, res) => articuloController.get); // Obtener todos
 
   app.post('/api/articulos', articuloController.insert); // Crear nuevo
 
