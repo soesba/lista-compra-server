@@ -15,7 +15,9 @@ module.exports = function(db) {
 	useBodyParser(app);
 	loadRoutes(app);
 
-    return app;
+  app.use(express.json());
+
+  return app;
 }
 
 function enableCors(app) {
