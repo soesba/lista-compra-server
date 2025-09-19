@@ -1,0 +1,19 @@
+'use strict';
+
+var usuarioController = require('./usuarioController');
+
+module.exports = function (app) {
+
+  app.route('/api/usuarios')
+    .get(usuarioController.getAll)         // Obtener todos los usuarios
+    .post(usuarioController.register);     // Registrar nuevo usuario
+
+  app.route('/api/usuarios/authenticate')
+    .post(usuarioController.authenticate); // Autenticación
+
+  app.route('/api/usuarios/:id')
+    .get(usuarioController.getById)        // Obtener usuario por ID
+    .put(usuarioController.update)         // Actualizar usuario por ID
+    .delete(usuarioController.delete);     // Eliminar usuario por ID
+
+}
