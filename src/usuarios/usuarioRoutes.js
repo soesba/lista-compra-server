@@ -1,5 +1,5 @@
 'use strict';
- const verifyToken = require('../utils/verifyToken.js').verifyToken;
+const verifyToken = require('../utils/verifyToken.js').verifyToken;
 var usuarioController = require('./usuarioController');
 
 module.exports = function (app) {
