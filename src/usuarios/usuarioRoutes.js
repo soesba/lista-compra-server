@@ -5,7 +5,7 @@ var usuarioController = require('./usuarioController');
 module.exports = function (app) {
 
   app.route('/api/usuarios')
-    .get(verifyToken, (req, res) => usuarioController.getAll)         // Obtener todos los usuarios
+    .get(verifyToken, (req, res) => usuarioController.getAll(req, res) )         // Obtener todos los usuarios
     .post(usuarioController.register);     // Registrar nuevo usuario
 
   app.route('/api/usuarios/:id')

@@ -3,8 +3,8 @@ const jwt = require("jsonwebtoken");
 const bcrypt = require('bcryptjs');
 var mongoose = require('mongoose');
 var Usuario = mongoose.model('Usuario');
-const TOKEN_SECRET = process.env.TOKEN_SECRET || 'your-secret-key';
-const REFRESH_TOKEN_SECRET = process.env.REFRESH_TOKEN_SECRET || 'your-refresh-token-secret'; // Add a separate secret for refresh tokens
+const TOKEN_SECRET = process.env.TOKEN_SECRET;
+const REFRESH_TOKEN_SECRET = process.env.REFRESH_TOKEN_SECRET;
 
 module.exports.login = function (req, res) {
   try {
@@ -50,4 +50,32 @@ module.exports.register = async function (req, res) {
   await newUser.save();
 
   res.status(201).send('Usuario registrado exitosamente');
+}
+
+module.exports.refreshToken = async function (req, res) {
+  try {
+    const refreshToken = req.body["x-refresh-token"];
+
+    if (!refreshToken) {
+      return res.status(400).json({ message: 'Refresh token is required' });
+    }
+
+    jwt.verify(refreshToken, REFRESH_TOKEN_SECRET, (err, decoded) => {
+      if (err) {
+        return res.status(401).json({ message: 'Invalid refresh token' });
+      }
+
+      const payload = decoded;
+      // Eliminar campos innecesarios del payload
+      delete payload.iat;
+      delete payload.exp;
+      // Generar un nuevo token con el mismo payload
+      const accessToken = jwt.sign({ payload: payload.username }, TOKEN_SECRET, { expiresIn: '1h' });
+
+      res.json({ accessToken });
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'Internal server error' });
+  }
 }
