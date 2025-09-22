@@ -71,8 +71,10 @@ module.exports.refreshToken = async function (req, res) {
       delete payload.exp;
       // Generar un nuevo token con el mismo payload
       const accessToken = jwt.sign({ payload: payload.username }, TOKEN_SECRET, { expiresIn: '1h' });
+       // Generar un nuevo token de refresco
+      const refreshToken = jwt.sign({ userId: payload._id }, REFRESH_TOKEN_SECRET, { expiresIn: '7d' });
 
-      res.json({ accessToken });
+      res.json({ accessToken, refreshToken });
     });
   } catch (err) {
     console.error(err);
