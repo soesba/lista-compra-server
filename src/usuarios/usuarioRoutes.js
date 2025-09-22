@@ -6,11 +6,11 @@ module.exports = function (app) {
 
   app.route('/api/usuarios')
     .get(verifyToken, (req, res) => usuarioController.getAll(req, res) )         // Obtener todos los usuarios
-    .post(usuarioController.register);     // Registrar nuevo usuario
+    .post(verifyToken, (req, res) => usuarioController.register(req, res));     // Registrar nuevo usuario
 
   app.route('/api/usuarios/:id')
-    .get(usuarioController.getById)        // Obtener usuario por ID
-    .put(usuarioController.update)         // Actualizar usuario por ID
-    .delete(usuarioController.delete);     // Eliminar usuario por ID
+    .get(verifyToken, (req, res) => usuarioController.getById(req, res))        // Obtener usuario por ID
+    .put(verifyToken, (req, res) => usuarioController.update(req, res))         // Actualizar usuario por ID
+    .delete(verifyToken, (req, res) => usuarioController.delete(req, res));     // Eliminar usuario por ID
 
 }

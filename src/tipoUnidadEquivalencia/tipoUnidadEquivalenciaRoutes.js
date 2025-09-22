@@ -4,22 +4,22 @@ const tipoUnidadEquivalenciaController = require('./tipoUnidadEquivalenciaContro
 
 module.exports = function (app) {
 
-  app.get('/api/tipos-unidad-equivalencia/search/:texto', tipoUnidadEquivalenciaController.getByAny); // Buscar por texto
+  app.get('/api/tipos-unidad-equivalencia/search/:texto', verifyToken, (req, res) => tipoUnidadEquivalenciaController.getByAny(req, res)); // Buscar por texto
 
-  app.get('/api/tipos-unidad-equivalencia/from/:from', tipoUnidadEquivalenciaController.getByFrom); // Por unidad origen
+  app.get('/api/tipos-unidad-equivalencia/from/:from', verifyToken, (req, res) => tipoUnidadEquivalenciaController.getByFrom(req, res)); // Por unidad origen
 
-  app.get('/api/tipos-unidad-equivalencia/from-multiple/:from', tipoUnidadEquivalenciaController.getByFromMultiple); // Por múltiples unidades
+  app.get('/api/tipos-unidad-equivalencia/from-multiple/:from', verifyToken, (req, res) => tipoUnidadEquivalenciaController.getByFromMultiple(req, res)); // Por múltiples unidades
 
-  app.get('/api/tipos-unidad-equivalencia/:id', tipoUnidadEquivalenciaController.getById); // Obtener por ID
+  app.get('/api/tipos-unidad-equivalencia/:id', verifyToken, (req, res) => tipoUnidadEquivalenciaController.getById(req, res)); // Obtener por ID
 
-  app.get('/api/tipos-unidad-equivalencia', tipoUnidadEquivalenciaController.get); // Obtener todos
+  app.get('/api/tipos-unidad-equivalencia', verifyToken, (req, res) => tipoUnidadEquivalenciaController.get(req, res)); // Obtener todos
 
-  app.post('/api/tipos-unidad-equivalencia', tipoUnidadEquivalenciaController.insert); // Crear nuevo
+  app.post('/api/tipos-unidad-equivalencia', verifyToken, (req, res) => tipoUnidadEquivalenciaController.insert(req, res)); // Crear nuevo
 
-  app.post('/api/tipos-unidad-equivalencia/save', tipoUnidadEquivalenciaController.save); // Guardar (si es distinto de insert)
+  app.post('/api/tipos-unidad-equivalencia/save', verifyToken, (req, res) => tipoUnidadEquivalenciaController.save(req, res)); // Guardar (si es distinto de insert)
 
-  app.put('/api/tipos-unidad-equivalencia/:id', tipoUnidadEquivalenciaController.update); // Actualizar por ID
+  app.put('/api/tipos-unidad-equivalencia/:id', verifyToken, (req, res) => tipoUnidadEquivalenciaController.update(req, res)); // Actualizar por ID
 
-  app.delete('/api/tipos-unidad-equivalencia/:id', tipoUnidadEquivalenciaController.delete); // Eliminar por ID
+  app.delete('/api/tipos-unidad-equivalencia/:id', verifyToken, (req, res) => tipoUnidadEquivalenciaController.delete(req, res)); // Eliminar por ID
 
 }

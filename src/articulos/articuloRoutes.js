@@ -4,17 +4,17 @@ const articuloController = require('./articuloController');
 
 module.exports = function (app) {
 
-  app.get('/api/articulos/desplegable', articuloController.getDesplegable); // Para dropdowns
+  app.get('/api/articulos/desplegable', verifyToken, (req, res) => articuloController.getDesplegable(req, res)); // Para dropdowns
 
-  app.get('/api/articulos/search/:texto', articuloController.getByAny); // Buscar por texto
+  app.get('/api/articulos/search/:texto', verifyToken, (req, res) => articuloController.getByAny(req, res)); // Buscar por texto
 
-  app.get('/api/articulos/:id', articuloController.getById); // Obtener por ID
+  app.get('/api/articulos/:id', verifyToken, (req, res) => articuloController.getById(req, res)); // Obtener por ID
 
-  app.get('/api/articulos', verifyToken, (req, res) => articuloController.get); // Obtener todos
+  app.get('/api/articulos', verifyToken, (req, res) => articuloController.get(req, res)); // Obtener todos
 
-  app.post('/api/articulos', articuloController.insert); // Crear nuevo
+  app.post('/api/articulos', verifyToken, (req, res) => articuloController.insert(req, res)); // Crear nuevo
 
-  app.put('/api/articulos/:id', articuloController.update); // Actualizar por ID
+  app.put('/api/articulos/:id', verifyToken, (req, res) => articuloController.update(req, res)); // Actualizar por ID
 
-  app.delete('/api/articulos/:id', articuloController.delete); // Eliminar por ID
+  app.delete('/api/articulos/:id', verifyToken, (req, res) => articuloController.delete(req, res)); // Eliminar por ID
 }

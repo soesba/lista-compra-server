@@ -4,18 +4,18 @@ const compraController = require('./precioController');
 
 module.exports = function (app) {
 
-  app.get('/api/precios/search/:texto', compraController.getByAny); // Búsqueda
+  app.get('/api/precios/search/:texto', verifyToken, (req, res) => compraController.getByAny(req, res)); // Búsqueda
 
-  app.get('/api/precios/articulo/:articuloId', compraController.getByArticuloId); // Por artículo
+  app.get('/api/precios/articulo/:articuloId', verifyToken, (req, res) => compraController.getByArticuloId(req, res)); // Por artículo
 
-  app.get('/api/precios/:id', compraController.getById); // Obtener por ID
+  app.get('/api/precios/:id', verifyToken, (req, res) => compraController.getById(req, res)); // Obtener por ID
 
-  app.get('/api/precios', compraController.get); // Obtener todos
+  app.get('/api/precios', verifyToken, (req, res) => compraController.get(req, res)); // Obtener todos
 
-  app.post('/api/precios', compraController.insert); // Crear nuevo
+  app.post('/api/precios', verifyToken, (req, res) => compraController.insert(req, res)); // Crear nuevo
 
-  app.put('/api/precios/:id', compraController.update); // Actualizar por ID
+  app.put('/api/precios/:id', verifyToken, (req, res) => compraController.update(req, res)); // Actualizar por ID
 
-  app.delete('/api/precios/:id', compraController.delete); // Eliminar por ID
+  app.delete('/api/precios/:id', verifyToken, (req, res) => compraController.delete(req, res)); // Eliminar por ID
 
 }
