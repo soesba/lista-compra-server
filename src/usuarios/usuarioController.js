@@ -5,9 +5,9 @@ var Usuario = mongoose.model('Usuario');
 
 module.exports.authenticate = function (req, res) {
   Usuario.findOne({ username: req.body.username, password: req.body.password })
-    .then(u => {
-      if (u) {
-        res.jsonp(u);
+    .then(result => {
+      if (result) {
+        res.jsonp({ data: result });
       } else {
         res.status(500).send({ message: 'Username or password is incorrect' });
       }
@@ -19,14 +19,14 @@ module.exports.register = function (req, res) {
   var user = new User(req.body);
 
   Usuario.findOne({ username: user.username })
-    .then(u => {
-      if (u) {
+    .then(result => {
+      if (result) {
         res.status(500).send({ message: 'Username "' + user.username + '" is already taken' });
       }
     });
 
   user.save()
-    .then(u => res.jsonp(u))
+    .then(result => res.jsonp({ data: result }))
     .catch(error => res.status(500).send({ message: error }));
 
 }
@@ -35,7 +35,7 @@ module.exports.getAll = function (req, res) {
   Usuario.find()
     .then(response => {
       if (response) {
-        res.jsonp(response);
+        res.jsonp({ data: response });
       } else {
         res.status(500).send({ message: 'No hay usuarios registrados' });
       }
@@ -45,9 +45,9 @@ module.exports.getAll = function (req, res) {
 
 module.exports.getById = function (req, res) {
   Usuario.findOne({ '_id': req.params.id })
-    .then(u => {
-      if (u) {
-        res.jsonp(u);
+    .then(response => {
+      if (response) {
+        res.jsonp({ data: response });
       } else {
         res.status(500).send({ message: 'User with id ' + req.params.id + ' no exists' });
       }
@@ -60,7 +60,7 @@ module.exports.update = function (req, res) {
   var data = req.body;
 
   Usuario.updateOne({ _id: userId }, data)
-    .then(u => res.jsonp(u))
+    .then(response => res.jsonp({ data: response }))
     .catch(error => {
       return res.status(500).send({ message: error })
     });
@@ -71,7 +71,7 @@ module.exports.delete = function (req, res) {
   var userId = req.params.id;
 
   Usuario.findOneAndRemove({ _id: userId })
-    .then(u => res.jsonp(u))
+    .then(result => res.jsonp({ data: result }))
     .catch(error => {
       return res.status(500).send({ message: error })
     });

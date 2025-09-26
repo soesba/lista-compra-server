@@ -31,7 +31,7 @@ module.exports.get = async function (req, res) {
     }
   ]).then((result) => {
     if (result) {
-      res.jsonp(result)
+      res.jsonp({ data: result })
     }
   })
     .catch((error) => res.status(500).send({ message: error }))
@@ -85,7 +85,7 @@ module.exports.getById = async function (req, res) {
     }
   ]).then((result) => {
     if (result[0]) {
-      res.jsonp(result[0])
+      res.jsonp({ data: result[0] })
     }
   })
     .catch((error) => res.status(500).send({ message: error }))
@@ -102,7 +102,7 @@ module.exports.getByAny = function (req, res) {
     .populate('tiposUnidad')
     .then((result) => {
       if (result) {
-        res.jsonp(result)
+        res.jsonp({ data: result })
       }
     })
     .catch((error) => res.status(500).send({ message: error }))
@@ -119,7 +119,7 @@ module.exports.getDesplegable = function (req, res) {
     }
   ]).then((result) => {
     if (result) {
-      res.jsonp(result)
+      res.jsonp({ data: result })
     }
   })
     .catch((error) => res.status(500).send({ message: error }))
@@ -139,7 +139,7 @@ module.exports.insert = function (req, res) {
           if (err) {
             res.status(500).send({ message: 'Error al crear el registro de articulo' })
           } else {
-            res.jsonp(result);
+            res.jsonp({ data: result });
           }
         })
       }
@@ -167,7 +167,7 @@ module.exports.update = function (req, res) {
       if (err) {
         return res.status(500).send({ message: err + ' en Articulo' })
       } else {
-        res.jsonp(result)
+        res.jsonp({ data: result })
       }
     }
   )
@@ -177,7 +177,7 @@ module.exports.delete = function (req, res) {
   Articulo.deleteOne({ _id: req.params.id })
     .then((result) => {
       if (result) {
-        res.jsonp(result)
+        res.jsonp({ data: result })
       } else {
         res
           .status(500)

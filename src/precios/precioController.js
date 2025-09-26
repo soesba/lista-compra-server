@@ -18,7 +18,7 @@ module.exports.get = async function (req, res) {
   //   })
   // });
   Precio.find()
-    .then((result) => res.jsonp(result))
+    .then((result) => res.jsonp({ data: result }))
     .catch((error) => res.status(500).send({ message: error }))
 }
 
@@ -81,7 +81,7 @@ module.exports.getById = async function (req, res) {
       if (err) {
         res.status(500).send({ message: error });
       }
-      res.jsonp(result[0]);
+      res.jsonp({ data: result[0] });
     })
   });
 }
@@ -156,7 +156,7 @@ module.exports.getByArticuloId = async function (req, res) {
       if (err) {
         res.status(500).send({ message: error });
       }
-      res.jsonp(result);
+      res.jsonp({ data: result });
     })
   });
 
@@ -218,7 +218,7 @@ module.exports.getByAny = async function (req, res) {
         select: { _id: 1, nombre: 1 }
       })
         .then((result) => {
-          res.jsonp(result)
+          res.jsonp({ data: result })
         })
         .catch((error) => res.status(500).send({ message: error }))
     }
@@ -247,7 +247,7 @@ module.exports.insert = function (req, res) {
       } else {
         precio.save().then((response) => {
           if (response) {
-            res.jsonp(response)
+            res.jsonp({ data: response })
           } else {
             res.status(500).send({
               message: 'Error al crear el registro de precio',
@@ -274,7 +274,7 @@ module.exports.update = function (req, res) {
       if (err) {
         return res.status(500).send({ message: err + ' en Precio' })
       } else {
-        res.jsonp(result)
+        res.jsonp({ data: result })
       }
     }
   )
@@ -284,7 +284,7 @@ module.exports.delete = function (req, res) {
   Precio.deleteOne({ _id: req.params.id })
     .then((result) => {
       if (result) {
-        res.jsonp(result)
+        res.jsonp({ data: result })
       } else {
         res
           .status(500)

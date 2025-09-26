@@ -24,7 +24,7 @@ module.exports.get = function (req, res) {
   // }).catch((error) => res.status(500).send({ message: error }));
   Establecimiento.find()
     .populate('tipoEstablecimiento')
-    .then((result) => res.jsonp(result))
+    .then((result) => res.jsonp({ data: result }))
     .catch((error) => res.status(500).send({ message: error }));
 };
 
@@ -32,7 +32,7 @@ module.exports.getById = function (req, res) {
     Establecimiento.findOne({ _id: req.params.id })
     .populate('tipoEstablecimiento')
     .then((result) => {
-        res.jsonp(result);
+        res.jsonp({ data: result });
     })
     .catch((error) => res.status(500).send({ message: error }));
 };
@@ -48,7 +48,7 @@ module.exports.getByAny = function (req, res) {
   .populate('tipoEstablecimiento')
   .then((result) => {
     if (result) {
-      res.jsonp(result);
+      res.jsonp({ data: result });
     }
   })
   .catch((error) => res.status(500).send({ message: error }));
@@ -65,7 +65,7 @@ module.exports.getDesplegable = function (req, res) {
     }
   ]).then((result) => {
       if (result) {
-        res.jsonp(result)
+        res.jsonp({ data: result })
       }
     })
     .catch((error) => res.status(500).send({ message: error }))
@@ -93,7 +93,7 @@ module.exports.insert = function (req, res) {
       } else {
         establecimiento.save().then((response) => {
           if (response) {
-            res.jsonp(response);
+            res.jsonp({ data: response });
           } else {
             res.status(500).send({
               message: "Error al crear el registro de establecimiento",
@@ -122,7 +122,7 @@ module.exports.update = function(req, res) {
             if (err) {
                 return res.status(500).send({message: err + " en Establecimiento"})
             } else {
-                res.jsonp(result)
+                res.jsonp({ data: result })
             }
         }
     )
@@ -132,7 +132,7 @@ module.exports.delete = function (req, res) {
   Establecimiento.deleteOne({ _id: req.params.id })
     .then((result) => {
       if (result) {
-        res.jsonp(result);
+        res.jsonp({ data: result });
       } else {
         res.status(500).send({
           message: "Establecimiento con id " + req.params.id + " no existe",

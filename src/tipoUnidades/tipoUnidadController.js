@@ -5,14 +5,14 @@ const TipoUnidad = require("./tipoUnidadModel");
 
 module.exports.get = function (req, res) {
   TipoUnidad.find()
-    .then((result) => res.jsonp(result))
+    .then((result) => res.jsonp({ data: result }))
     .catch((error) => res.status(500).send({ message: error }));
 };
 
 module.exports.getById = function (req, res) {
   TipoUnidad.findOne({ _id: req.params.id })
     .then((result) => {
-        res.jsonp(result);
+        res.jsonp({ data: result });
     })
     .catch((error) => res.status(500).send({ message: error }));
 };
@@ -27,7 +27,7 @@ module.exports.getByAny = function (req, res) {
   })
     .then((result) => {
       if (result) {
-        res.jsonp(result);
+        res.jsonp({ data: result });
       }
     })
     .catch((error) => res.status(500).send({ message: error }));
@@ -45,7 +45,7 @@ module.exports.getDesplegable = function (req, res) {
     }
   ]).then((result) => {
       if (result) {
-        res.jsonp(result)
+        res.jsonp({ data: result })
       }
     })
     .catch((error) => res.status(500).send({ message: error }))
@@ -68,7 +68,7 @@ module.exports.insert = function (req, res) {
       } else {
         tipoUnidad.save().then((response) => {
           if (response) {
-            res.jsonp(response);
+            res.jsonp({ data: response });
           } else {
             res.status(500).send({
               message: "Error al crear el registro de tipo de unidad",
@@ -89,7 +89,7 @@ module.exports.update = function(req, res) {
             if (err) {
                 return res.status(500).send({message: err + " en tipo de unidad"})
             } else {
-                res.jsonp(result)
+                res.jsonp({ data: result })
             }
         }
     )
@@ -118,7 +118,7 @@ module.exports.delete = function (req, res) {
           TipoUnidad.deleteOne({ _id: req.params.id })
           .then((result) => {
             if (result) {
-              res.jsonp(result);
+              res.jsonp({ data: result });
             } else {
               res.status(500).send({ message: "TipoUnidad con id " + req.params.id + " no existe" });
             }

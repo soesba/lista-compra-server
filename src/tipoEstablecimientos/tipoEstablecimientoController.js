@@ -5,14 +5,14 @@ const TipoEstablecimiento = require("./tipoEstablecimientoModel");
 
 module.exports.get = function (req, res) {
   TipoEstablecimiento.find()
-    .then((result) => res.jsonp(result))
+    .then((result) => res.jsonp({ data: result }))
     .catch((error) => res.status(500).send({ message: error }));
 };
 
 module.exports.getById = function (req, res) {
   TipoEstablecimiento.findOne({ _id: req.params.id })
     .then((result) => {
-      res.jsonp(result);
+      res.jsonp({ data: result });
     })
     .catch((error) => res.status(500).send({ message: error }));
 };
@@ -27,7 +27,7 @@ module.exports.getByAny = function (req, res) {
   })
     .then((result) => {
       if (result) {
-        res.jsonp(result);
+        res.jsonp({ data: result });
       }
     })
     .catch((error) => res.status(500).send({ message: error }));
@@ -44,7 +44,7 @@ module.exports.getDesplegable = function (req, res) {
     }
   ]).then((result) => {
       if (result) {
-        res.jsonp(result)
+        res.jsonp({ data: result });
       }
     })
     .catch((error) => res.status(500).send({ message: error }))
@@ -67,7 +67,7 @@ module.exports.insert = function (req, res) {
       } else {
         tipoEstablecimiento.save().then((response) => {
           if (response) {
-            res.jsonp(response);
+            res.jsonp({ data: response });
           } else {
             res.status(500).send({
               message: "Error al crear el registro de tipo de establecimiento",
@@ -90,7 +90,7 @@ module.exports.update = function (req, res) {
           .status(500)
           .send({ message: err + " en Tipo Establecimiento" });
       } else {
-        res.jsonp(result);
+        res.jsonp({ data: result });
       }
     }
   );
@@ -107,7 +107,7 @@ module.exports.delete = function (req, res) {
     } else {
       TipoEstablecimiento.deleteOne({ _id: req.params.id }).then((result) => {
         if (result) {
-          res.jsonp(result);
+          res.jsonp({ data: result });
         } else {
           res.status(500).send({
             message: "TipoEstablecimiento con id " + req.params.id + " no existe",
@@ -115,5 +115,5 @@ module.exports.delete = function (req, res) {
         }
       }).catch((error) => res.status(500).send({ message: error }));
     }
-  }).catch((error) => res.status(500).send({ message: error }));   
+  }).catch((error) => res.status(500).send({ message: error }));
 };

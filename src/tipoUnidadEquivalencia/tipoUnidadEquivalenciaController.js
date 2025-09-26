@@ -5,14 +5,14 @@ const TipoUnidadEquivalencia = require("./tipoUnidadEquivalenciaModel");
 
 module.exports.get = function (req, res) {
   TipoUnidadEquivalencia.find()
-    .then((result) => res.jsonp(result))
+    .then((result) => res.jsonp({ data: result }))
     .catch((error) => res.status(500).send({ message: error }));
 };
 
 module.exports.getById = function (req, res) {
   TipoUnidadEquivalencia.findOne({ _id: req.params.id })
     .then((result) => {
-        res.jsonp(result);
+        res.jsonp({ data: result });
     })
     .catch((error) => res.status(500).send({ message: error }));
 };
@@ -21,7 +21,7 @@ module.exports.getByFrom = function (req, res) {
   TipoUnidadEquivalencia.find({ from: req.params.from })
     .then((result) => {
       if (result) {
-        res.jsonp(result);
+        res.jsonp({ data: result });
       }
     })
     .catch((error) => res.status(500).send({ message: error }));
@@ -35,7 +35,7 @@ module.exports.getByFromMultiple = function (req, res) {
     from: { $in: fromToObjectId }
   }).then((result) => {
       if (result) {
-        res.jsonp(result);
+        res.jsonp({ data: result });
       }
     })
     .catch((error) => res.status(500).send({ message: error }));
@@ -49,7 +49,7 @@ module.exports.getByAny = function (req, res) {
     ],
   }).then((result) => {
       if (result) {
-        res.jsonp(result);
+        res.jsonp({ data: result });
       }
     })
     .catch((error) => res.status(500).send({ message: error }));
@@ -88,7 +88,7 @@ module.exports.save = function (req, res) {
   TipoUnidadEquivalencia.bulkWrite(operaciones)
     .then((result) => {
       if (result) {
-        res.jsonp(result);
+        res.jsonp({ data: result });
       } else {
         res.status(500).send({ message: "Error al guardar las equivalencias" });
       }
@@ -113,7 +113,7 @@ module.exports.insert = function (req, res) {
       } else {
         tipoUnidadEquivalencia.save().then((response) => {
           if (response) {
-            res.jsonp(response);
+            res.jsonp({ data: response });
           } else {
             res.status(500).send({
               message: "Error al crear el registro de equivalencias",
@@ -134,7 +134,7 @@ module.exports.update = function(req, res) {
           if (err) {
               return res.status(500).send({message: err + " en Equivalencias"})
           } else {
-              res.jsonp(result)
+              res.jsonp({ data: result })
           }
       }
   )
@@ -144,7 +144,7 @@ module.exports.delete = function (req, res) {
   TipoUnidadEquivalencia.deleteOne({ _id: req.params.id })
     .then((result) => {
       if (result) {
-        res.jsonp(result);
+        res.jsonp({ data: result });
       } else {
         res.status(500).send({ message: "Equivalencia con id " + req.params.id + " no existe" });
       }
