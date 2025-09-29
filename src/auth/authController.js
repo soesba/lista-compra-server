@@ -54,7 +54,7 @@ module.exports.register = async function (req, res) {
 
 module.exports.refreshToken = async function (req, res) {
   try {
-    const refreshToken = req.body["x-refresh-token"];
+    const refreshToken = req.headers["x-refresh-token"];
 
     if (!refreshToken) {
       return res.status(400).json({ message: 'Refresh token is required' });
