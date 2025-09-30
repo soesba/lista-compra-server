@@ -20,7 +20,7 @@ module.exports.login = function (req, res) {
           const validPassword = await bcrypt.compare(password, response.password);
           if (!validPassword) return res.status(400).send('Contraseña incorrecta');
           // Generar un token JWT
-          const token = jwt.sign({ username: response.username }, TOKEN_SECRET, { expiresIn: '600000' });
+          const token = jwt.sign({ username: response.username }, TOKEN_SECRET, { expiresIn: '1h' });
           // Generar un token de refresco
           const refreshToken = jwt.sign({ username: response.username }, REFRESH_TOKEN_SECRET, { expiresIn: '7d' });
           res.send({ token, refreshToken });
@@ -66,7 +66,7 @@ module.exports.refreshToken = async function (req, res) {
       }
       const payload = decoded;
       // Generar un nuevo token con el mismo payload
-      const token = jwt.sign({ payload: payload.username }, TOKEN_SECRET, { expiresIn: '600000' });
+      const token = jwt.sign({ payload: payload.username }, TOKEN_SECRET, { expiresIn: '1h' });
        // Generar un nuevo token de refresco
       const refreshToken = jwt.sign({ userId: payload.username }, REFRESH_TOKEN_SECRET, { expiresIn: '7d' });
 
