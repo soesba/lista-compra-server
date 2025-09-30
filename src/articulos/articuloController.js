@@ -34,7 +34,7 @@ module.exports.get = async function (req, res) {
       res.jsonp({ data: result })
     }
   })
-    .catch((error) => res.status(500).send({ message: error }))
+    .catch((error) => res.status(500).send({ message: error.message }))
 }
 
 module.exports.getById = async function (req, res) {
@@ -88,7 +88,7 @@ module.exports.getById = async function (req, res) {
       res.jsonp({ data: result[0] })
     }
   })
-    .catch((error) => res.status(500).send({ message: error }))
+    .catch((error) => res.status(500).send({ message: error.message }))
 }
 
 module.exports.getByAny = function (req, res) {
@@ -105,7 +105,7 @@ module.exports.getByAny = function (req, res) {
         res.jsonp({ data: result })
       }
     })
-    .catch((error) => res.status(500).send({ message: error }))
+    .catch((error) => res.status(500).send({ message: error.message }))
 }
 
 module.exports.getDesplegable = function (req, res) {
@@ -122,7 +122,7 @@ module.exports.getDesplegable = function (req, res) {
       res.jsonp({ data: result })
     }
   })
-    .catch((error) => res.status(500).send({ message: error }))
+    .catch((error) => res.status(500).send({ message: error.message }))
 }
 
 module.exports.insert = function (req, res) {
@@ -144,7 +144,7 @@ module.exports.insert = function (req, res) {
         })
       }
     })
-    .catch((error) => res.status(500).send({ message: error }))
+    .catch((error) => res.status(500).send({ message: error.message }))
 }
 
 module.exports.update = function (req, res) {
@@ -184,5 +184,5 @@ module.exports.delete = function (req, res) {
           .send({ message: 'Articulo con id ' + req.params.id + ' no existe' })
       }
     })
-    .catch((error) => res.status(500).send({ message: error }))
+    .catch((error) => res.status(500).send({ message: error.message }))
 }

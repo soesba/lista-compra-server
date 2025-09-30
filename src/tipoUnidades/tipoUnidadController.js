@@ -6,7 +6,7 @@ const TipoUnidad = require("./tipoUnidadModel");
 module.exports.get = function (req, res) {
   TipoUnidad.find()
     .then((result) => res.jsonp({ data: result }))
-    .catch((error) => res.status(500).send({ message: error }));
+    .catch((error) => res.status(500).send({ message: error.message }));
 };
 
 module.exports.getById = function (req, res) {
@@ -14,7 +14,7 @@ module.exports.getById = function (req, res) {
     .then((result) => {
         res.jsonp({ data: result });
     })
-    .catch((error) => res.status(500).send({ message: error }));
+    .catch((error) => res.status(500).send({ message: error.message }));
 };
 
 module.exports.getByAny = function (req, res) {
@@ -30,7 +30,7 @@ module.exports.getByAny = function (req, res) {
         res.jsonp({ data: result });
       }
     })
-    .catch((error) => res.status(500).send({ message: error }));
+    .catch((error) => res.status(500).send({ message: error.message }));
 };
 
 module.exports.getDesplegable = function (req, res) {
@@ -47,7 +47,7 @@ module.exports.getDesplegable = function (req, res) {
         res.jsonp({ data: result })
       }
     })
-    .catch((error) => res.status(500).send({ message: error }))
+    .catch((error) => res.status(500).send({ message: error.message }))
 }
 
 module.exports.insert = function (req, res) {
@@ -76,7 +76,7 @@ module.exports.insert = function (req, res) {
         });
       }
     })
-    .catch((error) => res.status(500).send({ message: error }));
+    .catch((error) => res.status(500).send({ message: error.message }));
 };
 
 module.exports.update = function(req, res) {
@@ -122,10 +122,10 @@ module.exports.delete = function (req, res) {
               res.status(500).send({ message: "TipoUnidad con id " + req.params.id + " no existe" });
             }
           })
-          .catch((error) => res.status(500).send({ message: error }));
+          .catch((error) => res.status(500).send({ message: error.message }));
         }
       })
     }
   })
-  .catch((error) => res.status(500).send({ message: error }));
+  .catch((error) => res.status(500).send({ message: error.message }));
 };

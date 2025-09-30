@@ -28,7 +28,7 @@ module.exports.login = function (req, res) {
           res.status(401).send({ message: 'Nombre de usuario o contraseña incorrectos' });
         }
       })
-      .catch(error => res.status(500).send({ message: error }));
+      .catch(error => res.status(500).send({ message: error.message }));
   } catch (error) {
     return res.status(500).json({ message: "Internal server error" });
   }

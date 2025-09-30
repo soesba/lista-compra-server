@@ -12,7 +12,7 @@ module.exports.authenticate = function (req, res) {
         res.status(500).send({ message: 'Username or password is incorrect' });
       }
     })
-    .catch(error => res.status(500).send({ message: error }));
+    .catch(error => res.status(500).send({ message: error.message }));
 }
 
 module.exports.register = function (req, res) {
@@ -27,7 +27,7 @@ module.exports.register = function (req, res) {
 
   user.save()
     .then(result => res.jsonp({ data: result }))
-    .catch(error => res.status(500).send({ message: error }));
+    .catch(error => res.status(500).send({ message: error.message }));
 
 }
 
@@ -40,7 +40,7 @@ module.exports.getAll = function (req, res) {
         res.status(500).send({ message: 'No hay usuarios registrados' });
       }
     })
-    .catch(error => res.status(500).send({ message: error }));
+    .catch(error => res.status(500).send({ message: error.message }));
 }
 
 module.exports.getById = function (req, res) {
@@ -52,7 +52,7 @@ module.exports.getById = function (req, res) {
         res.status(500).send({ message: 'User with id ' + req.params.id + ' no exists' });
       }
     })
-    .catch(error => res.status(500).send({ message: error }));;
+    .catch(error => res.status(500).send({ message: error.message }));;
 }
 
 module.exports.update = function (req, res) {
@@ -62,7 +62,7 @@ module.exports.update = function (req, res) {
   Usuario.updateOne({ _id: userId }, data)
     .then(response => res.jsonp({ data: response }))
     .catch(error => {
-      return res.status(500).send({ message: error })
+      return res.status(500).send({ message: error.message })
     });
 
 }
@@ -73,7 +73,7 @@ module.exports.delete = function (req, res) {
   Usuario.findOneAndRemove({ _id: userId })
     .then(result => res.jsonp({ data: result }))
     .catch(error => {
-      return res.status(500).send({ message: error })
+      return res.status(500).send({ message: error.message })
     });
 
 }

@@ -11,6 +11,8 @@ module.exports = function (app) {
 
   app.get('/refresh', loginController.refreshToken); // Refresh token
 
+  app.post('/changePassword', loginController.changePassword); // Change password
+
   // Protected route example
   app.get("/protected", verifyToken, function (req, res) {
     return res.status(200).json({ message: "You have access" });

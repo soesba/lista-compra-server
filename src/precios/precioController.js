@@ -12,14 +12,14 @@ module.exports.get = async function (req, res) {
   // Precio.populate(primerFiltro, { path: "establecimiento", select: { _id:1, nombre: 1 }}, (err, segundoFiltro) => {
   //   Precio.populate(segundoFiltro, { path: "articulo", select: { _id:1, nombre: 1 }}, (err, result) => {
   //     if (err) {
-  //       res.status(500).send({ message: error });
+  //       res.status(500).send({ message: error.message });
   //     }
   //     res.jsonp(result);
   //   })
   // });
   Precio.find()
     .then((result) => res.jsonp({ data: result }))
-    .catch((error) => res.status(500).send({ message: error }))
+    .catch((error) => res.status(500).send({ message: error.message }))
 }
 
 module.exports.getById = async function (req, res) {
@@ -79,7 +79,7 @@ module.exports.getById = async function (req, res) {
   Precio.populate(filtroUM, { path: "establecimiento", select: { _id: 1, nombre: 1 } }, (err, filtroEstablecimiento) => {
     Precio.populate(filtroEstablecimiento, { path: "articulo", select: { _id: 1, nombre: 1 } }, (err, result) => {
       if (err) {
-        res.status(500).send({ message: error });
+        res.status(500).send({ message: error.message });
       }
       res.jsonp({ data: result[0] });
     })
@@ -148,13 +148,13 @@ module.exports.getByArticuloId = async function (req, res) {
     }
   ], (err) => {
     if (err) {
-      res.status(500).send({ message: error });
+      res.status(500).send({ message: error.message });
     }
   });
   Precio.populate(filtroUM, { path: "establecimiento", select: { _id: 1, nombre: 1 } }, (err, filtroEstablecimiento) => {
     Precio.populate(filtroEstablecimiento, { path: "articulo", select: { _id: 1, nombre: 1 } }, (err, result) => {
       if (err) {
-        res.status(500).send({ message: error });
+        res.status(500).send({ message: error.message });
       }
       res.jsonp({ data: result });
     })
@@ -164,7 +164,7 @@ module.exports.getByArticuloId = async function (req, res) {
   //   .then((result) => {
   //     res.jsonp(result)
   //   })
-  //   .catch((error) => res.status(500).send({ message: error }))
+  //   .catch((error) => res.status(500).send({ message: error.message }))
 }
 
 module.exports.getByAny = async function (req, res) {
@@ -220,7 +220,7 @@ module.exports.getByAny = async function (req, res) {
         .then((result) => {
           res.jsonp({ data: result })
         })
-        .catch((error) => res.status(500).send({ message: error }))
+        .catch((error) => res.status(500).send({ message: error.message }))
     }
   )
 }
@@ -256,7 +256,7 @@ module.exports.insert = function (req, res) {
         })
       }
     })
-    .catch((error) => res.status(500).send({ message: error }))
+    .catch((error) => res.status(500).send({ message: error.message }))
 }
 
 module.exports.update = function (req, res) {
@@ -291,5 +291,5 @@ module.exports.delete = function (req, res) {
           .send({ message: 'Precio con id ' + req.params.id + ' no existe' })
       }
     })
-    .catch((error) => res.status(500).send({ message: error }))
+    .catch((error) => res.status(500).send({ message: error.message }))
 }
