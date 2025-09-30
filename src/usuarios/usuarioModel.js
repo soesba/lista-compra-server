@@ -53,4 +53,4 @@ UsuarioSchema.pre("validate", function (next) {
   next();
 });
 
-mongoose.model('Usuario', UsuarioSchema, 'Usuario');
+module.exports = mongoose.model('Usuario', UsuarioSchema, 'Usuario');

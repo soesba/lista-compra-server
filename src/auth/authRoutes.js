@@ -5,13 +5,13 @@ const verifyToken =  require('../utils/verifyToken.js').verifyToken;
 
 module.exports = function (app) {
 
-  app.post('/login', loginController.login); // Login
+  app.post('/auth/login', loginController.login); // Login
 
-  app.post('/register', loginController.register); // Register
+  app.post('/auth/register', loginController.register); // Register
 
-  app.get('/refresh', loginController.refreshToken); // Refresh token
+  app.get('/auth/refresh', loginController.refreshToken); // Refresh token
 
-  app.post('/changePassword', loginController.changePassword); // Change password
+  // app.post('/auth/changePassword', loginController.changePassword); // Change password
 
   // Protected route example
   app.get("/protected", verifyToken, function (req, res) {

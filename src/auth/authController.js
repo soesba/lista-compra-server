@@ -1,8 +1,8 @@
 'use strict';
 const jwt = require("jsonwebtoken");
 const bcrypt = require('bcryptjs');
-var mongoose = require('mongoose');
-var Usuario = mongoose.model('Usuario');
+const Usuario = require('../usuarios/usuarioModel');
+
 const TOKEN_SECRET = process.env.TOKEN_SECRET;
 const REFRESH_TOKEN_SECRET = process.env.REFRESH_TOKEN_SECRET;
 
