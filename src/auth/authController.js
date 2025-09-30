@@ -64,7 +64,6 @@ module.exports.refreshToken = async function (req, res) {
       if (err) {
         return res.status(401).json({ message: 'Invalid refresh token' });
       }
-      console.log('LOG~ ~ :64 ~ decoded:', decoded)
       const payload = decoded;
       // Generar un nuevo token con el mismo payload
       const token = jwt.sign({ payload: payload.username }, TOKEN_SECRET, { expiresIn: '600000' });
