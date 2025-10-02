@@ -18,14 +18,14 @@ module.exports.login = function (req, res) {
         if (response) {
           // Verificar la contraseña
           const validPassword = await bcrypt.compare(password, response.password);
-          if (!validPassword) return res.status(400).send('Contraseña incorrecta');
+          if (!validPassword) return res.status(401).send({ message: 'Contraseña incorrecta' });
           // Generar un token JWT
           const token = jwt.sign({ username: response.username }, TOKEN_SECRET, { expiresIn: '1h' });
           // Generar un token de refresco
           const refreshToken = jwt.sign({ username: response.username }, REFRESH_TOKEN_SECRET, { expiresIn: '7d' });
           res.send({ token, refreshToken });
         } else {
-          res.status(401).send({ message: 'Nombre de usuario o contraseña incorrectos' });
+          res.status(401).send({ message: 'El usuario no existe' });
         }
       })
       .catch(error => res.status(500).send({ message: error.message }));
