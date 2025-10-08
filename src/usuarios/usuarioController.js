@@ -3,13 +3,13 @@
 var mongoose = require('mongoose');
 var Usuario = mongoose.model('Usuario');
 
-module.exports.authenticate = function (req, res) {
-  Usuario.findOne({ username: req.body.username, password: req.body.password })
+module.exports.getByUsername = function (req, res) {
+  Usuario.findOne({ username: req.body.username })
     .then(result => {
       if (result) {
         res.jsonp({ data: result });
       } else {
-        res.status(500).send({ message: 'Username or password is incorrect' });
+        res.status(404).send({ message: 'No existe un usuario con ese username' });
       }
     })
     .catch(error => res.status(500).send({ message: error.message }));
@@ -21,7 +21,7 @@ module.exports.register = function (req, res) {
   Usuario.findOne({ username: user.username })
     .then(result => {
       if (result) {
-        res.status(500).send({ message: 'Username "' + user.username + '" is already taken' });
+        res.status(409).send({ message: 'El nombre de usuario "' + user.username + '" ya está en uso' });
       }
     });
 
@@ -31,28 +31,55 @@ module.exports.register = function (req, res) {
 
 }
 
+module.exports.get = function (req, res) {
+  const query = req.query;
+  if (query) {
+    return this.getBy(req, res);
+  } else {
+    return this.getAll(req, res);
+  }
+}
+
 module.exports.getAll = function (req, res) {
   Usuario.find()
     .then(response => {
       if (response) {
         res.jsonp({ data: response });
       } else {
-        res.status(500).send({ message: 'No hay usuarios registrados' });
+        res.status(404).send({ message: 'No hay usuarios registrados' });
       }
     })
     .catch(error => res.status(500).send({ message: error.message }));
 }
 
-module.exports.getById = function (req, res) {
-  Usuario.findOne({ '_id': req.params.id })
+module.exports.getBy = function (req, res) {
+  const params = req.query;
+  if (params.id) {
+    params._id = new mongoose.Types.ObjectId(`${params.id}`);
+    delete params.id;
+  }
+  Usuario.findOne(params)
     .then(response => {
       if (response) {
         res.jsonp({ data: response });
       } else {
-        res.status(500).send({ message: 'User with id ' + req.params.id + ' no exists' });
+        res.status(404).send({ message: 'Usuario con id ' + req.params.id + ' no existe' });
       }
     })
-    .catch(error => res.status(500).send({ message: error.message }));;
+    .catch(error => res.status(500).send({ message: error.message }));
+}
+
+module.exports.getByUsername = function (req, res) {
+  console.log('LOG~ ~ :62 ~ req.params.username:', req.params.username)
+  Usuario.findOne({ username: req.params.username })
+    .then(response => {
+      if (response) {
+        res.jsonp({ data: response });
+      } else {
+        res.status(404).send({ message: 'Usuario con username ' + req.params.username + ' no existe' });
+      }
+    })
+    .catch(error => res.status(500).send({ message: error.message }));
 }
 
 module.exports.update = function (req, res) {
