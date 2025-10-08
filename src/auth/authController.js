@@ -23,7 +23,12 @@ module.exports.login = function (req, res) {
           const token = jwt.sign({ username: response.username }, TOKEN_SECRET, { expiresIn: '1h' });
           // Generar un token de refresco
           const refreshToken = jwt.sign({ username: response.username }, REFRESH_TOKEN_SECRET, { expiresIn: '7d' });
-          res.send({ token, refreshToken });
+          const user = {
+            username: response.username,
+            esAdministrador: response.esAdministrador,
+            permisos: response.permisos
+          }
+          res.send({ token, refreshToken, user });
         } else {
           res.status(401).send({ message: 'El usuario no existe' });
         }

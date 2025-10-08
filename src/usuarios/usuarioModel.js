@@ -3,6 +3,25 @@
 var mongoose = require('mongoose');
 var	Schema = mongoose.Schema;
 
+var PermisoSchema = new Schema({
+  _id: {
+    type: Schema.Types.ObjectId,
+    required: true,
+  },
+  modeloId: {
+    type: Schema.Types.ObjectId,
+    required: true,
+  },
+  acceso: {
+    type: Boolean,
+    default: false
+  },
+  permiso: {
+    type: String, // CRUD: Create, Read, Update, Delete o combinaciones como CR, CRU, CRUD
+    required: true
+  }
+});
+
 var UsuarioSchema = new Schema({
   _id: {
     type: Schema.Types.ObjectId,
@@ -20,8 +39,16 @@ var UsuarioSchema = new Schema({
 	},
 	fechaCreacion: {
 		type: String,
-		default: Date.now
-	}
+    required: true
+	},
+  esAdministrador: {
+    type: Boolean,
+    default: false
+  },
+  permisos: {
+    type: [PermisoSchema],
+    default: null
+  }
 });
 
 // Duplicate the ID field.

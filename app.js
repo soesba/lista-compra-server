@@ -37,10 +37,11 @@ function initDB(db) {
 }
 
 function startServer(config) {
-    mongoose.connect(config.uriDb, {useNewUrlParser: true, useUnifiedTopology: true, autoIndex: false})
+    // mongoose.connect(config.uriDb, {useNewUrlParser: true, useUnifiedTopology: true, autoIndex: false})
+    mongoose.connect(config.uriDb)
     .then(
         (db) => {
-        mongoose.set('useCreateIndex', true);
+        // mongoose.set('useCreateIndex', true);
         let app = initExpress(db);
         exports = module.exports = app;
         app.listen(config.port, () => {
