@@ -41,9 +41,9 @@ TipoEstablecimientoSchema.set('toJSON', {
   virtuals: true
 });
 
-TipoEstablecimientoSchema.pre('validate', function(next) {    
+TipoEstablecimientoSchema.pre('validate', function(next) {
     if (!this._id) {
-      this._id = mongoose.Types.ObjectId()
+      this._id = new mongoose.Types.ObjectId()
     }
     if(!this.fechaCreacion) {
         this.fechaCreacion =  new Intl.DateTimeFormat('es-ES', {day: '2-digit', month: '2-digit', year: 'numeric'}).format()

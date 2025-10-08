@@ -12,7 +12,7 @@ module.exports.get = function (req, res) {
 module.exports.getById = function (req, res) {
   TipoUnidadEquivalencia.findOne({ _id: req.params.id })
     .then((result) => {
-        res.jsonp({ data: result });
+      res.jsonp({ data: result });
     })
     .catch((error) => res.status(500).send({ message: error.message }));
 };
@@ -29,15 +29,15 @@ module.exports.getByFrom = function (req, res) {
 
 module.exports.getByFromMultiple = function (req, res) {
   const fromToObjectId = req.params.from.split(',').map(x =>
-    mongoose.Types.ObjectId(x)
+    new mongoose.Types.ObjectId(`${x}`)
   )
   TipoUnidadEquivalencia.find({
     from: { $in: fromToObjectId }
   }).then((result) => {
-      if (result) {
-        res.jsonp({ data: result });
-      }
-    })
+    if (result) {
+      res.jsonp({ data: result });
+    }
+  })
     .catch((error) => res.status(500).send({ message: error.message }));
 };
 
@@ -48,10 +48,10 @@ module.exports.getByAny = function (req, res) {
       { to: req.params.id },
     ],
   }).then((result) => {
-      if (result) {
-        res.jsonp({ data: result });
-      }
-    })
+    if (result) {
+      res.jsonp({ data: result });
+    }
+  })
     .catch((error) => res.status(500).send({ message: error.message }));
 };
 
@@ -125,20 +125,18 @@ module.exports.insert = function (req, res) {
     .catch((error) => res.status(500).send({ message: error.message }));
 };
 
-module.exports.update = function(req, res) {
+module.exports.update = function (req, res) {
   TipoUnidadEquivalencia.findOneAndUpdate(
-      { _id:  mongoose.Types.ObjectId(req.body.id)},
-      { $set: { from: req.body.from, to: req.body.to, factor: req.body.factor } },
-      { useFindAndModify: false, returnNewDocument: true },
-      (err, result) => {
-          if (err) {
-              return res.status(500).send({message: err + " en Equivalencias"})
-          } else {
-              res.jsonp({ data: result })
-          }
+    { _id: new mongoose.Types.ObjectId(`${req.body.id}`) },
+    { $set: { from: req.body.from, to: req.body.to, factor: req.body.factor } },
+    { useFindAndModify: false, returnNewDocument: true }).then(result => {
+      if (result) {
+        res.jsonp({ data: result });
+      } else {
+        res.status(500).send({ message: "Error al actualizar el registro de equivalencias" });
       }
-  )
-}
+    }).catch((error) => res.status(500).send({ message: error.message }));
+};
 
 module.exports.delete = function (req, res) {
   TipoUnidadEquivalencia.deleteOne({ _id: req.params.id })

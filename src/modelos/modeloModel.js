@@ -31,7 +31,7 @@ ModeloSchema.set('toJSON', {
 
 ModeloSchema.pre("validate", function (next) {
   if (!this._id) {
-    this._id = mongoose.Types.ObjectId();
+    this._id = new mongoose.Types.ObjectId();
   }
   if (!this.fechaCreacion) {
     this.fechaCreacion = new Intl.DateTimeFormat("es-ES", {

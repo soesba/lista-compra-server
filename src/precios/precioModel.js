@@ -40,7 +40,7 @@ const PrecioSchema = new Schema({
   },
   unidadesMedida: {
     type: [UnidadMedidaSchema]
-  },  
+  },
   fechaCompra: {
     type: String,
     required: true,
@@ -83,7 +83,7 @@ PrecioSchema.set('toJSON', {
 });
 PrecioSchema.set('toObject', {
   virtuals: true,
-  versionKey: true 
+  versionKey: true
 });
 
 UnidadMedidaSchema.set('toJSON', {
@@ -97,7 +97,7 @@ UnidadMedidaSchema.set('toJSON', {
 
 PrecioSchema.pre("validate", function (next) {
   if (!this._id) {
-    this._id = mongoose.Types.ObjectId();
+    this._id = new mongoose.Types.ObjectId();
   }
   if (!this.fechaCreacion) {
     this.fechaCreacion = new Intl.DateTimeFormat("es-ES", {
@@ -122,7 +122,7 @@ PrecioSchema.post("aggregate", function (result) {
     delete item._id;
     delete item.__v
   })
-  
+
 })
 
 module.exports = mongoose.model("Precio", PrecioSchema, "Precio");

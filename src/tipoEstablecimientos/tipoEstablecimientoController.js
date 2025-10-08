@@ -43,11 +43,10 @@ module.exports.getDesplegable = function (req, res) {
       }
     }
   ]).then((result) => {
-      if (result) {
-        res.jsonp({ data: result });
-      }
-    })
-    .catch((error) => res.status(500).send({ message: error.message }))
+    if (result) {
+      res.jsonp({ data: result });
+    }
+  }).catch((error) => res.status(500).send({ message: error.message }))
 }
 
 module.exports.insert = function (req, res) {
@@ -81,26 +80,22 @@ module.exports.insert = function (req, res) {
 
 module.exports.update = function (req, res) {
   TipoEstablecimiento.findOneAndUpdate(
-    { _id: mongoose.Types.ObjectId(req.body.id) },
+    { _id: new mongoose.Types.ObjectId(`${req.body.id}`) },
     { $set: { nombre: req.body.nombre, abreviatura: req.body.abreviatura } },
-    { useFindAndModify: false, returnNewDocument: true },
-    (err, result) => {
-      if (err) {
-        return res
-          .status(500)
-          .send({ message: err + " en Tipo Establecimiento" });
+    { useFindAndModify: false, returnNewDocument: true }).then(result => {
+      if (result) {
+        res.jsonp({ data: result });
       } else {
         res.jsonp({ data: result });
       }
-    }
-  );
+    }).catch((error) => res.status(500).send({ message: error.message }));
 };
 
 module.exports.delete = function (req, res) {
   const tipoEstablecimientoId = req.params.id
   const Establecimiento = require("../establecimientos/establecimientoModel");
   Establecimiento.find({
-    tipoEstablecimiento: { $all: [mongoose.Types.ObjectId(tipoEstablecimientoId)] }
+    tipoEstablecimiento: { $all: [new mongoose.Types.ObjectId(`${tipoEstablecimientoId}`)] }
   }).then(result => {
     if (result.length !== 0) {
       res.status(409).send({ respuesta: 409, message: "El tipo de establecimiento está en uso" });

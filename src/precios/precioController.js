@@ -23,8 +23,9 @@ module.exports.get = async function (req, res) {
 }
 
 module.exports.getById = async function (req, res) {
+  const id = new mongoose.Types.ObjectId(`${req.params.id}`);
   const filtroUM = await Precio.aggregate([
-    { $match: { _id: mongoose.Types.ObjectId(req.params.id) } },
+    { $match: { _id: id } },
     {
       $lookup: {
         from: 'TipoUnidad',
@@ -74,24 +75,22 @@ module.exports.getById = async function (req, res) {
         um: 0
       }
     }
-  ]);
+  ]).catch((error) => res.status(500).send({ message: error.message }));
 
-  Precio.populate(filtroUM, { path: "establecimiento", select: { _id: 1, nombre: 1 } }, (err, filtroEstablecimiento) => {
-    Precio.populate(filtroEstablecimiento, { path: "articulo", select: { _id: 1, nombre: 1 } }, (err, result) => {
-      if (err) {
-        res.status(500).send({ message: error.message });
-      }
+  Precio.populate(filtroUM, { path: "establecimiento", select: { _id: 1, nombre: 1 } }).then(filtroEstablecimiento => {
+    Precio.populate(filtroEstablecimiento, { path: "articulo", select: { _id: 1, nombre: 1 } }).then(result => {
       res.jsonp({ data: result[0] });
-    })
-  });
+    }).catch(error => res.status(500).send({ message: error.message }));
+  }).catch(error => res.status(500).send({ message: error.message }));
 }
 
 module.exports.getByArticuloId = async function (req, res) {
   if (!req.params.articuloId) {
     return res.status(400).send({ message: 'El id del articulo es requerido' })
   }
-  const filtroUM = await Precio.aggregate([
-    { $match: { articulo: mongoose.Types.ObjectId(req.params.articuloId) } },
+  const id = new mongoose.Types.ObjectId(`${req.params.articuloId}`);
+  Precio.aggregate([
+    { $match: { articulo: id } },
     {
       $lookup: {
         from: 'TipoUnidad',
@@ -146,19 +145,13 @@ module.exports.getByArticuloId = async function (req, res) {
         um: 0
       }
     }
-  ], (err) => {
-    if (err) {
-      res.status(500).send({ message: error.message });
-    }
-  });
-  Precio.populate(filtroUM, { path: "establecimiento", select: { _id: 1, nombre: 1 } }, (err, filtroEstablecimiento) => {
-    Precio.populate(filtroEstablecimiento, { path: "articulo", select: { _id: 1, nombre: 1 } }, (err, result) => {
-      if (err) {
-        res.status(500).send({ message: error.message });
-      }
-      res.jsonp({ data: result });
-    })
-  });
+  ]).then((filtroUM) => {
+    Precio.populate(filtroUM, { path: "establecimiento", select: { _id: 1, nombre: 1 } }).then(filtroEstablecimiento => {
+      Precio.populate(filtroEstablecimiento, { path: "articulo", select: { _id: 1, nombre: 1 } }).then(result => {
+        res.jsonp({ data: result });
+      }).catch((error) => res.status(500).send({ message: error.message }));
+    }).catch((error) => res.status(500).send({ message: error.message }));
+  }).catch((error) => res.status(500).send({ message: error.message }));
 
   // Precio.find({ articulo: req.params.articuloId })
   //   .then((result) => {
@@ -209,20 +202,11 @@ module.exports.getByAny = async function (req, res) {
       }
     }
   ])
-  Precio.populate(
-    primerFiltro,
-    { path: 'establecimiento', select: { _id: 1, nombre: 1 } },
-    (err, result) => {
-      Precio.populate(result, {
-        path: 'articulo',
-        select: { _id: 1, nombre: 1 }
-      })
-        .then((result) => {
-          res.jsonp({ data: result })
-        })
-        .catch((error) => res.status(500).send({ message: error.message }))
-    }
-  )
+  Precio.populate(primerFiltro, { path: 'establecimiento', select: { _id: 1, nombre: 1 } }).then(result => {
+    Precio.populate(result, { path: 'articulo', select: { _id: 1, nombre: 1 } }).then((result) => {
+      res.jsonp({ data: result })
+    }).catch(error => res.status(500).send({ message: error.message }));
+  }).catch(error => res.status(500).send({ message: error.message }));
 }
 
 module.exports.insert = function (req, res) {
@@ -262,22 +246,20 @@ module.exports.insert = function (req, res) {
 module.exports.update = function (req, res) {
   if (req.body.unidadesMedida.length !== 0) {
     req.body.unidadesMedida = req.body.unidadesMedida.map((item) => {
-      item._id = mongoose.Types.ObjectId(item.id)
+      item._id = new mongoose.Types.ObjectId(`${item.id}`)
       return item
     })
   }
   Precio.findOneAndUpdate(
-    { _id: mongoose.Types.ObjectId(req.body.id) },
+    { _id: new mongoose.Types.ObjectId(`${req.body.id}`) },
     { $set: req.body },
-    { useFindAndModify: false, returnNewDocument: true, returnOriginal: false },
-    (err, result) => {
-      if (err) {
-        return res.status(500).send({ message: err + ' en Precio' })
-      } else {
+    { useFindAndModify: false, returnNewDocument: true, returnOriginal: false }).then(result => {
+      if (result) {
         res.jsonp({ data: result })
+      } else {
+        res.status(500).send({ message: 'Error al actualizar el registro de precio' })
       }
-    }
-  )
+    }).catch((error) => res.status(500).send({ message: error.message }))
 }
 
 module.exports.delete = function (req, res) {

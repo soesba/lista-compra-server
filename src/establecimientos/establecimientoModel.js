@@ -98,10 +98,10 @@ DireccionSchema.set('toJSON', {
 
 EstablecimientoSchema.pre('validate', function (next) {
   if (!this._id) {
-    this._id = mongoose.Types.ObjectId()
+    this._id = new mongoose.Types.ObjectId()
   }
   if (this.tipoEstablecimiento) {
-    this.tipoEstablecimiento = mongoose.Types.ObjectId(this.tipoEstablecimiento)
+    this.tipoEstablecimiento = new mongoose.Types.ObjectId(`${this.tipoEstablecimiento}`)
   }
   if (!this.fechaCreacion) {
     this.fechaCreacion = new Intl.DateTimeFormat('es-ES', {

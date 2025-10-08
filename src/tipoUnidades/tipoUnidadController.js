@@ -12,7 +12,7 @@ module.exports.get = function (req, res) {
 module.exports.getById = function (req, res) {
   TipoUnidad.findOne({ _id: req.params.id })
     .then((result) => {
-        res.jsonp({ data: result });
+      res.jsonp({ data: result });
     })
     .catch((error) => res.status(500).send({ message: error.message }));
 };
@@ -36,19 +36,18 @@ module.exports.getByAny = function (req, res) {
 module.exports.getDesplegable = function (req, res) {
   TipoUnidad.aggregate([
     {
-      "$project":{
+      "$project": {
         _id: 0,
         "id": "$_id",
         "nombre": "$nombre"
       }
     }
   ]).then((result) => {
-      if (result) {
-        res.jsonp({ data: result })
-      }
-    })
-    .catch((error) => res.status(500).send({ message: error.message }))
-}
+    if (result) {
+      res.jsonp({ data: result })
+    }
+  }).catch((error) => res.status(500).send({ message: error.message }));
+};
 
 module.exports.insert = function (req, res) {
   const tipoUnidad = new TipoUnidad(req.body);
@@ -79,19 +78,17 @@ module.exports.insert = function (req, res) {
     .catch((error) => res.status(500).send({ message: error.message }));
 };
 
-module.exports.update = function(req, res) {
-    TipoUnidad.findOneAndUpdate(
-        { _id:  mongoose.Types.ObjectId(req.body.id)},
-        { $set: { nombre: req.body.nombre, abreviatura: req.body.abreviatura } },
-        { useFindAndModify: false, returnNewDocument: true },
-        (err, result) => {
-            if (err) {
-                return res.status(500).send({message: err + " en tipo de unidad"})
-            } else {
-                res.jsonp({ data: result })
-            }
-        }
-    )
+module.exports.update = function (req, res) {
+  TipoUnidad.findOneAndUpdate(
+    { _id: new mongoose.Types.ObjectId(`${req.body.id}`) },
+    { $set: { nombre: req.body.nombre, abreviatura: req.body.abreviatura } },
+    { useFindAndModify: false, returnNewDocument: true }).then(result => {
+      if (result) {
+        res.jsonp({ data: result });
+      } else {
+        res.status(500).send({ message: "Error al actualizar el registro de tipo de unidad" });
+      }
+    }).catch((error) => res.status(500).send({ message: error.message }));
 }
 
 module.exports.delete = function (req, res) {
@@ -100,7 +97,7 @@ module.exports.delete = function (req, res) {
   const TipoUnidadEquivalencia = require('../tipoUnidadEquivalencia/tipoUnidadEquivalenciaModel');
 
   Articulo.find({
-    tiposUnidad: { $all: [mongoose.Types.ObjectId(tipoUnidadId)]   }
+    tiposUnidad: { $all: [new mongoose.Types.ObjectId(`${tipoUnidadId}`)] }
   }).then((result) => {
     if (result.length !== 0) {
       res.status(409).send({ respuesta: 409, message: "El tipo de unidad está en uso" });
@@ -115,17 +112,17 @@ module.exports.delete = function (req, res) {
           res.status(409).send({ respuesta: 409, message: "El tipo de unidad está en uso" });
         } else {
           TipoUnidad.deleteOne({ _id: req.params.id })
-          .then((result) => {
-            if (result) {
-              res.jsonp({ data: result });
-            } else {
-              res.status(500).send({ message: "TipoUnidad con id " + req.params.id + " no existe" });
-            }
-          })
-          .catch((error) => res.status(500).send({ message: error.message }));
+            .then((result) => {
+              if (result) {
+                res.jsonp({ data: result });
+              } else {
+                res.status(500).send({ message: "TipoUnidad con id " + req.params.id + " no existe" });
+              }
+            })
+            .catch((error) => res.status(500).send({ message: error.message }));
         }
       })
     }
   })
-  .catch((error) => res.status(500).send({ message: error.message }));
+    .catch((error) => res.status(500).send({ message: error.message }));
 };

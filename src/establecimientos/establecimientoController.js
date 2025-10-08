@@ -64,11 +64,10 @@ module.exports.getDesplegable = function (req, res) {
       }
     }
   ]).then((result) => {
-      if (result) {
-        res.jsonp({ data: result })
-      }
-    })
-    .catch((error) => res.status(500).send({ message: error.message }))
+    if (result) {
+      res.jsonp({ data: result })
+    }
+  }).catch((error) => res.status(500).send({ message: error.message }))
 }
 
 module.exports.insert = function (req, res) {
@@ -115,17 +114,15 @@ module.exports.update = function(req, res) {
       return element
     });
     Establecimiento.findOneAndUpdate(
-        { _id:  mongoose.Types.ObjectId(req.body.id)},
-        { $set: { nombre: req.body.nombre, abreviatura: req.body.abreviatura, logo: req.body.logo, direcciones: req.body.direcciones, tipoEstablecimiento: req.body.tipoEstablecimiento } },
-        { useFindAndModify: false, returnNewDocument: true },
-        (err, result) => {
-            if (err) {
-                return res.status(500).send({message: err + " en Establecimiento"})
-            } else {
-                res.jsonp({ data: result })
-            }
-        }
-    )
+      { _id:  new mongoose.Types.ObjectId(`${req.body.id}`) },
+      { $set: { nombre: req.body.nombre, abreviatura: req.body.abreviatura, logo: req.body.logo, direcciones: req.body.direcciones, tipoEstablecimiento: req.body.tipoEstablecimiento } },
+      { useFindAndModify: false, returnNewDocument: true }).then(result => {
+          if (result) {
+              res.jsonp({ data: result })
+          } else {
+              res.status(500).send({ message: 'Error al actualizar el registro de establecimiento' })
+          }
+      }).catch((error) => res.status(500).send({ message: error.message }));
 }
 
 module.exports.delete = function (req, res) {

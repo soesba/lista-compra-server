@@ -33,14 +33,14 @@ module.exports.get = async function (req, res) {
     if (result) {
       res.jsonp({ data: result })
     }
-  })
-    .catch((error) => res.status(500).send({ message: error.message }))
+  }).catch((error) => res.status(500).send({ message: error.message }))
 }
 
 module.exports.getById = async function (req, res) {
+  const id = new mongoose.Types.ObjectId(`${req.params.id}`);
   Articulo.aggregate([
     {
-      $match: { _id: mongoose.Types.ObjectId(req.params.id) } // Filtrar por id
+      $match: { _id: id } // Filtrar por id
     },
     {
       $lookup: {
@@ -87,8 +87,7 @@ module.exports.getById = async function (req, res) {
     if (result[0]) {
       res.jsonp({ data: result[0] })
     }
-  })
-    .catch((error) => res.status(500).send({ message: error.message }))
+  }).catch((error) => res.status(500).send({ message: error.message }))
 }
 
 module.exports.getByAny = function (req, res) {
@@ -121,8 +120,7 @@ module.exports.getDesplegable = function (req, res) {
     if (result) {
       res.jsonp({ data: result })
     }
-  })
-    .catch((error) => res.status(500).send({ message: error.message }))
+  }).catch((error) => res.status(500).send({ message: error.message }))
 }
 
 module.exports.insert = function (req, res) {
@@ -135,13 +133,9 @@ module.exports.insert = function (req, res) {
           message: 'Ya existe un registro con ese nombre',
         })
       } else {
-        articulo.save({ returnNewDocument: true }, (err, result) => {
-          if (err) {
-            res.status(500).send({ message: 'Error al crear el registro de articulo' })
-          } else {
-            res.jsonp({ data: result });
-          }
-        })
+        articulo.save({ returnNewDocument: true }).then(result => {
+          res.jsonp({ data: result });
+        }).catch((error) => res.status(500).send({ message: error.message }));
       }
     })
     .catch((error) => res.status(500).send({ message: error.message }))
@@ -149,12 +143,12 @@ module.exports.insert = function (req, res) {
 
 module.exports.update = function (req, res) {
   const tiposUnidad = req.body.tiposUnidad.map(item => {
-    item = mongoose.Types.ObjectId(item)
+    item = new mongoose.Types.ObjectId(`${item}`)
     return item
   })
 
   Articulo.findOneAndUpdate(
-    { _id: mongoose.Types.ObjectId(req.body.id) },
+    { _id: new mongoose.Types.ObjectId(`${req.body.id}`) },
     {
       $set: {
         nombre: req.body.nombre,
@@ -162,15 +156,13 @@ module.exports.update = function (req, res) {
         tiposUnidad: tiposUnidad,
       },
     },
-    { useFindAndModify: false, returnNewDocument: true },
-    (err, result) => {
-      if (err) {
-        return res.status(500).send({ message: err + ' en Articulo' })
-      } else {
+    { useFindAndModify: false, returnNewDocument: true }).then(result => {
+      if (result) {
         res.jsonp({ data: result })
+      } else {
+        res.status(500).send({ message: 'Error al actualizar el registro de articulo' })
       }
-    }
-  )
+    }).catch((error) => res.status(500).send({ message: error.message }));
 }
 
 module.exports.delete = function (req, res) {
