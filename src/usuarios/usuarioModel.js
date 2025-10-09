@@ -33,6 +33,16 @@ var UsuarioSchema = new Schema({
 		required: true,
 		trim: true
 	},
+  nombre: {
+    type: String,
+    required: true
+  },
+  primerApellido: {
+    type: String
+  },
+  segundoApellido: {
+    type: String
+  },
 	password: {
 		type: String,
 		default: ''

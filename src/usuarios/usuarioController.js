@@ -83,15 +83,19 @@ module.exports.getByUsername = function (req, res) {
 }
 
 module.exports.update = function (req, res) {
-  var userId = req.params.id;
+  var userId = new mongoose.Types.ObjectId(`${req.body.id}`);
   var data = req.body;
+  const newUsuario = {
+    ...req.body
+  }
+  delete newUsuario.id;
 
-  Usuario.updateOne({ _id: userId }, data)
-    .then(response => res.jsonp({ data: response }))
-    .catch(error => {
-      return res.status(500).send({ message: error.message })
-    });
-
+  Usuario.findOneAndUpdate({ _id: userId }, newUsuario).then(response => {
+    console.log('LOG~ ~ :91 ~ response:', response)
+    return res.jsonp({ data: response })
+  }).catch(error => {
+    return res.status(500).send({ message: error.message })
+  });
 }
 
 module.exports.delete = function (req, res) {
