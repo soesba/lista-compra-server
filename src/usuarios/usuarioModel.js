@@ -2,6 +2,7 @@
 
 var mongoose = require('mongoose');
 var	Schema = mongoose.Schema;
+var ImageSchema = require('../common/imageSchema.js');
 
 var PermisoSchema = new Schema({
   _id: {
@@ -42,6 +43,10 @@ var UsuarioSchema = new Schema({
   },
   segundoApellido: {
     type: String
+  },
+  foto: {
+    type: ImageSchema,
+    default: null,
   },
 	password: {
 		type: String,

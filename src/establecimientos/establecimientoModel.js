@@ -2,6 +2,8 @@
 
 var mongoose = require('mongoose')
 var Schema = mongoose.Schema
+var ImageSchema = require('../common/imageSchema.js')
+
 var DireccionSchema = new Schema({
   _id: {
     type: Schema.Types.ObjectId,
@@ -25,17 +27,6 @@ var DireccionSchema = new Schema({
   },
 })
 
-var LogoSchema = new Schema({
-  type: {
-    type: String,
-    default: '',
-  },
-  content: {
-    type: String,
-    default: '',
-  },
-})
-
 var EstablecimientoSchema = new Schema({
   _id: {
     type: Schema.Types.ObjectId,
@@ -53,7 +44,7 @@ var EstablecimientoSchema = new Schema({
     index: true,
   },
   logo: {
-    type: LogoSchema,
+    type: ImageSchema,
     default: null,
   },
   notas: {
