@@ -37,7 +37,6 @@ function initDB(db) {
 }
 
 function startServer(config) {
-    // mongoose.connect(config.uriDb, {useNewUrlParser: true, useUnifiedTopology: true, autoIndex: false})
     mongoose.connect(config.uriDb)
     .then(
         (db) => {

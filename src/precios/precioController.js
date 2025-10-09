@@ -253,7 +253,7 @@ module.exports.update = function (req, res) {
   Precio.findOneAndUpdate(
     { _id: new mongoose.Types.ObjectId(`${req.body.id}`) },
     { $set: req.body },
-    { useFindAndModify: false, returnNewDocument: true, returnOriginal: false }).then(result => {
+    { new: true, returnOriginal: false }).then(result => {
       if (result) {
         res.jsonp({ data: result })
       } else {

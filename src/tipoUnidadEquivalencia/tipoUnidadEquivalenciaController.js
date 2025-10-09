@@ -129,7 +129,7 @@ module.exports.update = function (req, res) {
   TipoUnidadEquivalencia.findOneAndUpdate(
     { _id: new mongoose.Types.ObjectId(`${req.body.id}`) },
     { $set: { from: req.body.from, to: req.body.to, factor: req.body.factor } },
-    { useFindAndModify: false, returnNewDocument: true }).then(result => {
+    { new: true }).then(result => {
       if (result) {
         res.jsonp({ data: result });
       } else {

@@ -116,7 +116,7 @@ module.exports.update = function(req, res) {
     Establecimiento.findOneAndUpdate(
       { _id:  new mongoose.Types.ObjectId(`${req.body.id}`) },
       { $set: { nombre: req.body.nombre, abreviatura: req.body.abreviatura, logo: req.body.logo, direcciones: req.body.direcciones, tipoEstablecimiento: req.body.tipoEstablecimiento } },
-      { useFindAndModify: false, returnNewDocument: true }).then(result => {
+      { new: true }).then(result => {
           if (result) {
               res.jsonp({ data: result })
           } else {

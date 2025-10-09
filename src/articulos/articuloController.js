@@ -133,7 +133,7 @@ module.exports.insert = function (req, res) {
           message: 'Ya existe un registro con ese nombre',
         })
       } else {
-        articulo.save({ returnNewDocument: true }).then(result => {
+        articulo.save({ new: true }).then(result => {
           res.jsonp({ data: result });
         }).catch((error) => res.status(500).send({ message: error.message }));
       }
@@ -156,7 +156,7 @@ module.exports.update = function (req, res) {
         tiposUnidad: tiposUnidad,
       },
     },
-    { useFindAndModify: false, returnNewDocument: true }).then(result => {
+    { new: true }).then(result => {
       if (result) {
         res.jsonp({ data: result })
       } else {

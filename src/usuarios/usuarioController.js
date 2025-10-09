@@ -84,14 +84,12 @@ module.exports.getByUsername = function (req, res) {
 
 module.exports.update = function (req, res) {
   var userId = new mongoose.Types.ObjectId(`${req.body.id}`);
-  var data = req.body;
   const newUsuario = {
     ...req.body
   }
   delete newUsuario.id;
 
-  Usuario.findOneAndUpdate({ _id: userId }, newUsuario).then(response => {
-    console.log('LOG~ ~ :91 ~ response:', response)
+  Usuario.findOneAndUpdate({ _id: userId }, newUsuario, { new: true }).then(response => {
     return res.jsonp({ data: response })
   }).catch(error => {
     return res.status(500).send({ message: error.message })

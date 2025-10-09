@@ -82,7 +82,7 @@ module.exports.update = function (req, res) {
   TipoUnidad.findOneAndUpdate(
     { _id: new mongoose.Types.ObjectId(`${req.body.id}`) },
     { $set: { nombre: req.body.nombre, abreviatura: req.body.abreviatura } },
-    { useFindAndModify: false, returnNewDocument: true }).then(result => {
+    { new: true }).then(result => {
       if (result) {
         res.jsonp({ data: result });
       } else {
