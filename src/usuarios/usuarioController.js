@@ -3,18 +3,6 @@
 var mongoose = require('mongoose');
 var Usuario = mongoose.model('Usuario');
 
-module.exports.getByUsername = function (req, res) {
-  Usuario.findOne({ username: req.body.username })
-    .then(result => {
-      if (result) {
-        res.jsonp({ data: result });
-      } else {
-        res.status(404).send({ message: 'No existe un usuario con ese username' });
-      }
-    })
-    .catch(error => res.status(500).send({ message: error.message }));
-}
-
 module.exports.register = function (req, res) {
   var user = new User(req.body);
 
@@ -33,10 +21,10 @@ module.exports.register = function (req, res) {
 
 module.exports.get = function (req, res) {
   const query = req.query;
-  if (query) {
-    return this.getBy(req, res);
-  } else {
+ if (Object.keys(query).length === 0) {
     return this.getAll(req, res);
+  } else {
+    return this.getBy(req, res);
   }
 }
 
@@ -54,7 +42,9 @@ module.exports.getAll = function (req, res) {
 
 module.exports.getBy = function (req, res) {
   const params = req.query;
+  let message = 'username ';
   if (params.id) {
+    message = 'id ';
     params._id = new mongoose.Types.ObjectId(`${params.id}`);
     delete params.id;
   }
@@ -63,20 +53,19 @@ module.exports.getBy = function (req, res) {
       if (response) {
         res.jsonp({ data: response });
       } else {
-        res.status(404).send({ message: 'Usuario con id ' + req.params.id + ' no existe' });
+        res.status(404).send({ message: 'Usuario con ' + message + req.params.id + ' no existe' });
       }
     })
     .catch(error => res.status(500).send({ message: error.message }));
 }
 
 module.exports.getByUsername = function (req, res) {
-  console.log('LOG~ ~ :62 ~ req.params.username:', req.params.username)
   Usuario.findOne({ username: req.params.username })
     .then(response => {
       if (response) {
         res.jsonp({ data: response });
       } else {
-        res.status(404).send({ message: 'Usuario con username ' + req.params.username + ' no existe' });
+        res.status(404).send({ message: 'No existe un usuario con ese username' });
       }
     })
     .catch(error => res.status(500).send({ message: error.message }));
