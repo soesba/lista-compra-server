@@ -9,12 +9,6 @@ var AvatarSchema = new Schema({
     type: Schema.Types.ObjectId,
     required: true,
   },
-  nombre: {
-    type: String,
-    unique: true,
-    required: true,
-    trim: true
-  },
   imagen: {
     type: ImageSchema,
     default: null,
@@ -44,8 +38,8 @@ AvatarSchema.pre("validate", function (next) {
   if (!this._id) {
     this._id = new mongoose.Types.ObjectId();
   }
-  if (!this.fechaCreacion) {
-    this.fechaCreacion = new Intl.DateTimeFormat("es-ES", {
+  if (!this.fechaSubida) {
+    this.fechaSubida = new Intl.DateTimeFormat("es-ES", {
       day: "2-digit",
       month: "2-digit",
       year: "numeric",

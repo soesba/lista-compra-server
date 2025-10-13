@@ -42,7 +42,7 @@ module.exports.update = function (req, res) {
 module.exports.delete = function (req, res) {
   var modeloId = req.params.id;
 
-  Modelo.findOneAndRemove({ _id: modeloId })
+  Modelo.findOneAndDelete({ _id: modeloId })
     .then(result => res.jsonp({ data: result }))
     .catch(error => {
       return res.status(500).send({ message: error.message })

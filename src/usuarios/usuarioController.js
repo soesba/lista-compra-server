@@ -88,7 +88,7 @@ module.exports.update = function (req, res) {
 module.exports.delete = function (req, res) {
   var userId = req.params.id;
 
-  Usuario.findOneAndRemove({ _id: userId })
+  Usuario.findOneAndDelete({ _id: userId })
     .then(result => res.jsonp({ data: result }))
     .catch(error => {
       return res.status(500).send({ message: error.message })
