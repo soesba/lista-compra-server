@@ -23,6 +23,21 @@ var PermisoSchema = new Schema({
   }
 });
 
+var PreferenciaUserSchema = new Schema({
+  configuracionId: {
+    type: Schema.Types.ObjectId,
+    required: true
+  },
+  modeloId: {
+    type: Schema.Types.ObjectId,
+    required: true
+  },
+  valor: {
+    type: String,
+    required: true
+  }
+});
+
 var UsuarioSchema = new Schema({
   _id: {
     type: Schema.Types.ObjectId,
@@ -62,6 +77,10 @@ var UsuarioSchema = new Schema({
   },
   permisos: {
     type: [PermisoSchema],
+    default: null
+  },
+  preferencias: {
+    type: [PreferenciaUserSchema],
     default: null
   }
 });
