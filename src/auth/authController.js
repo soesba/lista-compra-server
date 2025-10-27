@@ -26,7 +26,8 @@ module.exports.login = function (req, res) {
           const user = {
             username: response.username,
             esAdministrador: response.esAdministrador,
-            permisos: response.permisos
+            permisos: response.permisos,
+            preferencias: response.preferencias
           }
           res.send({ token, refreshToken, user });
         } else {

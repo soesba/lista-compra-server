@@ -28,4 +28,5 @@ function checkTablasMaestras () {
   })
   initCollections.checkDataConsistency('Precio')
   initCollections.checkDataConsistency('Equivalencias');
+  initCollections.checkDataConsistency('Modelo');
 }

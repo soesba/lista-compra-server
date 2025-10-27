@@ -69,11 +69,11 @@ module.exports.getByUsername = function (req, res) {
 }
 
 module.exports.getPreferencias = function (req, res) {
-  var userId = new mongoose.Types.ObjectId(`${req.query.id}`);
-  Usuario.findOne({ _id: userId }, { configuracion: 1 })
+  var userId = new mongoose.Types.ObjectId(`${req.params.id}`);
+  Usuario.findOne({ _id: userId }, { preferencias: 1 })
     .then(response => {
       if (response) {
-        res.jsonp({ data: response.configuracion });
+        res.jsonp({ data: response.preferencias });
       } else {
         res.status(404).send({ message: 'No existe un usuario con ese ID' });
       }

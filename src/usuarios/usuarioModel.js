@@ -90,12 +90,16 @@ UsuarioSchema.virtual('id').get(function(){
   return this._id.toHexString();
 });
 
+PreferenciaUserSchema.virtual('id').get(function(){
+  return this._id.toHexString();
+});
+
 UsuarioSchema.set('toJSON', {
   virtuals: true,
   transform: (doc, result) => {
     return {
       ...result,
-      id: result._id,
+      id: result._id
     }
   }
 });

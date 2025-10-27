@@ -74,3 +74,16 @@ module.exports.delete = function (req, res) {
     });
 
 }
+
+module.exports.checkUso = function (req, res) {
+  const modeloId = req.params.id;
+  const checkUsoModelo = require('../utils/checkUso').checkUsoModelo;
+
+  checkUsoModelo(modeloId)
+    .then(resultados => {
+      res.jsonp({ data: resultados });
+    })
+    .catch(error => {
+      res.status(500).send({ message: error.message });
+    });
+};

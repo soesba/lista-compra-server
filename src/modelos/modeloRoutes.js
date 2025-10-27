@@ -8,6 +8,9 @@ module.exports = function (app) {
     .get(verifyToken, (req, res) => modeloController.get(req, res)) // Obtener
     .post(verifyToken, (req, res) => modeloController.insert(req, res)); // Crear nuevo
 
+  app.route('/api/modelos/checkuso/:id')
+    .get(verifyToken, (req, res) => modeloController.checkUso(req, res));
+
   app.route('/api/modelos/:id')
     .put(verifyToken, (req, res) => modeloController.update(req, res)) // Actualizar por ID
     .delete(verifyToken, (req, res) => modeloController.delete(req, res)); // Eliminar por ID
