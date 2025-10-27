@@ -3,18 +3,6 @@
 var mongoose = require('mongoose');
 var Usuario = mongoose.model('Usuario');
 
-module.exports.getByUsername = function (req, res) {
-  Usuario.findOne({ username: req.body.username })
-    .then(result => {
-      if (result) {
-        res.jsonp({ data: result });
-      } else {
-        res.status(404).send({ message: 'No existe un usuario con ese username' });
-      }
-    })
-    .catch(error => res.status(500).send({ message: error.message }));
-}
-
 module.exports.register = function (req, res) {
   var user = new User(req.body);
 
@@ -33,15 +21,17 @@ module.exports.register = function (req, res) {
 
 module.exports.get = function (req, res) {
   const query = req.query;
-  if (query) {
-    return this.getBy(req, res);
-  } else {
+ if (Object.keys(query).length === 0) {
     return this.getAll(req, res);
+  } else {
+    const params = req.query;
+    if (params.id) return this.getById(req, res);
+    if (params.username) return this.getByUsername(req, res);
   }
 }
 
 module.exports.getAll = function (req, res) {
-  Usuario.find()
+  Usuario.find({}, { password: 0 })
     .then(response => {
       if (response) {
         res.jsonp({ data: response });
@@ -52,31 +42,40 @@ module.exports.getAll = function (req, res) {
     .catch(error => res.status(500).send({ message: error.message }));
 }
 
-module.exports.getBy = function (req, res) {
-  const params = req.query;
-  if (params.id) {
-    params._id = new mongoose.Types.ObjectId(`${params.id}`);
-    delete params.id;
-  }
-  Usuario.findOne(params)
+module.exports.getById = function (req, res) {
+  const params = { _id: new mongoose.Types.ObjectId(`${req.query.id}`) };
+  Usuario.findOne(params, { password: 0 })
     .then(response => {
       if (response) {
         res.jsonp({ data: response });
       } else {
-        res.status(404).send({ message: 'Usuario con id ' + req.params.id + ' no existe' });
+        res.status(404).send({ message: 'No existe un usuario con id ' + req.query.id });
       }
     })
     .catch(error => res.status(500).send({ message: error.message }));
 }
 
 module.exports.getByUsername = function (req, res) {
-  console.log('LOG~ ~ :62 ~ req.params.username:', req.params.username)
-  Usuario.findOne({ username: req.params.username })
+  const params = { username: req.query.username };
+  Usuario.findOne(params, { password: 0 })
     .then(response => {
       if (response) {
         res.jsonp({ data: response });
       } else {
-        res.status(404).send({ message: 'Usuario con username ' + req.params.username + ' no existe' });
+        res.status(404).send({ message: 'No existe un usuario con username ' + req.query.username });
+      }
+    })
+    .catch(error => res.status(500).send({ message: error.message }));
+}
+
+module.exports.getPreferencias = function (req, res) {
+  var userId = new mongoose.Types.ObjectId(`${req.params.id}`);
+  Usuario.findOne({ _id: userId }, { preferencias: 1 })
+    .then(response => {
+      if (response) {
+        res.jsonp({ data: response.preferencias });
+      } else {
+        res.status(404).send({ message: 'No existe un usuario con ese ID' });
       }
     })
     .catch(error => res.status(500).send({ message: error.message }));
@@ -99,7 +98,7 @@ module.exports.update = function (req, res) {
 module.exports.delete = function (req, res) {
   var userId = req.params.id;
 
-  Usuario.findOneAndRemove({ _id: userId })
+  Usuario.findOneAndDelete({ _id: userId })
     .then(result => res.jsonp({ data: result }))
     .catch(error => {
       return res.status(500).send({ message: error.message })

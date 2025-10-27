@@ -4,13 +4,14 @@ const modeloController = require('./modeloController');
 
 module.exports = function (app) {
 
-  app.get('/api/modelos/:id', verifyToken, (req, res) => modeloController.getById(req, res)); // Obtener por ID
+  app.route('/api/modelos')
+    .get(verifyToken, (req, res) => modeloController.get(req, res)) // Obtener
+    .post(verifyToken, (req, res) => modeloController.insert(req, res)); // Crear nuevo
 
-  app.get('/api/modelos', verifyToken, (req, res) => modeloController.get(req, res)); // Obtener todos
+  app.route('/api/modelos/checkuso/:id')
+    .get(verifyToken, (req, res) => modeloController.checkUso(req, res));
 
-  app.post('/api/modelos', verifyToken, (req, res) => modeloController.insert(req, res)); // Crear nuevo
-
-  app.put('/api/modelos/:id', verifyToken, (req, res) => modeloController.update(req, res)); // Actualizar por ID
-
-  app.delete('/api/modelos/:id', verifyToken, (req, res) => modeloController.delete(req, res)); // Eliminar por ID
+  app.route('/api/modelos/:id')
+    .put(verifyToken, (req, res) => modeloController.update(req, res)) // Actualizar por ID
+    .delete(verifyToken, (req, res) => modeloController.delete(req, res)); // Eliminar por ID
 }

@@ -9,6 +9,9 @@ module.exports = function (app) {
     .post(verifyToken, (req, res) => usuarioController.register(req, res))     // Registrar nuevo usuario
     .put(verifyToken, (req, res) => usuarioController.update(req, res));         // Actualizar usuario por ID
 
+  app.route('/api/usuarios/preferencias/:id')
+    .get(verifyToken, (req, res) => usuarioController.getPreferencias(req, res)); // Obtener configuracion de usuario
+
   app.route('/api/usuarios/:id')
     .delete(verifyToken, (req, res) => usuarioController.delete(req, res));     // Eliminar usuario por ID
 
