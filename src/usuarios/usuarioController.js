@@ -81,6 +81,42 @@ module.exports.getPreferencias = function (req, res) {
     .catch(error => res.status(500).send({ message: error.message }));
 }
 
+module.exports.getFoto = function (req, res) {
+  const query = req.query;
+  if (Object.keys(query).length === 0) {
+    return this.getAll(req, res);
+  } else {
+    const params = req.query;
+    if (params.id) return this.getFotoById(req, res);
+    if (params.username) return this.getFotoByUsername(req, res);
+  }
+}
+module.exports.getFotoById = function (req, res) {
+  const params = { _id: new mongoose.Types.ObjectId(`${req.query.id}`) };
+  Usuario.findOne(params, { foto: 1 })
+    .then(response => {
+      if (response) {
+        res.jsonp({ data: response.foto });
+      } else {
+        res.status(404).send({ message: 'No existe un usuario con ese ID' });
+      }
+    })
+    .catch(error => res.status(500).send({ message: error.message }));
+}
+
+module.exports.getFotoByUsername = function (req, res) {
+  const params = { username: req.query.username };
+  Usuario.findOne(params, { foto: 1 })
+    .then(response => {
+      if (response) {
+        res.jsonp({ data: response.foto });
+      } else {
+        res.status(404).send({ message: 'No existe un usuario con ese username' });
+      }
+    })
+    .catch(error => res.status(500).send({ message: error.message }));
+}
+
 module.exports.update = function (req, res) {
   var userId = new mongoose.Types.ObjectId(`${req.body.id}`);
   const newUsuario = {

@@ -12,6 +12,9 @@ module.exports = function (app) {
   app.route('/api/usuarios/preferencias/:id')
     .get(verifyToken, (req, res) => usuarioController.getPreferencias(req, res)); // Obtener configuracion de usuario
 
+    app.route('/api/usuarios/foto')
+    .get(verifyToken, (req, res) => usuarioController.getFoto(req, res)); // Obtener foto del usuario
+
   app.route('/api/usuarios/:id')
     .delete(verifyToken, (req, res) => usuarioController.delete(req, res));     // Eliminar usuario por ID
 
