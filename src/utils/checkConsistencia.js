@@ -18,21 +18,11 @@ module.exports.checkDataConsistencyArticulo = async function () {
 
       // Comprobacion de existencia del usuario asociado al articulo
       if (!current.usuario) {
-        resultados.push({
-          modelo: 'Usuario',
-          articulo: `${current.id} - ${current.nombre}`,
-          usuario: null,
-          existe: false,
-        });
+        resultados.push(`El artículo ${current.id} - ${current.nombre} no tiene usuario asociado`);
       } else {
         const existeUsuario = await mongoose.model('Usuario').exists({ _id: current.usuario });
         if (!existeUsuario) {
-          resultados.push({
-            modelo: 'Usuario',
-            articulo: `${current.id} - ${current.nombre}`,
-            id: current.usuario,
-            existe: !!existeUsuario,
-          });
+          resultados.push(`El artículo ${current.id} - ${current.nombre} tiene un usuario asociado que no existe: ${current.usuario}`);
         }
       }
 
@@ -40,23 +30,19 @@ module.exports.checkDataConsistencyArticulo = async function () {
       for (const idUnidad of current.tiposUnidad) {
         const existe = await TipoUnidad.exists({ _id: idUnidad });
         if (!existe) {
-          resultados.push({
-            modelo: 'TipoUnidad',
-            articulo: `${current.id} - ${current.nombre}`,
-            id: idUnidad,
-            existe: !!existe,
-          });
+          resultados.push(`El artículo ${current.id} - ${current.nombre} tiene un tipo de unidad asociado que no existe: ${idUnidad}`);
         }
       }
     }
 
     const respuesta = {
-      totalArticulos: articulos.length,
+      total: articulos.length,
       totalFallas: resultados.length,
       fallas: resultados
     }
 
     console.log(`Verificación completa de datos en articulos: ${respuesta.totalFallas} errores`);
+    return respuesta;
   } catch (error) {
     console.error('Error al verificar coleccion articulos:', error);
   }
@@ -80,43 +66,29 @@ module.exports.checkDataConsistencyEstablecimiento = async function () {
 
       // Comprobacion de existencia del usuario asociado al establecimiento
       if (!current.usuario) {
-        resultados.push({
-          modelo: 'Usuario',
-          establecimiento: `${current.id} - ${current.nombre}`,
-          usuario: null,
-          existe: false,
-        });
+        resultados.push(`El establecimiento ${current.id} - ${current.nombre} no tiene usuario asociado`);
       } else {
         const existeUsuario = await mongoose.model('Usuario').exists({ _id: current.usuario });
         if (!existeUsuario) {
-          resultados.push({
-            modelo: 'Usuario',
-            establecimiento: `${current.id} - ${current.nombre}`,
-            id: current.usuario,
-            existe: !!existeUsuario,
-          });
+          resultados.push(`El establecimiento ${current.id} - ${current.nombre} tiene un usuario asociado que no existe: ${current.usuario}`);
         }
       }
 
       // Comprobacion de existencia del tipo de establecimiento asociado
       const existe = await TipoEstablecimiento.exists({ _id: current.tipo });
       if (!existe) {
-        resultados.push({
-          modelo: 'TipoEstablecimiento',
-          establecimiento: `${current.id} - ${current.nombre}`,
-          id: current.tipo,
-          existe: !!existe,
-        });
+        resultados.push(`El establecimiento ${current.id} - ${current.nombre} tiene un tipo de establecimiento asociado que no existe: ${current.tipo}`);
       }
     }
 
     const respuesta = {
-      totalEstablecimientos: establecimientos.length,
+      total: establecimientos.length,
       totalFallas: resultados.length,
       fallas: resultados
     }
 
     console.log(`Verificación completa de datos en establecimiento: ${respuesta.totalFallas} errores`);
+    return respuesta;
   } catch (error) {
     console.error('Error al verificar coleccion establecimientos:', error);
   }
@@ -140,21 +112,11 @@ module.exports.checkDataConsistencyPrecio = async function () {
 
        // Comprobacion de existencia del usuario asociado al precio
       if (!current.usuario) {
-        resultados.push({
-          modelo: 'Usuario',
-          precio: `${current.id} - ${current.precio}`,
-          usuario: null,
-          existe: false,
-        });
+        resultados.push(`El precio ${current.id} - ${current.precio} no tiene usuario asociado`);
       } else {
         const existeUsuario = await mongoose.model('Usuario').exists({ _id: current.usuario });
         if (!existeUsuario) {
-          resultados.push({
-            modelo: 'Usuario',
-            precio: `${current.id} - ${current.precio}`,
-            id: current.usuario,
-            existe: !!existeUsuario,
-          });
+          resultados.push(`El precio ${current.id} - ${current.precio} tiene un usuario asociado que no existe: ${current.usuario}`);
         }
       }
 
@@ -162,23 +124,19 @@ module.exports.checkDataConsistencyPrecio = async function () {
       for (const unidad of current.unidades) {
         const existe = await TipoUnidad.exists({ _id: unidad._id });
         if (!existe) {
-          resultados.push({
-            modelo: 'TipoUnidad',
-            precio: `${current.id} - ${current.precio}`,
-            id: unidad._id,
-            existe: !!existe,
-          });
+          resultados.push(`El precio ${current.id} - ${current.precio} tiene un tipo de unidad asociado que no existe: ${unidad._id}`);
         }
       }
     }
 
      const respuesta = {
-      totalArticulos: precios.length,
+      total: precios.length,
       totalFallas: resultados.length,
       fallas: resultados
     }
 
     console.log(`Verificación completa de datos en precios: ${respuesta.totalFallas} errores`);
+    return respuesta;
   } catch (error) {
     console.error('Error al verificar coleccion precios:', error);
   }
@@ -203,23 +161,19 @@ module.exports.checkDataConsistencyEquivalencias = async function () {
       const existeTo = await TipoUnidad.exists({ _id: current.to });
 
       if (!existeFrom || !existeTo) {
-        resultados.push({
-          modelo: 'TipoUnidadEquivalencia',
-          equivalenciaId: current.id,
-          from: current.from,
-          existeFrom: !!existeFrom,
-          existeTo: !!existeTo,
-        });
+        const error = !existeFrom ? `from: ${current.from}` : `to: ${current.to}`;
+        resultados.push(`El equivalencia ${current.id} tiene referencias inválidas: ${error}`);
       }
     }
 
     const respuesta = {
-      totalArticulos: equivalencias.length,
+      total: equivalencias.length,
       totalFallas: resultados.length,
       fallas: resultados
     }
 
     console.log(`Verificación completa de datos en equivalencias: ${respuesta.totalFallas} errores`);
+    return respuesta;
   } catch (error) {
     console.error('Error al verificar coleccion equivalencias:', error);
   }
@@ -242,23 +196,27 @@ module.exports.checkDataConsistencyModelo = async function () {
 
       for (const preferencia of current.preferencias) {
         const existe = await Modelo.exists({ _id: preferencia.modeloId });
-        resultados.push({
-          usuario: current.id,
-          modelo: preferencia.modeloId,
-          existe: !!existe,
-        });
+        if (!existe) {
+          resultados.push(`El usuario ${current.id} tiene una configuración de un modelo que no existe: ${preferencia.modeloId}`);
+        }
       };
 
       for (const permiso of current.permisos) {
         const existe = await Modelo.exists({ _id: permiso.modeloId });
-        resultados.push({
-          usuario: current.id,
-          modelo: permiso.modeloId,
-          existe: !!existe,
-        });
+        if (!existe) {
+          resultados.push(`El usuario ${current.id} tiene un permiso para un modelo que no existe: ${permiso.modeloId}`);
+        }
       };
     };
-    console.log('Verificación completa de modelos en preferencias y permisos de usuarios:', resultados.filter(res => res.existe === false));
+
+    const respuesta = {
+      total: usuarios.length,
+      totalFallas: resultados.length,
+      fallas: resultados
+    }
+
+    console.log(`Verificación completa de modelos en preferencias y permisos de usuarios: ${resultados.length} errores`);
+    return respuesta;
   } catch (error) {
     console.error('Error al verificar coleccion modelos en usuarios:', error);
   }
@@ -283,23 +241,19 @@ module.exports.checkDataConsistencyTipoUnidad = async function () {
       if (current.usuario) {
         const existeUsuario = await mongoose.model('Usuario').exists({ _id: current.usuario });
         if (!existeUsuario) {
-          resultados.push({
-            modelo: 'Usuario',
-            tipoUnidad: `${current.id} - ${current.nombre}`,
-            id: current.usuario,
-            existe: !!existeUsuario,
-          });
+          resultados.push(`El tipo de unidad ${current.id} - ${current.nombre} tiene un usuario que no existe: ${current.usuario}`);
         }
       }
     }
 
     const respuesta = {
-      totalArticulos: tiposUnidad.length,
+      total: tiposUnidad.length,
       totalFallas: resultados.length,
       fallas: resultados
     }
 
     console.log(`Verificación completa de datos en tipos de unidad: ${respuesta.totalFallas} errores`);
+    return respuesta;
   } catch (error) {
     console.error('Error al verificar coleccion equivalencias:', error);
   }
