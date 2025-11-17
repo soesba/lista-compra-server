@@ -126,3 +126,16 @@ module.exports.delete = function (req, res) {
   })
     .catch((error) => res.status(500).send({ message: error.message }));
 };
+
+module.exports.checkUso = function (req, res) {
+  const tipoUnidadId = req.params.id;
+  const checkUsoTipoUnidad = require('../utils/checkUso').checkUsoTipoUnidad;
+
+  checkUsoTipoUnidad(tipoUnidadId)
+    .then(resultados => {
+      res.jsonp({ data: resultados });
+    })
+    .catch(error => {
+      res.status(500).send({ message: error.message });
+    });
+};

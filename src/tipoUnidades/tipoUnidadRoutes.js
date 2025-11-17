@@ -18,4 +18,6 @@ module.exports = function (app) {
 
   app.delete('/api/tipos-unidad/:id', verifyToken, (req, res) => tipoUnidadController.delete(req, res)); // Eliminar por ID
 
+  app.get('/api/tipos-unidad/checkuso/:id', verifyToken, (req, res) => tipoUnidadController.checkUso(req, res)); // Comprobar uso antes de eliminar
+
 }

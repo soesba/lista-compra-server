@@ -9,22 +9,54 @@ module.exports.checkDataConsistencyArticulo = async function () {
     const resultados = [];
 
     for (const articulo of articulos) {
-      const currentArt = {
+      const current = {
         id: articulo._id,
         nombre: articulo.nombre,
         tiposUnidad: articulo.tiposUnidad || [],
+        usuario: articulo.usuario
       };
 
-      for (const idUnidad of currentArt.tiposUnidad) {
-        const existe = await TipoUnidad.exists({ _id: idUnidad });
+      // Comprobacion de existencia del usuario asociado al articulo
+      if (!current.usuario) {
         resultados.push({
-          id: idUnidad,
-          existe: !!existe,
+          modelo: 'Usuario',
+          articulo: `${current.id} - ${current.nombre}`,
+          usuario: null,
+          existe: false,
         });
+      } else {
+        const existeUsuario = await mongoose.model('Usuario').exists({ _id: current.usuario });
+        if (!existeUsuario) {
+          resultados.push({
+            modelo: 'Usuario',
+            articulo: `${current.id} - ${current.nombre}`,
+            id: current.usuario,
+            existe: !!existeUsuario,
+          });
+        }
+      }
+
+      // Comprobacion de existencia de cada tipo de unidad asociado al articulo
+      for (const idUnidad of current.tiposUnidad) {
+        const existe = await TipoUnidad.exists({ _id: idUnidad });
+        if (!existe) {
+          resultados.push({
+            modelo: 'TipoUnidad',
+            articulo: `${current.id} - ${current.nombre}`,
+            id: idUnidad,
+            existe: !!existe,
+          });
+        }
       }
     }
 
-    console.log('Verificación completa de tipos de unidad en articulos:', resultados.filter(res => res.existe === false));
+    const respuesta = {
+      totalArticulos: articulos.length,
+      totalFallas: resultados.length,
+      fallas: resultados
+    }
+
+    console.log(`Verificación completa de tipos de unidad en articulos: ${respuesta.totalFallas} errores`);
   } catch (error) {
     console.error('Error al verificar coleccion articulos:', error);
   }
@@ -43,17 +75,48 @@ module.exports.checkDataConsistencyEstablecimiento = async function () {
         id: establecimiento._id,
         nombre: establecimiento.nombre,
         tipo: establecimiento.tipoEstablecimiento,
+        usuario: establecimiento.usuario
       };
 
+      // Comprobacion de existencia del usuario asociado al establecimiento
+      if (!current.usuario) {
+        resultados.push({
+          modelo: 'Usuario',
+          establecimiento: `${current.id} - ${current.nombre}`,
+          usuario: null,
+          existe: false,
+        });
+      } else {
+        const existeUsuario = await mongoose.model('Usuario').exists({ _id: current.usuario });
+        if (!existeUsuario) {
+          resultados.push({
+            modelo: 'Usuario',
+            establecimiento: `${current.id} - ${current.nombre}`,
+            id: current.usuario,
+            existe: !!existeUsuario,
+          });
+        }
+      }
+
+      // Comprobacion de existencia del tipo de establecimiento asociado
       const existe = await TipoEstablecimiento.exists({ _id: current.tipo });
-      resultados.push({
-        establecimiento: current.nombre,
-        id: current.tipo,
-        existe: !!existe,
-      });
+      if (!existe) {
+        resultados.push({
+          modelo: 'TipoEstablecimiento',
+          establecimiento: `${current.id} - ${current.nombre}`,
+          id: current.tipo,
+          existe: !!existe,
+        });
+      }
     }
 
-    console.log('Verificación completa de tipos de establecimiento en establecimientos:', resultados.filter(res => res.existe === false));
+    const respuesta = {
+      totalEstablecimientos: establecimientos.length,
+      totalFallas: resultados.length,
+      fallas: resultados
+    }
+
+    console.log(`Verificación completa de tipos de establecimiento en establecimientos: ${respuesta.totalFallas} errores`);
   } catch (error) {
     console.error('Error al verificar coleccion establecimientos:', error);
   }
@@ -70,21 +133,52 @@ module.exports.checkDataConsistencyPrecio = async function () {
     for (const precio of precios) {
       const current = {
         id: precio._id,
-        articulo: precio.articulo,
+        precio: precio.precio,
         unidades: precio.unidadesMedida || [],
+        usuario: precio.usuario
       };
 
+       // Comprobacion de existencia del usuario asociado al precio
+      if (!current.usuario) {
+        resultados.push({
+          modelo: 'Usuario',
+          precio: `${current.id} - ${current.precio}`,
+          usuario: null,
+          existe: false,
+        });
+      } else {
+        const existeUsuario = await mongoose.model('Usuario').exists({ _id: current.usuario });
+        if (!existeUsuario) {
+          resultados.push({
+            modelo: 'Usuario',
+            precio: `${current.id} - ${current.precio}`,
+            id: current.usuario,
+            existe: !!existeUsuario,
+          });
+        }
+      }
+
+      // Comprobacion de existencia de cada tipo de unidad asociado al precio
       for (const unidad of current.unidades) {
         const existe = await TipoUnidad.exists({ _id: unidad._id });
-        resultados.push({
-          articulo: current.articulo,
-          id: unidad._id,
-          existe: !!existe,
-        });
+        if (!existe) {
+          resultados.push({
+            modelo: 'TipoUnidad',
+            precio: `${current.id} - ${current.precio}`,
+            id: unidad._id,
+            existe: !!existe,
+          });
+        }
       }
     }
 
-    console.log('Verificación completa de tipos de unidad en precios:', resultados.filter(res => res.existe === false));
+     const respuesta = {
+      totalArticulos: precios.length,
+      totalFallas: resultados.length,
+      fallas: resultados
+    }
+
+    console.log(`Verificación completa de tipos de unidad en precios: ${respuesta.totalFallas} errores`);
   } catch (error) {
     console.error('Error al verificar coleccion precios:', error);
   }
@@ -107,15 +201,25 @@ module.exports.checkDataConsistencyEquivalencias = async function () {
 
       const existeFrom = await TipoUnidad.exists({ _id: current.from });
       const existeTo = await TipoUnidad.exists({ _id: current.to });
-      resultados.push({
-        equivalenciaId: current.id,
-        from: current.from,
-        existeFrom: !!existeFrom,
-        existeTo: !!existeTo,
-      });
+
+      if (!existeFrom || !existeTo) {
+        resultados.push({
+          modelo: 'TipoUnidadEquivalencia',
+          equivalenciaId: current.id,
+          from: current.from,
+          existeFrom: !!existeFrom,
+          existeTo: !!existeTo,
+        });
+      }
     }
 
-    console.log('Verificación completa de tipos de unidad en equivalencias:', resultados.filter(res => res.existeFrom === false || res.existeTo === false));
+    const respuesta = {
+      totalArticulos: equivalencias.length,
+      totalFallas: resultados.length,
+      fallas: resultados
+    }
+
+    console.log(`Verificación completa de tipos de unidad en equivalencias: ${respuesta.totalFallas} errores`);
   } catch (error) {
     console.error('Error al verificar coleccion equivalencias:', error);
   }

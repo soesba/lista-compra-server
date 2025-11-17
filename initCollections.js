@@ -34,7 +34,7 @@ function crearColeccionArticulo () {
   ArticuloData.forEach(async function (item) {
     const Articulo = mongoose.model('Articulo')
     const nuevoArticulo = new Articulo(item);
-    nuevoArticulo.tipoUnidad = new mongoose.Types.ObjectId(`${item._id}`)
+    nuevoArticulo._id = new mongoose.Types.ObjectId(`${item._id}`)
     const resultado = await nuevoArticulo.save();
   })
 }
@@ -43,7 +43,7 @@ function crearColeccionTipoUnidad () {
   TipoUnidadesData.forEach(async function (item) {
     const TipoUnidad = mongoose.model('TipoUnidad')
     const nuevoTipoUnidad = new TipoUnidad(item);
-    nuevoTipoUnidad.tipoUnidad = new mongoose.Types.ObjectId(`${item._id}`)
+    nuevoTipoUnidad._id = new mongoose.Types.ObjectId(`${item._id}`)
     const resultado = await nuevoTipoUnidad.save();
   })
 }
@@ -52,7 +52,7 @@ function crearColeccionTipoEstablecimiento () {
   TipoEstablecimientosData.forEach(async function (item) {
     const TipoEstablecimiento = mongoose.model('TipoEstablecimiento')
     const nuevoTipoEstablecimiento = new TipoEstablecimiento(item);
-    nuevoTipoEstablecimiento.tipoUnidad = new mongoose.Types.ObjectId(`${item._id}`)
+    nuevoTipoEstablecimiento._id = new mongoose.Types.ObjectId(`${item._id}`)
     const resultado = await nuevoTipoEstablecimiento.save();
   })
 }
@@ -61,7 +61,7 @@ function crearColeccionEstablecimiento () {
   EstablecimientosData.forEach(async function (item) {
     const Establecimiento = mongoose.model('Establecimiento')
     const nuevoEstablecimiento = new Establecimiento(item);
-    nuevoEstablecimiento.tipoUnidad = new mongoose.Types.ObjectId(`${item._id}`)
+    nuevoEstablecimiento._id = new mongoose.Types.ObjectId(`${item._id}`)
     const resultado = await nuevoEstablecimiento.save();
   })
 }

@@ -30,24 +30,10 @@ const ArticuloSchema = new Schema({
     type: Boolean,
     default: false
   },
-  // tipoUnidad: {
-  //   type: Schema.Types.ObjectId,
-  //   default: '',
-  //   trim: true,
-  //   required: true
-  // },
-  // cantidad: {
-  //   type: Number,
-  //   required: true
-  // },
-  // precioUnidad: {
-  //   type: Number,
-  //   required: true
-  // },
-  // precioTotal: {
-  //   type: Number,
-  //   required: true
-  // },
+  usuario: {
+    type: Schema.Types.ObjectId,
+    required: true,
+  },
   fechaCreacion: {
     type: String,
     required: true,

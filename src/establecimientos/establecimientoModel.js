@@ -25,6 +25,10 @@ var DireccionSchema = new Schema({
     type: Boolean,
     default: false,
   },
+  usuario: {
+    type: Schema.Types.ObjectId,
+    required: true
+  }
 })
 
 var EstablecimientoSchema = new Schema({
