@@ -4,6 +4,8 @@ const compraController = require('./precioController');
 
 module.exports = function (app) {
 
+  app.get('/api/precios/checkData', verifyToken, (req, res) => compraController.checkData(req, res)); // Chequear consistencia de datos
+
   app.get('/api/precios/search/:texto', verifyToken, (req, res) => compraController.getByAny(req, res)); // Búsqueda
 
   app.get('/api/precios/articulo/:articuloId', verifyToken, (req, res) => compraController.getByArticuloId(req, res)); // Por artículo

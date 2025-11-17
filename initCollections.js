@@ -5,7 +5,7 @@ const TipoUnidadesData = require('./src/data/tipoUnidades.json');
 const TipoEstablecimientosData = require('./src/data/tipoEstablecimientos.json');
 const EstablecimientosData = require('./src/data/establecimientos.json')
 const mongoose = require('mongoose');
-const { checkDataConsistencyArticulo, checkDataConsistencyEstablecimiento, checkDataConsistencyPrecio, checkDataConsistencyEquivalencias, checkDataConsistencyModelo } = require('./src/utils/checkConsistencia');
+const { checkDataConsistencyArticulo, checkDataConsistencyEstablecimiento, checkDataConsistencyPrecio, checkDataConsistencyEquivalencias, checkDataConsistencyModelo, checkDataConsistencyTipoUnidad } = require('./src/utils/checkConsistencia');
 
 
 
@@ -82,6 +82,9 @@ module.exports.checkDataConsistency = function (nombreColeccion) {
       break;
     case 'Modelo':
       checkDataConsistencyModelo();
+      break;
+    case 'TipoUnidad':
+      checkDataConsistencyTipoUnidad();
       break;
   }
 }

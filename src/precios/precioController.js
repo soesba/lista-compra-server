@@ -275,3 +275,9 @@ module.exports.delete = function (req, res) {
     })
     .catch((error) => res.status(500).send({ message: error.message }))
 }
+
+module.exports.checkData = async function (req, res) {
+  const checkModule = require('../utils/checkConsistencia.js');
+  const resultado = await checkModule.checkDataConsistencyPrecio();
+  res.jsonp({ data: resultado });
+}

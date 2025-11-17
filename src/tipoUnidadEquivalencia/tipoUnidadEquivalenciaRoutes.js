@@ -4,6 +4,8 @@ const tipoUnidadEquivalenciaController = require('./tipoUnidadEquivalenciaContro
 
 module.exports = function (app) {
 
+  app.get('/api/tipos-unidad-equivalencia/checkData', verifyToken, (req, res) => tipoUnidadEquivalenciaController.checkData(req, res)); // Chequear consistencia de datos
+
   app.get('/api/tipos-unidad-equivalencia/search/:texto', verifyToken, (req, res) => tipoUnidadEquivalenciaController.getByAny(req, res)); // Buscar por texto
 
   app.get('/api/tipos-unidad-equivalencia/from/:from', verifyToken, (req, res) => tipoUnidadEquivalenciaController.getByFrom(req, res)); // Por unidad origen

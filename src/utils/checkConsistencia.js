@@ -56,7 +56,7 @@ module.exports.checkDataConsistencyArticulo = async function () {
       fallas: resultados
     }
 
-    console.log(`Verificación completa de tipos de unidad en articulos: ${respuesta.totalFallas} errores`);
+    console.log(`Verificación completa de datos en articulos: ${respuesta.totalFallas} errores`);
   } catch (error) {
     console.error('Error al verificar coleccion articulos:', error);
   }
@@ -116,7 +116,7 @@ module.exports.checkDataConsistencyEstablecimiento = async function () {
       fallas: resultados
     }
 
-    console.log(`Verificación completa de tipos de establecimiento en establecimientos: ${respuesta.totalFallas} errores`);
+    console.log(`Verificación completa de datos en establecimiento: ${respuesta.totalFallas} errores`);
   } catch (error) {
     console.error('Error al verificar coleccion establecimientos:', error);
   }
@@ -178,7 +178,7 @@ module.exports.checkDataConsistencyPrecio = async function () {
       fallas: resultados
     }
 
-    console.log(`Verificación completa de tipos de unidad en precios: ${respuesta.totalFallas} errores`);
+    console.log(`Verificación completa de datos en precios: ${respuesta.totalFallas} errores`);
   } catch (error) {
     console.error('Error al verificar coleccion precios:', error);
   }
@@ -219,7 +219,7 @@ module.exports.checkDataConsistencyEquivalencias = async function () {
       fallas: resultados
     }
 
-    console.log(`Verificación completa de tipos de unidad en equivalencias: ${respuesta.totalFallas} errores`);
+    console.log(`Verificación completa de datos en equivalencias: ${respuesta.totalFallas} errores`);
   } catch (error) {
     console.error('Error al verificar coleccion equivalencias:', error);
   }
@@ -261,5 +261,46 @@ module.exports.checkDataConsistencyModelo = async function () {
     console.log('Verificación completa de modelos en preferencias y permisos de usuarios:', resultados.filter(res => res.existe === false));
   } catch (error) {
     console.error('Error al verificar coleccion modelos en usuarios:', error);
+  }
+}
+
+module.exports.checkDataConsistencyTipoUnidad = async function () {
+  const TipoUnidad = mongoose.model('TipoUnidad');
+
+  try {
+    const tiposUnidad = await TipoUnidad.find().lean();
+    const resultados = [];
+
+    for (const tipo of tiposUnidad) {
+      const current = {
+        id: tipo._id,
+        nombre: tipo.nombre,
+        borrable: tipo.borrable,
+        usuario: tipo.usuario
+      };
+
+     // Comprobacion de existencia del usuario asociado al precio: si no tiene usuario es porque es un dato maestro y no se verifica
+      if (current.usuario) {
+        const existeUsuario = await mongoose.model('Usuario').exists({ _id: current.usuario });
+        if (!existeUsuario) {
+          resultados.push({
+            modelo: 'Usuario',
+            tipoUnidad: `${current.id} - ${current.nombre}`,
+            id: current.usuario,
+            existe: !!existeUsuario,
+          });
+        }
+      }
+    }
+
+    const respuesta = {
+      totalArticulos: tiposUnidad.length,
+      totalFallas: resultados.length,
+      fallas: resultados
+    }
+
+    console.log(`Verificación completa de datos en tipos de unidad: ${respuesta.totalFallas} errores`);
+  } catch (error) {
+    console.error('Error al verificar coleccion equivalencias:', error);
   }
 }
