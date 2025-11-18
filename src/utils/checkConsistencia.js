@@ -342,7 +342,7 @@ module.exports.checkDataConsistencyTipoEstablecimiento = async function () {
     }
 
     const respuesta = {
-      total: tiposUnidad.length,
+      total: tiposEstablecimiento.length,
       totalFallas: resultados.length,
       fallas: resultados
     }
