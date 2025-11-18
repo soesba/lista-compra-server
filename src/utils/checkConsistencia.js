@@ -56,7 +56,7 @@ module.exports.checkDataConsistencyArticulo = async function () {
     console.log(`Verificación completa de datos en articulos: ${respuesta.totalFallas} errores`);
     return respuesta;
   } catch (error) {
-    console.error('Error al verificar coleccion articulos:', error);
+    console.error('Error al verificar coleccion Articulo:', error);
   }
 }
 
@@ -114,7 +114,7 @@ module.exports.checkDataConsistencyEstablecimiento = async function () {
     console.log(`Verificación completa de datos en establecimiento: ${respuesta.totalFallas} errores`);
     return respuesta;
   } catch (error) {
-    console.error('Error al verificar coleccion establecimientos:', error);
+    console.error('Error al verificar coleccion Establecimiento:', error);
   }
 }
 
@@ -174,7 +174,7 @@ module.exports.checkDataConsistencyPrecio = async function () {
     console.log(`Verificación completa de datos en precios: ${respuesta.totalFallas} errores`);
     return respuesta;
   } catch (error) {
-    console.error('Error al verificar coleccion precios:', error);
+    console.error('Error al verificar coleccion Precio:', error);
   }
 }
 
@@ -215,7 +215,7 @@ module.exports.checkDataConsistencyEquivalencias = async function () {
     console.log(`Verificación completa de datos en equivalencias: ${respuesta.totalFallas} errores`);
     return respuesta;
   } catch (error) {
-    console.error('Error al verificar coleccion equivalencias:', error);
+    console.error('Error al verificar coleccion TipoUnidadEquivalencia:', error);
   }
 }
 
@@ -273,12 +273,17 @@ module.exports.checkDataConsistencyTipoUnidad = async function () {
       const current = {
         id: tipo._id,
         nombre: tipo.nombre,
-        borrable: tipo.borrable,
         usuario: tipo.usuario
       };
 
-     // Comprobacion de existencia del usuario asociado: si no tiene usuario es porque es un dato maestro y no se verifica
-      if (current.usuario) {
+     // Comprobacion de existencia del usuario asociado al tipo de unidad
+      if (!current.usuario) {
+        resultados.push({
+          id: current.id,
+          nombre: current.nombre,
+          mensaje: `no tiene usuario asociado`
+        });
+      } else {
         const existeUsuario = await mongoose.model('Usuario').exists({ _id: current.usuario });
         if (!existeUsuario) {
           resultados.push({
@@ -299,6 +304,52 @@ module.exports.checkDataConsistencyTipoUnidad = async function () {
     console.log(`Verificación completa de datos en tipos de unidad: ${respuesta.totalFallas} errores`);
     return respuesta;
   } catch (error) {
-    console.error('Error al verificar coleccion equivalencias:', error);
+    console.error('Error al verificar coleccion TipoUnidad:', error);
+  }
+}
+
+module.exports.checkDataConsistencyTipoEstablecimiento = async function () {
+  const TipoEstablecimiento = mongoose.model('TipoEstablecimiento');
+
+  try {
+    const tiposEstablecimiento = await TipoEstablecimiento.find().lean();
+    const resultados = [];
+
+    for (const tipo of tiposEstablecimiento) {
+      const current = {
+        id: tipo._id,
+        nombre: tipo.nombre,
+        usuario: tipo.usuario
+      };
+
+     // Comprobacion de existencia del usuario asociado al tipo de unidad
+      if (!current.usuario) {
+        resultados.push({
+          id: current.id,
+          nombre: current.nombre,
+          mensaje: `no tiene usuario asociado`
+        });
+      } else {
+        const existeUsuario = await mongoose.model('Usuario').exists({ _id: current.usuario });
+        if (!existeUsuario) {
+          resultados.push({
+            id: current.id,
+            nombre: current.nombre,
+            mensaje: `tiene un usuario asociado que no existe: ${current.usuario}`
+          });
+        }
+      }
+    }
+
+    const respuesta = {
+      total: tiposUnidad.length,
+      totalFallas: resultados.length,
+      fallas: resultados
+    }
+
+    console.log(`Verificación completa de datos en tipos de establecimientos: ${respuesta.totalFallas} errores`);
+    return respuesta;
+  } catch (error) {
+    console.error('Error al verificar coleccion TipoEstablecimiento:', error);
   }
 }
