@@ -46,6 +46,10 @@ const TipoUnidadSchema = new Schema({
     borrable: {
       type: Boolean,
       default: true
+    },
+    esMaestro: {
+      type: Boolean,
+      default: false
     }
 });
 
