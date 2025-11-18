@@ -50,6 +50,10 @@ const TipoUnidadSchema = new Schema({
     esMaestro: {
       type: Boolean,
       default: false
+    },
+    usuario: {
+      type: Schema.Types.ObjectId,
+      required: true,
     }
 });
 

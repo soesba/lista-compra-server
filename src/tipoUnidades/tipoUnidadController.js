@@ -142,6 +142,6 @@ module.exports.checkUso = function (req, res) {
 
 module.exports.checkData = async function (req, res) {
   const checkModule = require('../utils/checkConsistencia.js');
-  const resultado = await checkModule.checkDataConsistencyArticulo();
+  const resultado = await checkModule.checkDataConsistencyTipoUnidad();
   res.jsonp({ data: resultado });
 }
