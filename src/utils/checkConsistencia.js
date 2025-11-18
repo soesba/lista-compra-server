@@ -18,11 +18,19 @@ module.exports.checkDataConsistencyArticulo = async function () {
 
       // Comprobacion de existencia del usuario asociado al articulo
       if (!current.usuario) {
-        resultados.push(`El artículo ${current.id} - ${current.nombre} no tiene usuario asociado`);
+        resultados.push({
+          id: current.id,
+          nombre: current.nombre,
+          mensaje: `no tiene usuario asociado`
+        });
       } else {
         const existeUsuario = await mongoose.model('Usuario').exists({ _id: current.usuario });
         if (!existeUsuario) {
-          resultados.push(`El artículo ${current.id} - ${current.nombre} tiene un usuario asociado que no existe: ${current.usuario}`);
+          resultados.push({
+            id: current.id,
+            nombre: current.nombre,
+            mensaje: `tiene un usuario asociado que no existe: ${current.usuario}`
+          });
         }
       }
 
@@ -30,7 +38,11 @@ module.exports.checkDataConsistencyArticulo = async function () {
       for (const idUnidad of current.tiposUnidad) {
         const existe = await TipoUnidad.exists({ _id: idUnidad });
         if (!existe) {
-          resultados.push(`El artículo ${current.id} - ${current.nombre} tiene un tipo de unidad asociado que no existe: ${idUnidad}`);
+          resultados.push({
+            id: current.id,
+            nombre: current.nombre,
+            mensaje: `tiene un tipo de unidad asociado que no existe: ${idUnidad}`
+          });
         }
       }
     }
@@ -66,18 +78,30 @@ module.exports.checkDataConsistencyEstablecimiento = async function () {
 
       // Comprobacion de existencia del usuario asociado al establecimiento
       if (!current.usuario) {
-        resultados.push(`El establecimiento ${current.id} - ${current.nombre} no tiene usuario asociado`);
+        resultados.push({
+          id: current.id,
+          nombre: current.nombre,
+          mensaje: `no tiene usuario asociado`
+        });
       } else {
         const existeUsuario = await mongoose.model('Usuario').exists({ _id: current.usuario });
         if (!existeUsuario) {
-          resultados.push(`El establecimiento ${current.id} - ${current.nombre} tiene un usuario asociado que no existe: ${current.usuario}`);
+          resultados.push({
+            id: current.id,
+            nombre: current.nombre,
+            mensaje: `tiene un usuario asociado que no existe: ${current.usuario}`
+          });
         }
       }
 
       // Comprobacion de existencia del tipo de establecimiento asociado
       const existe = await TipoEstablecimiento.exists({ _id: current.tipo });
       if (!existe) {
-        resultados.push(`El establecimiento ${current.id} - ${current.nombre} tiene un tipo de establecimiento asociado que no existe: ${current.tipo}`);
+        resultados.push({
+          id: current.id,
+          nombre: current.nombre,
+          mensaje: `tiene un tipo de establecimiento asociado que no existe: ${current.tipo}`
+        });
       }
     }
 
@@ -112,11 +136,19 @@ module.exports.checkDataConsistencyPrecio = async function () {
 
        // Comprobacion de existencia del usuario asociado al precio
       if (!current.usuario) {
-        resultados.push(`El precio ${current.id} - ${current.precio} no tiene usuario asociado`);
+        resultados.push({
+          id: current.id,
+          precio: current.precio,
+          mensaje: `no tiene usuario asociado`
+        });
       } else {
         const existeUsuario = await mongoose.model('Usuario').exists({ _id: current.usuario });
         if (!existeUsuario) {
-          resultados.push(`El precio ${current.id} - ${current.precio} tiene un usuario asociado que no existe: ${current.usuario}`);
+          resultados.push({
+            id: current.id,
+            precio: current.precio,
+            mensaje: `tiene un usuario asociado que no existe: ${current.usuario}`
+          });
         }
       }
 
@@ -124,7 +156,11 @@ module.exports.checkDataConsistencyPrecio = async function () {
       for (const unidad of current.unidades) {
         const existe = await TipoUnidad.exists({ _id: unidad._id });
         if (!existe) {
-          resultados.push(`El precio ${current.id} - ${current.precio} tiene un tipo de unidad asociado que no existe: ${unidad._id}`);
+          resultados.push({
+            id: current.id,
+            precio: current.precio,
+            mensaje: `tiene un tipo de unidad asociado que no existe: ${unidad._id}`
+          });
         }
       }
     }
@@ -162,7 +198,11 @@ module.exports.checkDataConsistencyEquivalencias = async function () {
 
       if (!existeFrom || !existeTo) {
         const error = !existeFrom ? `from: ${current.from}` : `to: ${current.to}`;
-        resultados.push(`El equivalencia ${current.id} tiene referencias inválidas: ${error}`);
+        resultados.push({
+          id: current.id,
+          nombre: error,
+          error: 'tiene referencias inválidas'
+        });
       }
     }
 
@@ -237,11 +277,15 @@ module.exports.checkDataConsistencyTipoUnidad = async function () {
         usuario: tipo.usuario
       };
 
-     // Comprobacion de existencia del usuario asociado al precio: si no tiene usuario es porque es un dato maestro y no se verifica
+     // Comprobacion de existencia del usuario asociado: si no tiene usuario es porque es un dato maestro y no se verifica
       if (current.usuario) {
         const existeUsuario = await mongoose.model('Usuario').exists({ _id: current.usuario });
         if (!existeUsuario) {
-          resultados.push(`El tipo de unidad ${current.id} - ${current.nombre} tiene un usuario que no existe: ${current.usuario}`);
+          resultados.push({
+            id: current.id,
+            nombre: current.nombre,
+            mensaje: `tiene un usuario asociado que no existe: ${current.usuario}`
+          });
         }
       }
     }
