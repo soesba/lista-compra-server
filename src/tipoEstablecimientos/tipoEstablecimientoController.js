@@ -4,7 +4,12 @@ var mongoose = require("mongoose");
 const TipoEstablecimiento = require("./tipoEstablecimientoModel");
 
 module.exports.get = function (req, res) {
-  TipoEstablecimiento.find()
+  TipoEstablecimiento.find({
+     $or: [
+        { usuario: new mongoose.Types.ObjectId(`${req.user.id}`) },
+        { esMaestro: true }
+      ],
+    })
     .then((result) => res.jsonp({ data: result }))
     .catch((error) => res.status(500).send({ message: error.message }));
 };
@@ -21,6 +26,10 @@ module.exports.getByAny = function (req, res) {
   const texto = new RegExp(req.params.texto);
   TipoEstablecimiento.find({
     $or: [
+      { usuario: new mongoose.Types.ObjectId(`${req.user.id}`) },
+      { esMaestro: true }
+    ],
+    $or: [
       { nombre: { $regex: texto, $options: "i" } },
       { abreviatura: { $regex: texto, $options: "i" } },
     ],
@@ -35,6 +44,14 @@ module.exports.getByAny = function (req, res) {
 
 module.exports.getDesplegable = function (req, res) {
   TipoEstablecimiento.aggregate([
+    {
+      $match: {
+        $or: [
+          { usuario: new mongoose.Types.ObjectId(`${req.user.id}`) },
+          { esMaestro: true }
+        ]
+      }
+    },
     {
       "$project":{
         _id: 0,
@@ -52,7 +69,8 @@ module.exports.getDesplegable = function (req, res) {
 module.exports.insert = function (req, res) {
   const tipoEstablecimiento = new TipoEstablecimiento(req.body);
   TipoEstablecimiento.findOne({
-    $and: [
+    usuario: new mongoose.Types.ObjectId(`${req.user.id}`),
+    $or: [
       { nombre: tipoEstablecimiento.nombre },
       { abreviatura: tipoEstablecimiento.abreviatura },
     ],

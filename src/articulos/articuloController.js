@@ -4,7 +4,7 @@ var mongoose = require('mongoose')
 const Articulo = require('./articuloModel')
 
 module.exports.get = async function (req, res) {
-  const articulos = await Articulo.find().lean();
+  const articulos = await Articulo.find({ usuario: new mongoose.Types.ObjectId(`${req.user.id}`) }).lean();
   Articulo.aggregate([
     {
       $match: { _id: { $in: articulos.map(p => p._id) } } // Filtrar por los pedidos encontrados
@@ -40,7 +40,7 @@ module.exports.getById = async function (req, res) {
   const id = new mongoose.Types.ObjectId(`${req.params.id}`);
   Articulo.aggregate([
     {
-      $match: { _id: id } // Filtrar por id
+      $match: { _id: id, usuario: new mongoose.Types.ObjectId(`${req.user.id}`) } // Filtrar por id
     },
     {
       $lookup: {
@@ -93,6 +93,7 @@ module.exports.getById = async function (req, res) {
 module.exports.getByAny = function (req, res) {
   const texto = new RegExp(req.params.texto)
   Articulo.find({
+    usuario: new mongoose.Types.ObjectId(`${req.user.id}`),
     $or: [
       { nombre: { $regex: texto, $options: 'i' } },
       { descripcion: { $regex: texto, $options: 'i' } },
@@ -110,6 +111,9 @@ module.exports.getByAny = function (req, res) {
 module.exports.getDesplegable = function (req, res) {
   Articulo.aggregate([
     {
+      $match: { usuario: new mongoose.Types.ObjectId(`${req.user.id}`) }
+    },
+    {
       "$project": {
         _id: 0,
         "id": "$_id",
@@ -125,7 +129,7 @@ module.exports.getDesplegable = function (req, res) {
 
 module.exports.insert = function (req, res) {
   const articulo = new Articulo(req.body)
-  Articulo.findOne({ nombre: articulo.nombre })
+  Articulo.findOne({ nombre: articulo.nombre, usuario: new mongoose.Types.ObjectId(`${req.user.id}`) })
     .then((u) => {
       if (u) {
         res.status(409).send({

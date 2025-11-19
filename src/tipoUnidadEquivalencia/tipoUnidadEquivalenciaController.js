@@ -4,13 +4,13 @@ var mongoose = require("mongoose");
 const TipoUnidadEquivalencia = require("./tipoUnidadEquivalenciaModel");
 
 module.exports.get = function (req, res) {
-  TipoUnidadEquivalencia.find()
+  TipoUnidadEquivalencia.find({ usuario: new mongoose.Types.ObjectId(`${req.user.id}`) })
     .then((result) => res.jsonp({ data: result }))
     .catch((error) => res.status(500).send({ message: error.message }));
 };
 
 module.exports.getById = function (req, res) {
-  TipoUnidadEquivalencia.findOne({ _id: req.params.id })
+  TipoUnidadEquivalencia.findOne({ _id: req.params.id, usuario: new mongoose.Types.ObjectId(`${req.user.id}`) })
     .then((result) => {
       res.jsonp({ data: result });
     })
@@ -18,7 +18,7 @@ module.exports.getById = function (req, res) {
 };
 
 module.exports.getByFrom = function (req, res) {
-  TipoUnidadEquivalencia.find({ from: req.params.from })
+  TipoUnidadEquivalencia.find({ from: req.params.from, usuario: new mongoose.Types.ObjectId(`${req.user.id}`) })
     .then((result) => {
       if (result) {
         res.jsonp({ data: result });
@@ -32,6 +32,7 @@ module.exports.getByFromMultiple = function (req, res) {
     new mongoose.Types.ObjectId(`${x}`)
   )
   TipoUnidadEquivalencia.find({
+    usuario: new mongoose.Types.ObjectId(`${req.user.id}`),
     from: { $in: fromToObjectId }
   }).then((result) => {
     if (result) {
@@ -43,6 +44,7 @@ module.exports.getByFromMultiple = function (req, res) {
 
 module.exports.getByAny = function (req, res) {
   TipoUnidadEquivalencia.find({
+    usuario: new mongoose.Types.ObjectId(`${req.user.id}`),
     $or: [
       { from: req.params.id },
       { to: req.params.id },

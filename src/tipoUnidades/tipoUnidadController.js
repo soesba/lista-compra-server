@@ -4,13 +4,24 @@ var mongoose = require("mongoose");
 const TipoUnidad = require("./tipoUnidadModel");
 
 module.exports.get = function (req, res) {
-  TipoUnidad.find()
+  TipoUnidad.find({
+    $or: [
+      { usuario: new mongoose.Types.ObjectId(`${req.user.id}`) },
+      { esMaestro: true }
+    ]
+  })
     .then((result) => res.jsonp({ data: result }))
     .catch((error) => res.status(500).send({ message: error.message }));
 };
 
 module.exports.getById = function (req, res) {
-  TipoUnidad.findOne({ _id: req.params.id })
+  TipoUnidad.findOne({
+    _id: req.params.id,
+    $or: [
+      { usuario: new mongoose.Types.ObjectId(`${req.user.id}`) },
+      { esMaestro: true }
+    ]
+  })
     .then((result) => {
       res.jsonp({ data: result });
     })
@@ -20,6 +31,10 @@ module.exports.getById = function (req, res) {
 module.exports.getByAny = function (req, res) {
   const texto = new RegExp(req.params.texto);
   TipoUnidad.find({
+     $or: [
+      { usuario: new mongoose.Types.ObjectId(`${req.user.id}`) },
+      { esMaestro: true }
+    ],
     $or: [
       { nombre: { $regex: texto, $options: "i" } },
       { abreviatura: { $regex: texto, $options: "i" } },
@@ -35,6 +50,14 @@ module.exports.getByAny = function (req, res) {
 
 module.exports.getDesplegable = function (req, res) {
   TipoUnidad.aggregate([
+    {
+      $match: {
+        $or: [
+          { usuario: new mongoose.Types.ObjectId(`${req.user.id}`) },
+          { esMaestro: true }
+        ]
+      }
+    },
     {
       "$project": {
         _id: 0,
@@ -52,6 +75,7 @@ module.exports.getDesplegable = function (req, res) {
 module.exports.insert = function (req, res) {
   const tipoUnidad = new TipoUnidad(req.body);
   TipoUnidad.findOne({
+    usuario: new mongoose.Types.ObjectId(`${req.user.id}`),
     $or: [
       { nombre: tipoUnidad.nombre },
       { abreviatura: tipoUnidad.abreviatura }

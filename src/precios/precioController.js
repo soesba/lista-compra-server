@@ -4,20 +4,7 @@ var mongoose = require('mongoose')
 const Precio = require('./precioModel')
 
 module.exports.get = async function (req, res) {
-  // const primerFiltro = await Precio.aggregate([
-  //   { $group: { _id: "$articulo", doc:{ "$first": "$$ROOT" }}},
-  //   { $replaceRoot: { newRoot: "$doc" }},
-  //   { $addFields: { id: '$_id' } }
-  // ])
-  // Precio.populate(primerFiltro, { path: "establecimiento", select: { _id:1, nombre: 1 }}, (err, segundoFiltro) => {
-  //   Precio.populate(segundoFiltro, { path: "articulo", select: { _id:1, nombre: 1 }}, (err, result) => {
-  //     if (err) {
-  //       res.status(500).send({ message: error.message });
-  //     }
-  //     res.jsonp(result);
-  //   })
-  // });
-  Precio.find()
+  Precio.find({ usuario: new mongoose.Types.ObjectId(`${req.user.id}`) })
     .then((result) => res.jsonp({ data: result }))
     .catch((error) => res.status(500).send({ message: error.message }))
 }
@@ -25,7 +12,7 @@ module.exports.get = async function (req, res) {
 module.exports.getById = async function (req, res) {
   const id = new mongoose.Types.ObjectId(`${req.params.id}`);
   const filtroUM = await Precio.aggregate([
-    { $match: { _id: id } },
+    { $match: { _id: id, usuario: new mongoose.Types.ObjectId(`${req.user.id}`) } },
     {
       $lookup: {
         from: 'TipoUnidad',
@@ -90,7 +77,7 @@ module.exports.getByArticuloId = async function (req, res) {
   }
   const id = new mongoose.Types.ObjectId(`${req.params.articuloId}`);
   Precio.aggregate([
-    { $match: { articulo: id } },
+    { $match: { articulo: id, usuario: new mongoose.Types.ObjectId(`${req.user.id}`) } },
     {
       $lookup: {
         from: 'TipoUnidad',
@@ -195,6 +182,7 @@ module.exports.getByAny = async function (req, res) {
     },
     {
       $match: {
+        _id: id, usuario: new mongoose.Types.ObjectId(`${req.user.id}`),
         $or: [
           { establecimiento_lookup: { $ne: [] } },
           { articulo_lookup: { $ne: [] } }
@@ -222,6 +210,7 @@ module.exports.insert = function (req, res) {
     marca: precio.marca,
     establecimiento: precio.establecimiento,
     fechaCompra: precio.fechaCompra,
+    usuario: new mongoose.Types.ObjectId(`${req.user.id}`)
   })
     .then((u) => {
       if (u) {
