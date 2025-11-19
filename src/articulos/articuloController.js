@@ -152,16 +152,16 @@ module.exports.update = function (req, res) {
     return item
   })
 
+  req.body.usuario = new mongoose.Types.ObjectId(`${req.user.id}`)
+  req.body.tiposUnidad = tiposUnidad
+  const articulo = new Articulo(req.body)
+
   Articulo.findOneAndUpdate(
     { _id: new mongoose.Types.ObjectId(`${req.body.id}`) },
     {
-      $set: {
-        nombre: req.body.nombre,
-        descripcion: req.body.descripcion,
-        tiposUnidad: tiposUnidad,
-      },
+      $set: articulo,
     },
-    { new: true }).then(result => {
+    { new: true,  runValidators: true }).then(result => {
       if (result) {
         res.jsonp({ data: result })
       } else {

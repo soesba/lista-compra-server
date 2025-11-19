@@ -240,10 +240,12 @@ module.exports.update = function (req, res) {
       return item
     })
   }
+  req.body.usuario = new mongoose.Types.ObjectId(`${req.user.id}`)
+  const precio = new Precio(req.body)
   Precio.findOneAndUpdate(
     { _id: new mongoose.Types.ObjectId(`${req.body.id}`) },
-    { $set: req.body },
-    { new: true, returnOriginal: false }).then(result => {
+    { $set: precio },
+    { new: true, runValidators: true, returnOriginal: false }).then(result => {
       if (result) {
         res.jsonp({ data: result })
       } else {

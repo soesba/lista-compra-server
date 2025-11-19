@@ -104,10 +104,12 @@ module.exports.insert = function (req, res) {
 };
 
 module.exports.update = function (req, res) {
+  req.body.usuario = new mongoose.Types.ObjectId(`${req.user.id}`);
+  const tipoUnidad = new TipoUnidad(req.body);
   TipoUnidad.findOneAndUpdate(
     { _id: new mongoose.Types.ObjectId(`${req.body.id}`) },
-    { $set: { nombre: req.body.nombre, abreviatura: req.body.abreviatura } },
-    { new: true }).then(result => {
+    { $set: tipoUnidad },
+    { new: true,  runValidators: true }).then(result => {
       if (result) {
         res.jsonp({ data: result });
       } else {

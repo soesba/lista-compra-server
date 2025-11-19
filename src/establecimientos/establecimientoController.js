@@ -93,18 +93,18 @@ module.exports.insert = function (req, res) {
 };
 
 module.exports.update = function(req, res) {
-    // const imageData = req.body.logo;
-    // const imageBuffer = Buffer.from(imageData.content, "base64");
     req.body.direcciones =  req.body.direcciones.map(element => {
       if (!element._id) {
         element._id =  mongoose.Types.ObjectId()
       }
       return element
     });
+    req.body.usuario = new mongoose.Types.ObjectId(`${req.user.id}`);
+    const establecimiento = new Establecimiento(req.body);
     Establecimiento.findOneAndUpdate(
       { _id:  new mongoose.Types.ObjectId(`${req.body.id}`) },
-      { $set: { nombre: req.body.nombre, abreviatura: req.body.abreviatura, logo: req.body.logo, direcciones: req.body.direcciones, tipoEstablecimiento: req.body.tipoEstablecimiento } },
-      { new: true }).then(result => {
+      { $set: establecimiento },
+      { new: true,  runValidators: true }).then(result => {
           if (result) {
               res.jsonp({ data: result })
           } else {
