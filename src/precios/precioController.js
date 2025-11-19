@@ -198,6 +198,7 @@ module.exports.getByAny = async function (req, res) {
 }
 
 module.exports.insert = function (req, res) {
+  req.body.usuario = new mongoose.Types.ObjectId(`${req.user.id}`)
   const precio = new Precio(req.body)
   if (precio.unidadesMedida.length !== 0) {
     precio.unidadesMedida = req.body.unidadesMedida.map((item) => {

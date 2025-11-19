@@ -128,6 +128,7 @@ module.exports.getDesplegable = function (req, res) {
 }
 
 module.exports.insert = function (req, res) {
+  req.body.usuario = new mongoose.Types.ObjectId(`${req.user.id}`)
   const articulo = new Articulo(req.body)
   Articulo.findOne({ nombre: articulo.nombre, usuario: new mongoose.Types.ObjectId(`${req.user.id}`) })
     .then((u) => {

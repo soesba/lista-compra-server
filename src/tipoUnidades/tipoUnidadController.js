@@ -73,6 +73,7 @@ module.exports.getDesplegable = function (req, res) {
 };
 
 module.exports.insert = function (req, res) {
+  req.body.usuario = new mongoose.Types.ObjectId(`${req.user.id}`);
   const tipoUnidad = new TipoUnidad(req.body);
   TipoUnidad.findOne({
     usuario: new mongoose.Types.ObjectId(`${req.user.id}`),

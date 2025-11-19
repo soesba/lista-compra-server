@@ -79,6 +79,7 @@ module.exports.save = function (req, res) {
       }
     } else {
       // Insertar si no tiene _id
+      op.usuario = new mongoose.Types.ObjectId(`${req.user.id}`);
       delete op.markedForDeletion; // Eliminar la propiedad para evitar problemas en la inserción
       return {
         insertOne: {
@@ -99,6 +100,7 @@ module.exports.save = function (req, res) {
 }
 
 module.exports.insert = function (req, res) {
+  req.body.usuario = new mongoose.Types.ObjectId(`${req.user.id}`);
   const tipoUnidadEquivalencia = new TipoUnidadEquivalencia(req.body);
   TipoUnidadEquivalencia.findOne({
     $and: [

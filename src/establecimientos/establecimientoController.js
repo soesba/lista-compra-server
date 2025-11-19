@@ -57,6 +57,7 @@ module.exports.getDesplegable = function (req, res) {
 }
 
 module.exports.insert = function (req, res) {
+  req.body.usuario = new mongoose.Types.ObjectId(`${req.user.id}`);
   req.body.direcciones =  req.body.direcciones.map(element => {
     if (!element._id) {
       element._id =  mongoose.Types.ObjectId()
