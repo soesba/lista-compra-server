@@ -1,0 +1,7 @@
+'use strict';
+const verifyToken = require('../utils/verifyToken.js').verifyToken;
+const commonController = require('./commonController');
+
+module.exports = function (app) {
+  app.post('/api/common/asignarUsuario', verifyToken, (req, res) => commonController.asignarUsuario(req, res)); // Asignar usuario
+};

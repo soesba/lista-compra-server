@@ -141,3 +141,19 @@ module.exports.delete = function (req, res) {
     });
 
 }
+
+module.exports.getDesplegable = function (req, res) {
+  Usuario.aggregate([
+    {
+      "$project": {
+        _id: 0,
+        "id": "$_id",
+        "nombre": "$username"
+      }
+    }
+  ]).then((result) => {
+    if (result) {
+      res.jsonp({ data: result })
+    }
+  }).catch((error) => res.status(500).send({ message: error.message }));
+};
