@@ -24,10 +24,6 @@ var DireccionSchema = new Schema({
   favorita: {
     type: Boolean,
     default: false,
-  },
-  usuario: {
-    type: Schema.Types.ObjectId,
-    required: true
   }
 })
 
@@ -66,6 +62,10 @@ var EstablecimientoSchema = new Schema({
     type: Boolean,
     default: true,
   },
+  usuario: {
+    type: Schema.Types.ObjectId,
+    required: true
+  }
 })
 
 // Duplicate the ID field.
