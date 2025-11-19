@@ -4,13 +4,13 @@ var mongoose = require("mongoose");
 const TipoUnidadEquivalencia = require("./tipoUnidadEquivalenciaModel");
 
 module.exports.get = function (req, res) {
-  TipoUnidadEquivalencia.find()
+  TipoUnidadEquivalencia.find({ usuario: new mongoose.Types.ObjectId(`${req.user.id}`) })
     .then((result) => res.jsonp({ data: result }))
     .catch((error) => res.status(500).send({ message: error.message }));
 };
 
 module.exports.getById = function (req, res) {
-  TipoUnidadEquivalencia.findOne({ _id: req.params.id })
+  TipoUnidadEquivalencia.findOne({ _id: req.params.id, usuario: new mongoose.Types.ObjectId(`${req.user.id}`) })
     .then((result) => {
       res.jsonp({ data: result });
     })
@@ -18,7 +18,7 @@ module.exports.getById = function (req, res) {
 };
 
 module.exports.getByFrom = function (req, res) {
-  TipoUnidadEquivalencia.find({ from: req.params.from })
+  TipoUnidadEquivalencia.find({ from: req.params.from, usuario: new mongoose.Types.ObjectId(`${req.user.id}`) })
     .then((result) => {
       if (result) {
         res.jsonp({ data: result });
@@ -32,6 +32,7 @@ module.exports.getByFromMultiple = function (req, res) {
     new mongoose.Types.ObjectId(`${x}`)
   )
   TipoUnidadEquivalencia.find({
+    usuario: new mongoose.Types.ObjectId(`${req.user.id}`),
     from: { $in: fromToObjectId }
   }).then((result) => {
     if (result) {
@@ -43,6 +44,7 @@ module.exports.getByFromMultiple = function (req, res) {
 
 module.exports.getByAny = function (req, res) {
   TipoUnidadEquivalencia.find({
+    usuario: new mongoose.Types.ObjectId(`${req.user.id}`),
     $or: [
       { from: req.params.id },
       { to: req.params.id },
@@ -77,6 +79,7 @@ module.exports.save = function (req, res) {
       }
     } else {
       // Insertar si no tiene _id
+      op.usuario = new mongoose.Types.ObjectId(`${req.user.id}`);
       delete op.markedForDeletion; // Eliminar la propiedad para evitar problemas en la inserción
       return {
         insertOne: {
@@ -97,6 +100,7 @@ module.exports.save = function (req, res) {
 }
 
 module.exports.insert = function (req, res) {
+  req.body.usuario = new mongoose.Types.ObjectId(`${req.user.id}`);
   const tipoUnidadEquivalencia = new TipoUnidadEquivalencia(req.body);
   TipoUnidadEquivalencia.findOne({
     $and: [
@@ -149,3 +153,9 @@ module.exports.delete = function (req, res) {
     })
     .catch((error) => res.status(500).send({ message: error.message }));
 };
+
+module.exports.checkData = async function (req, res) {
+  const checkModule = require('../utils/checkConsistencia.js');
+  const resultado = await checkModule.checkDataConsistencyEquivalencias();
+  res.jsonp({ data: resultado });
+}

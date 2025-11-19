@@ -4,7 +4,7 @@ var mongoose = require('mongoose')
 const Articulo = require('./articuloModel')
 
 module.exports.get = async function (req, res) {
-  const articulos = await Articulo.find().lean();
+  const articulos = await Articulo.find({ usuario: new mongoose.Types.ObjectId(`${req.user.id}`) }).lean();
   Articulo.aggregate([
     {
       $match: { _id: { $in: articulos.map(p => p._id) } } // Filtrar por los pedidos encontrados
@@ -40,7 +40,7 @@ module.exports.getById = async function (req, res) {
   const id = new mongoose.Types.ObjectId(`${req.params.id}`);
   Articulo.aggregate([
     {
-      $match: { _id: id } // Filtrar por id
+      $match: { _id: id, usuario: new mongoose.Types.ObjectId(`${req.user.id}`) } // Filtrar por id
     },
     {
       $lookup: {
@@ -93,6 +93,7 @@ module.exports.getById = async function (req, res) {
 module.exports.getByAny = function (req, res) {
   const texto = new RegExp(req.params.texto)
   Articulo.find({
+    usuario: new mongoose.Types.ObjectId(`${req.user.id}`),
     $or: [
       { nombre: { $regex: texto, $options: 'i' } },
       { descripcion: { $regex: texto, $options: 'i' } },
@@ -110,6 +111,9 @@ module.exports.getByAny = function (req, res) {
 module.exports.getDesplegable = function (req, res) {
   Articulo.aggregate([
     {
+      $match: { usuario: new mongoose.Types.ObjectId(`${req.user.id}`) }
+    },
+    {
       "$project": {
         _id: 0,
         "id": "$_id",
@@ -124,8 +128,9 @@ module.exports.getDesplegable = function (req, res) {
 }
 
 module.exports.insert = function (req, res) {
+  req.body.usuario = new mongoose.Types.ObjectId(`${req.user.id}`)
   const articulo = new Articulo(req.body)
-  Articulo.findOne({ nombre: articulo.nombre })
+  Articulo.findOne({ nombre: articulo.nombre, usuario: new mongoose.Types.ObjectId(`${req.user.id}`) })
     .then((u) => {
       if (u) {
         res.status(409).send({
@@ -147,16 +152,16 @@ module.exports.update = function (req, res) {
     return item
   })
 
+  req.body.usuario = new mongoose.Types.ObjectId(`${req.user.id}`)
+  req.body.tiposUnidad = tiposUnidad
+  const articulo = new Articulo(req.body)
+
   Articulo.findOneAndUpdate(
     { _id: new mongoose.Types.ObjectId(`${req.body.id}`) },
     {
-      $set: {
-        nombre: req.body.nombre,
-        descripcion: req.body.descripcion,
-        tiposUnidad: tiposUnidad,
-      },
+      $set: articulo,
     },
-    { new: true }).then(result => {
+    { new: true,  runValidators: true }).then(result => {
       if (result) {
         res.jsonp({ data: result })
       } else {
@@ -177,4 +182,10 @@ module.exports.delete = function (req, res) {
       }
     })
     .catch((error) => res.status(500).send({ message: error.message }))
+}
+
+module.exports.checkData = async function (req, res) {
+  const checkModule = require('../utils/checkConsistencia.js');
+  const resultado = await checkModule.checkDataConsistencyArticulo();
+  res.jsonp({ data: resultado });
 }

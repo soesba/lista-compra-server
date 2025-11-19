@@ -4,6 +4,8 @@ const tipoEstablecimientoController = require('./tipoEstablecimientoController')
 
 module.exports = function (app) {
 
+  app.get('/api/tipo-establecimientos/checkData', verifyToken, (req, res) => tipoEstablecimientoController.checkData(req, res)); // Chequear consistencia de datos
+
   app.get('/api/tipo-establecimientos/desplegable', verifyToken, (req, res) => tipoEstablecimientoController.getDesplegable(req, res)); // Para dropdowns
 
   app.get('/api/tipo-establecimientos/search/:texto', verifyToken, (req, res) => tipoEstablecimientoController.getByAny(req, res)); // Buscar por texto

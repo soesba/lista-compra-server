@@ -4,6 +4,8 @@ const articuloController = require('./articuloController');
 
 module.exports = function (app) {
 
+  app.get('/api/articulos/checkData', verifyToken, (req, res) => articuloController.checkData(req, res)); // Chequear consistencia de datos
+
   app.get('/api/articulos/desplegable', verifyToken, (req, res) => articuloController.getDesplegable(req, res)); // Para dropdowns
 
   app.get('/api/articulos/search/:texto', verifyToken, (req, res) => articuloController.getByAny(req, res)); // Buscar por texto

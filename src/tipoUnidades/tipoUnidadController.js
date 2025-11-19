@@ -4,13 +4,24 @@ var mongoose = require("mongoose");
 const TipoUnidad = require("./tipoUnidadModel");
 
 module.exports.get = function (req, res) {
-  TipoUnidad.find()
+  TipoUnidad.find({
+    $or: [
+      { usuario: new mongoose.Types.ObjectId(`${req.user.id}`) },
+      { esMaestro: true }
+    ]
+  })
     .then((result) => res.jsonp({ data: result }))
     .catch((error) => res.status(500).send({ message: error.message }));
 };
 
 module.exports.getById = function (req, res) {
-  TipoUnidad.findOne({ _id: req.params.id })
+  TipoUnidad.findOne({
+    _id: req.params.id,
+    $or: [
+      { usuario: new mongoose.Types.ObjectId(`${req.user.id}`) },
+      { esMaestro: true }
+    ]
+  })
     .then((result) => {
       res.jsonp({ data: result });
     })
@@ -20,6 +31,10 @@ module.exports.getById = function (req, res) {
 module.exports.getByAny = function (req, res) {
   const texto = new RegExp(req.params.texto);
   TipoUnidad.find({
+     $or: [
+      { usuario: new mongoose.Types.ObjectId(`${req.user.id}`) },
+      { esMaestro: true }
+    ],
     $or: [
       { nombre: { $regex: texto, $options: "i" } },
       { abreviatura: { $regex: texto, $options: "i" } },
@@ -36,6 +51,14 @@ module.exports.getByAny = function (req, res) {
 module.exports.getDesplegable = function (req, res) {
   TipoUnidad.aggregate([
     {
+      $match: {
+        $or: [
+          { usuario: new mongoose.Types.ObjectId(`${req.user.id}`) },
+          { esMaestro: true }
+        ]
+      }
+    },
+    {
       "$project": {
         _id: 0,
         "id": "$_id",
@@ -50,8 +73,10 @@ module.exports.getDesplegable = function (req, res) {
 };
 
 module.exports.insert = function (req, res) {
+  req.body.usuario = new mongoose.Types.ObjectId(`${req.user.id}`);
   const tipoUnidad = new TipoUnidad(req.body);
   TipoUnidad.findOne({
+    usuario: new mongoose.Types.ObjectId(`${req.user.id}`),
     $or: [
       { nombre: tipoUnidad.nombre },
       { abreviatura: tipoUnidad.abreviatura }
@@ -79,10 +104,12 @@ module.exports.insert = function (req, res) {
 };
 
 module.exports.update = function (req, res) {
+  req.body.usuario = new mongoose.Types.ObjectId(`${req.user.id}`);
+  const tipoUnidad = new TipoUnidad(req.body);
   TipoUnidad.findOneAndUpdate(
     { _id: new mongoose.Types.ObjectId(`${req.body.id}`) },
-    { $set: { nombre: req.body.nombre, abreviatura: req.body.abreviatura } },
-    { new: true }).then(result => {
+    { $set: tipoUnidad },
+    { new: true,  runValidators: true }).then(result => {
       if (result) {
         res.jsonp({ data: result });
       } else {
@@ -125,4 +152,23 @@ module.exports.delete = function (req, res) {
     }
   })
     .catch((error) => res.status(500).send({ message: error.message }));
+};
+
+module.exports.checkUso = function (req, res) {
+  const tipoUnidadId = req.params.id;
+  const checkUsoTipoUnidad = require('../utils/checkUso').checkUsoTipoUnidad;
+
+  checkUsoTipoUnidad(tipoUnidadId)
+    .then(resultados => {
+      res.jsonp({ data: resultados });
+    })
+    .catch(error => {
+      res.status(500).send({ message: error.message });
+    });
+};
+
+module.exports.checkData = async function (req, res) {
+  const checkModule = require('../utils/checkConsistencia.js');
+  const resultado = await checkModule.checkDataConsistencyTipoUnidad();
+  res.jsonp({ data: resultado });
 };

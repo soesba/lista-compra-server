@@ -29,6 +29,14 @@ const TipoEstablecimientoSchema = new Schema({
     borrable: {
       type: Boolean,
       default: true
+    },
+    esMaestro: {
+      type: Boolean,
+      default: false
+    },
+    usuario: {
+      type: Schema.Types.ObjectId,
+      required: true,
     }
 });
 

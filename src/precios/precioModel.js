@@ -56,6 +56,10 @@ const PrecioSchema = new Schema({
   borrable: {
     type: Boolean,
     default: true,
+  },
+  usuario: {
+    type: Schema.Types.ObjectId,
+    required: true,
   }
 });
 

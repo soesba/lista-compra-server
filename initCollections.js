@@ -5,7 +5,14 @@ const TipoUnidadesData = require('./src/data/tipoUnidades.json');
 const TipoEstablecimientosData = require('./src/data/tipoEstablecimientos.json');
 const EstablecimientosData = require('./src/data/establecimientos.json')
 const mongoose = require('mongoose');
-const { checkDataConsistencyArticulo, checkDataConsistencyEstablecimiento, checkDataConsistencyPrecio, checkDataConsistencyEquivalencias, checkDataConsistencyModelo } = require('./src/utils/checkConsistencia');
+const {
+  checkDataConsistencyArticulo,
+  checkDataConsistencyEstablecimiento,
+  checkDataConsistencyPrecio,
+  checkDataConsistencyEquivalencias,
+  checkDataConsistencyModelo,
+  checkDataConsistencyTipoUnidad,
+  checkDataConsistencyTipoEstablecimiento } = require('./src/utils/checkConsistencia');
 
 
 
@@ -34,7 +41,7 @@ function crearColeccionArticulo () {
   ArticuloData.forEach(async function (item) {
     const Articulo = mongoose.model('Articulo')
     const nuevoArticulo = new Articulo(item);
-    nuevoArticulo.tipoUnidad = new mongoose.Types.ObjectId(`${item._id}`)
+    nuevoArticulo._id = new mongoose.Types.ObjectId(`${item._id}`)
     const resultado = await nuevoArticulo.save();
   })
 }
@@ -43,7 +50,7 @@ function crearColeccionTipoUnidad () {
   TipoUnidadesData.forEach(async function (item) {
     const TipoUnidad = mongoose.model('TipoUnidad')
     const nuevoTipoUnidad = new TipoUnidad(item);
-    nuevoTipoUnidad.tipoUnidad = new mongoose.Types.ObjectId(`${item._id}`)
+    nuevoTipoUnidad._id = new mongoose.Types.ObjectId(`${item._id}`)
     const resultado = await nuevoTipoUnidad.save();
   })
 }
@@ -52,7 +59,7 @@ function crearColeccionTipoEstablecimiento () {
   TipoEstablecimientosData.forEach(async function (item) {
     const TipoEstablecimiento = mongoose.model('TipoEstablecimiento')
     const nuevoTipoEstablecimiento = new TipoEstablecimiento(item);
-    nuevoTipoEstablecimiento.tipoUnidad = new mongoose.Types.ObjectId(`${item._id}`)
+    nuevoTipoEstablecimiento._id = new mongoose.Types.ObjectId(`${item._id}`)
     const resultado = await nuevoTipoEstablecimiento.save();
   })
 }
@@ -61,7 +68,7 @@ function crearColeccionEstablecimiento () {
   EstablecimientosData.forEach(async function (item) {
     const Establecimiento = mongoose.model('Establecimiento')
     const nuevoEstablecimiento = new Establecimiento(item);
-    nuevoEstablecimiento.tipoUnidad = new mongoose.Types.ObjectId(`${item._id}`)
+    nuevoEstablecimiento._id = new mongoose.Types.ObjectId(`${item._id}`)
     const resultado = await nuevoEstablecimiento.save();
   })
 }
@@ -82,6 +89,12 @@ module.exports.checkDataConsistency = function (nombreColeccion) {
       break;
     case 'Modelo':
       checkDataConsistencyModelo();
+      break;
+    case 'TipoUnidad':
+      checkDataConsistencyTipoUnidad();
+      break;
+    case 'TipoEstablecimiento':
+      checkDataConsistencyTipoEstablecimiento();
       break;
   }
 }

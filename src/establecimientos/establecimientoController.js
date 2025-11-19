@@ -4,32 +4,14 @@ var mongoose = require("mongoose");
 const Establecimiento = require("./establecimientoModel");
 
 module.exports.get = function (req, res) {
-  // NOTA: si usamos aggregate no se ejecuta la transformacion toJSON del model
-  // Establecimiento.aggregate([
-  //   { $lookup: {
-  //     from: "TipoEstablecimiento",
-  //     localField: "tipoEstablecimiento",
-  //     foreignField: "_id",
-  //     as: "tipoEstablecimiento"
-  //   }}
-  // ]).then((result) => {
-  //   result.forEach(item => {
-  //     item.id = item._id
-  //     if (item.tipoEstablecimiento.length !== 0){
-  //       const tipoEstablecimiento = item.tipoEstablecimiento[0]
-  //       item.tipoEstablecimiento = tipoEstablecimiento
-  //     }
-  //   })
-  //   res.jsonp(result)
-  // }).catch((error) => res.status(500).send({ message: error.message }));
-  Establecimiento.find()
+  Establecimiento.find({ usuario: new mongoose.Types.ObjectId(`${req.user.id}`) })
     .populate('tipoEstablecimiento')
     .then((result) => res.jsonp({ data: result }))
     .catch((error) => res.status(500).send({ message: error.message }));
 };
 
 module.exports.getById = function (req, res) {
-    Establecimiento.findOne({ _id: req.params.id })
+    Establecimiento.findOne({ _id: req.params.id, usuario: new mongoose.Types.ObjectId(`${req.user.id}`) })
     .populate('tipoEstablecimiento')
     .then((result) => {
         res.jsonp({ data: result });
@@ -40,6 +22,7 @@ module.exports.getById = function (req, res) {
 module.exports.getByAny = function (req, res) {
   const texto = new RegExp(req.params.texto);
   Establecimiento.find({
+    usuario: new mongoose.Types.ObjectId(`${req.user.id}`),
     $or: [
       { nombre: { $regex: texto, $options: "i" } },
       { tipoEstablecimiento: { $regex: texto, $options: "i" } },
@@ -57,6 +40,9 @@ module.exports.getByAny = function (req, res) {
 module.exports.getDesplegable = function (req, res) {
   Establecimiento.aggregate([
     {
+      $match: { usuario: new mongoose.Types.ObjectId(`${req.user.id}`) }
+    },
+    {
       "$project":{
         _id: 0,
         "id": "$_id",
@@ -71,6 +57,7 @@ module.exports.getDesplegable = function (req, res) {
 }
 
 module.exports.insert = function (req, res) {
+  req.body.usuario = new mongoose.Types.ObjectId(`${req.user.id}`);
   req.body.direcciones =  req.body.direcciones.map(element => {
     if (!element._id) {
       element._id =  mongoose.Types.ObjectId()
@@ -79,6 +66,7 @@ module.exports.insert = function (req, res) {
   });
   const establecimiento = new Establecimiento(req.body);
   Establecimiento.findOne({
+    usuario: new mongoose.Types.ObjectId(`${req.user.id}`),
     $and: [
       { nombre: establecimiento.nombre },
       { tipoEstablecimiento: establecimiento.tipoEstablecimiento },
@@ -105,18 +93,18 @@ module.exports.insert = function (req, res) {
 };
 
 module.exports.update = function(req, res) {
-    // const imageData = req.body.logo;
-    // const imageBuffer = Buffer.from(imageData.content, "base64");
     req.body.direcciones =  req.body.direcciones.map(element => {
       if (!element._id) {
         element._id =  mongoose.Types.ObjectId()
       }
       return element
     });
+    req.body.usuario = new mongoose.Types.ObjectId(`${req.user.id}`);
+    const establecimiento = new Establecimiento(req.body);
     Establecimiento.findOneAndUpdate(
       { _id:  new mongoose.Types.ObjectId(`${req.body.id}`) },
-      { $set: { nombre: req.body.nombre, abreviatura: req.body.abreviatura, logo: req.body.logo, direcciones: req.body.direcciones, tipoEstablecimiento: req.body.tipoEstablecimiento } },
-      { new: true }).then(result => {
+      { $set: establecimiento },
+      { new: true,  runValidators: true }).then(result => {
           if (result) {
               res.jsonp({ data: result })
           } else {
@@ -138,3 +126,9 @@ module.exports.delete = function (req, res) {
     })
     .catch((error) => res.status(500).send({ message: error.message }));
 };
+
+module.exports.checkData = async function (req, res) {
+  const checkModule = require('../utils/checkConsistencia.js');
+  const resultado = await checkModule.checkDataConsistencyEstablecimiento();
+  res.jsonp({ data: resultado });
+}

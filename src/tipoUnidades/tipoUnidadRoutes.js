@@ -4,6 +4,8 @@ const tipoUnidadController = require('./tipoUnidadController');
 
 module.exports = function (app) {
 
+  app.get('/api/tipos-unidad/checkData', verifyToken, (req, res) => tipoUnidadController.checkData(req, res)); // Chequear consistencia de datos
+
   app.get('/api/tipos-unidad/desplegable', verifyToken, (req, res) => tipoUnidadController.getDesplegable(req, res)); // Para dropdowns
 
   app.get('/api/tipos-unidad/search/:texto', verifyToken, (req, res) => tipoUnidadController.getByAny(req, res)); // Buscar por texto
@@ -17,5 +19,7 @@ module.exports = function (app) {
   app.put('/api/tipos-unidad/:id', verifyToken, (req, res) => tipoUnidadController.update(req, res)); // Actualizar por ID
 
   app.delete('/api/tipos-unidad/:id', verifyToken, (req, res) => tipoUnidadController.delete(req, res)); // Eliminar por ID
+
+  app.get('/api/tipos-unidad/checkuso/:id', verifyToken, (req, res) => tipoUnidadController.checkUso(req, res)); // Comprobar uso antes de eliminar
 
 }

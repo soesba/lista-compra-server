@@ -1,21 +1,23 @@
 'use strict';
 const verifyToken = require('../utils/verifyToken.js').verifyToken;
-const compraController = require('./precioController');
+const precioController = require('./precioController');
 
 module.exports = function (app) {
 
-  app.get('/api/precios/search/:texto', verifyToken, (req, res) => compraController.getByAny(req, res)); // Búsqueda
+  app.get('/api/precios/checkData', verifyToken, (req, res) => precioController.checkData(req, res)); // Chequear consistencia de datos
 
-  app.get('/api/precios/articulo/:articuloId', verifyToken, (req, res) => compraController.getByArticuloId(req, res)); // Por artículo
+  app.get('/api/precios/search/:texto', verifyToken, (req, res) => precioController.getByAny(req, res)); // Búsqueda
 
-  app.get('/api/precios/:id', verifyToken, (req, res) => compraController.getById(req, res)); // Obtener por ID
+  app.get('/api/precios/articulo/:articuloId', verifyToken, (req, res) => precioController.getByArticuloId(req, res)); // Por artículo
 
-  app.get('/api/precios', verifyToken, (req, res) => compraController.get(req, res)); // Obtener todos
+  app.get('/api/precios/:id', verifyToken, (req, res) => precioController.getById(req, res)); // Obtener por ID
 
-  app.post('/api/precios', verifyToken, (req, res) => compraController.insert(req, res)); // Crear nuevo
+  app.get('/api/precios', verifyToken, (req, res) => precioController.get(req, res)); // Obtener todos
 
-  app.put('/api/precios/:id', verifyToken, (req, res) => compraController.update(req, res)); // Actualizar por ID
+  app.post('/api/precios', verifyToken, (req, res) => precioController.insert(req, res)); // Crear nuevo
 
-  app.delete('/api/precios/:id', verifyToken, (req, res) => compraController.delete(req, res)); // Eliminar por ID
+  app.put('/api/precios/:id', verifyToken, (req, res) => precioController.update(req, res)); // Actualizar por ID
+
+  app.delete('/api/precios/:id', verifyToken, (req, res) => precioController.delete(req, res)); // Eliminar por ID
 
 }

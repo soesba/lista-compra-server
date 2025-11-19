@@ -4,7 +4,12 @@ var mongoose = require("mongoose");
 const TipoEstablecimiento = require("./tipoEstablecimientoModel");
 
 module.exports.get = function (req, res) {
-  TipoEstablecimiento.find()
+  TipoEstablecimiento.find({
+     $or: [
+        { usuario: new mongoose.Types.ObjectId(`${req.user.id}`) },
+        { esMaestro: true }
+      ],
+    })
     .then((result) => res.jsonp({ data: result }))
     .catch((error) => res.status(500).send({ message: error.message }));
 };
@@ -21,6 +26,10 @@ module.exports.getByAny = function (req, res) {
   const texto = new RegExp(req.params.texto);
   TipoEstablecimiento.find({
     $or: [
+      { usuario: new mongoose.Types.ObjectId(`${req.user.id}`) },
+      { esMaestro: true }
+    ],
+    $or: [
       { nombre: { $regex: texto, $options: "i" } },
       { abreviatura: { $regex: texto, $options: "i" } },
     ],
@@ -36,6 +45,14 @@ module.exports.getByAny = function (req, res) {
 module.exports.getDesplegable = function (req, res) {
   TipoEstablecimiento.aggregate([
     {
+      $match: {
+        $or: [
+          { usuario: new mongoose.Types.ObjectId(`${req.user.id}`) },
+          { esMaestro: true }
+        ]
+      }
+    },
+    {
       "$project":{
         _id: 0,
         "id": "$_id",
@@ -50,9 +67,11 @@ module.exports.getDesplegable = function (req, res) {
 }
 
 module.exports.insert = function (req, res) {
+  req.body.usuario = new mongoose.Types.ObjectId(`${req.user.id}`);
   const tipoEstablecimiento = new TipoEstablecimiento(req.body);
   TipoEstablecimiento.findOne({
-    $and: [
+    usuario: new mongoose.Types.ObjectId(`${req.user.id}`),
+    $or: [
       { nombre: tipoEstablecimiento.nombre },
       { abreviatura: tipoEstablecimiento.abreviatura },
     ],
@@ -79,10 +98,12 @@ module.exports.insert = function (req, res) {
 };
 
 module.exports.update = function (req, res) {
+  req.body.usuario = new mongoose.Types.ObjectId(`${req.user.id}`);
+  const tipoEstablecimiento = new TipoEstablecimiento(req.body);
   TipoEstablecimiento.findOneAndUpdate(
     { _id: new mongoose.Types.ObjectId(`${req.body.id}`) },
-    { $set: { nombre: req.body.nombre, abreviatura: req.body.abreviatura } },
-    { new: true }).then(result => {
+    { $set: tipoEstablecimiento },
+    { new: true, runValidators: true }).then(result => {
       if (result) {
         res.jsonp({ data: result });
       } else {
@@ -112,3 +133,10 @@ module.exports.delete = function (req, res) {
     }
   }).catch((error) => res.status(500).send({ message: error.message }));
 };
+
+
+module.exports.checkData = async function (req, res) {
+  const checkModule = require('../utils/checkConsistencia.js');
+  const resultado = await checkModule.checkDataConsistencyTipoEstablecimiento();
+  res.jsonp({ data: resultado });
+}
