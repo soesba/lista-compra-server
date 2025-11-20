@@ -43,6 +43,11 @@ var UsuarioSchema = new Schema({
     type: Schema.Types.ObjectId,
     required: true,
   },
+  rol: {
+    type: Schema.Types.ObjectId,
+    ref: 'Rol',
+    required: true
+  },
 	username: {
 		type: String,
 		unique: true,
@@ -71,10 +76,6 @@ var UsuarioSchema = new Schema({
 		type: String,
     required: true
 	},
-  esAdministrador: {
-    type: Boolean,
-    default: false
-  },
   permisos: {
     type: [PermisoSchema],
     default: null
@@ -90,10 +91,17 @@ UsuarioSchema.virtual('id').get(function(){
   return this._id.toHexString();
 });
 
+UsuarioSchema.virtual('esAdministrador').get(function() {
+  // El campo rol debe estar relleno
+  return this.rol && this.rol.nombre?.toLowerCase() === 'administrador';
+});
+
+
 PreferenciaUserSchema.virtual('id').get(function(){
   return this._id.toHexString();
 });
 
+UsuarioSchema.set('toObject', { virtuals: true });
 UsuarioSchema.set('toJSON', {
   virtuals: true,
   transform: (doc, result) => {

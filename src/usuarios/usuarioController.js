@@ -32,6 +32,7 @@ module.exports.get = function (req, res) {
 
 module.exports.getAll = function (req, res) {
   Usuario.find({}, { password: 0 })
+    .populate({ path: 'rol', select: 'nombre' })
     .then(response => {
       if (response) {
         res.jsonp({ data: response });
@@ -45,6 +46,7 @@ module.exports.getAll = function (req, res) {
 module.exports.getById = function (req, res) {
   const params = { _id: new mongoose.Types.ObjectId(`${req.query.id}`) };
   Usuario.findOne(params, { password: 0 })
+    .populate({ path: 'rol', select: 'nombre' })
     .then(response => {
       if (response) {
         res.jsonp({ data: response });
@@ -58,6 +60,7 @@ module.exports.getById = function (req, res) {
 module.exports.getByUsername = function (req, res) {
   const params = { username: req.query.username };
   Usuario.findOne(params, { password: 0 })
+    .populate({ path: 'rol', select: 'nombre' })
     .then(response => {
       if (response) {
         res.jsonp({ data: response });

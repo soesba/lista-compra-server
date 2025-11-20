@@ -10,7 +10,7 @@ const {
   checkDataConsistencyEstablecimiento,
   checkDataConsistencyPrecio,
   checkDataConsistencyEquivalencias,
-  checkDataConsistencyModelo,
+  checkDataConsistencyUsuario: checkDataConsistencyUsuario,
   checkDataConsistencyTipoUnidad,
   checkDataConsistencyTipoEstablecimiento } = require('./src/utils/checkConsistencia');
 
@@ -87,8 +87,8 @@ module.exports.checkDataConsistency = function (nombreColeccion) {
     case 'Equivalencias':
       checkDataConsistencyEquivalencias();
       break;
-    case 'Modelo':
-      checkDataConsistencyModelo();
+    case 'Usuario':
+      checkDataConsistencyUsuario();
       break;
     case 'TipoUnidad':
       checkDataConsistencyTipoUnidad();

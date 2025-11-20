@@ -3,7 +3,7 @@
 const mongoose = require('mongoose');
 const initCollections = require('./initCollections');
 const conexion =  mongoose.connection.db;
-const listaTablasMaestras = ['TipoEstablecimiento', 'TipoUnidad', 'Articulo', 'Establecimiento'];
+const listaTablasMaestras = ['TipoEstablecimiento', 'TipoUnidad', 'Articulo', 'Establecimiento', 'Usuario'];
 
 module.exports.init = async function() {
   checkTablasMaestras();
@@ -28,5 +28,4 @@ function checkTablasMaestras () {
   })
   initCollections.checkDataConsistency('Precio')
   initCollections.checkDataConsistency('Equivalencias');
-  initCollections.checkDataConsistency('Modelo');
 }

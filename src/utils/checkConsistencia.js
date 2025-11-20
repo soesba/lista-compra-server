@@ -219,7 +219,7 @@ module.exports.checkDataConsistencyEquivalencias = async function () {
   }
 }
 
-module.exports.checkDataConsistencyModelo = async function () {
+module.exports.checkDataConsistencyUsuario = async function () {
   const Modelo = mongoose.model('Modelo');
   const Usuario = mongoose.model('Usuario');
 
@@ -232,6 +232,7 @@ module.exports.checkDataConsistencyModelo = async function () {
         id: usuario._id,
         preferencias: usuario.preferencias || [],
         permisos: usuario.permisos || [],
+        rol: usuario.rol
       };
 
       for (const preferencia of current.preferencias) {
@@ -247,6 +248,15 @@ module.exports.checkDataConsistencyModelo = async function () {
           resultados.push(`El usuario ${current.id} tiene un permiso para un modelo que no existe: ${permiso.modeloId}`);
         }
       };
+
+      if (current.rol) {
+        const existe = await mongoose.model('Rol').exists({ _id: current.rol });
+        if (!existe) {
+          resultados.push(`El usuario ${current.id} tiene un rol que no existe: ${current.rol}`);
+        }
+      } else {
+        resultados.push(`El usuario ${current.id} no tiene rol asignado`);
+      }
     };
 
     const respuesta = {
@@ -255,10 +265,10 @@ module.exports.checkDataConsistencyModelo = async function () {
       fallas: resultados
     }
 
-    console.log(`Verificación completa de modelos en preferencias y permisos de usuarios: ${resultados.length} errores`);
+    console.log(`Verificación completa de datos en usuarios: ${resultados.length} errores`);
     return respuesta;
   } catch (error) {
-    console.error('Error al verificar coleccion modelos en usuarios:', error);
+    console.error('Error al verificar coleccion usuarios:', error);
   }
 }
 

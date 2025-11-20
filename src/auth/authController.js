@@ -26,6 +26,7 @@ module.exports.login = function (req, res) {
       return res.status(400).json({ message: "Nombre de usuario y contraseña son requeridos" });
     }
     Usuario.findOne({ username: username })
+      .populate({ path: 'rol', select: 'nombre' })
       .then(async (response) => {
         if (response) {
           // Verificar la contraseña
