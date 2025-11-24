@@ -4,6 +4,8 @@ var usuarioController = require('./usuarioController');
 
 module.exports = function (app) {
 
+  app.get('/api/usuarios/checkData', verifyToken, (req, res) => usuarioController.checkData(req, res)); // Chequear consistencia de datos
+
   app.get('/api/usuarios/desplegable', verifyToken, (req, res) => usuarioController.getDesplegable(req, res)); // Para dropdowns
 
   app.route('/api/usuarios')

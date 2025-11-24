@@ -138,7 +138,7 @@ module.exports.checkDataConsistencyPrecio = async function () {
       if (!current.usuario) {
         resultados.push({
           id: current.id,
-          precio: current.precio,
+          nombre: current.precio,
           mensaje: `no tiene usuario asociado`
         });
       } else {
@@ -146,7 +146,7 @@ module.exports.checkDataConsistencyPrecio = async function () {
         if (!existeUsuario) {
           resultados.push({
             id: current.id,
-            precio: current.precio,
+            nombre: current.precio,
             mensaje: `tiene un usuario asociado que no existe: ${current.usuario}`
           });
         }
@@ -158,7 +158,7 @@ module.exports.checkDataConsistencyPrecio = async function () {
         if (!existe) {
           resultados.push({
             id: current.id,
-            precio: current.precio,
+            nombre: current.precio,
             mensaje: `tiene un tipo de unidad asociado que no existe: ${unidad._id}`
           });
         }
@@ -230,6 +230,7 @@ module.exports.checkDataConsistencyUsuario = async function () {
     for (const usuario of usuarios) {
       const current = {
         id: usuario._id,
+        username: usuario.username,
         preferencias: usuario.preferencias || [],
         permisos: usuario.permisos || [],
         rol: usuario.rol
@@ -238,24 +239,40 @@ module.exports.checkDataConsistencyUsuario = async function () {
       for (const preferencia of current.preferencias) {
         const existe = await Modelo.exists({ _id: preferencia.modeloId });
         if (!existe) {
-          resultados.push(`El usuario ${current.id} tiene una configuración de un modelo que no existe: ${preferencia.modeloId}`);
+          resultados.push({
+            id: current.id,
+            nombre: current.username,
+            mensaje: `El usuario ${current.id} tiene una configuración de un modelo que no existe: ${preferencia.modeloId}`
+          });
         }
       };
 
       for (const permiso of current.permisos) {
         const existe = await Modelo.exists({ _id: permiso.modeloId });
         if (!existe) {
-          resultados.push(`El usuario ${current.id} tiene un permiso para un modelo que no existe: ${permiso.modeloId}`);
+          resultados.push({
+            id: current.id,
+            nombre: current.username,
+            mensaje: `El usuario ${current.id} tiene un permiso para un modelo que no existe: ${permiso.modeloId}`
+          });
         }
       };
 
       if (current.rol) {
         const existe = await mongoose.model('Rol').exists({ _id: current.rol });
         if (!existe) {
-          resultados.push(`El usuario ${current.id} tiene un rol que no existe: ${current.rol}`);
+          resultados.push({
+            id: current.id,
+            nombre: current.username,
+            mensaje: `El usuario ${current.id} tiene un rol que no existe: ${current.rol}`
+          });
         }
       } else {
-        resultados.push(`El usuario ${current.id} no tiene rol asignado`);
+        resultados.push({
+          id: current.id,
+          nombre: current.username,
+          mensaje: `El usuario ${current.id} no tiene rol asignado`
+        });
       }
     };
 
