@@ -1,17 +1,17 @@
 'use strict';
 const jwt = require("jsonwebtoken");
-var loginController = require('./authController');
+const authController = require('./authController');
 const verifyToken =  require('../utils/verifyToken.js').verifyToken;
 
-module.exports = function (app) {
+module.exports = function setupAuthRoutes(app) {
 
-  app.post('/auth/login', loginController.login); // Login
+  app.post('/auth/login', authController.login); // Login
 
-  app.post('/auth/register', loginController.register); // Register
+  app.post('/auth/register', authController.register); // Register
 
-  app.get('/auth/refresh', loginController.refreshToken); // Refresh token
+  app.get('/auth/refresh', authController.refreshToken); // Refresh token
 
-  // app.post('/auth/changePassword', loginController.changePassword); // Change password
+  app.post('/auth/change-password', authController.changePassword); // Change password
 
   // Protected route example
   app.get("/protected", verifyToken, function (req, res) {

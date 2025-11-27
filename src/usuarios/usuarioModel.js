@@ -1,10 +1,10 @@
 'use strict';
 
-var mongoose = require('mongoose');
-var	Schema = mongoose.Schema;
-var ImageSchema = require('../common/imageSchema.js');
+const mongoose = require('mongoose');
+const	Schema = mongoose.Schema;
+const ImageSchema = require('../common/imageSchema.js');
 
-var PermisoSchema = new Schema({
+const PermisoSchema = new Schema({
   _id: {
     type: Schema.Types.ObjectId,
     required: true,
@@ -23,7 +23,7 @@ var PermisoSchema = new Schema({
   }
 });
 
-var PreferenciaUserSchema = new Schema({
+const PreferenciaUserSchema = new Schema({
   configuracionId: {
     type: Schema.Types.ObjectId,
     required: true
@@ -38,7 +38,7 @@ var PreferenciaUserSchema = new Schema({
   }
 });
 
-var UsuarioSchema = new Schema({
+const UsuarioSchema = new Schema({
   _id: {
     type: Schema.Types.ObjectId,
     required: true,
@@ -54,9 +54,14 @@ var UsuarioSchema = new Schema({
 		required: true,
 		trim: true
 	},
+  email: {
+    type: String,
+    required: true,
+    unique: true,
+    trim: true
+  },
   nombre: {
     type: String,
-    required: true
   },
   primerApellido: {
     type: String

@@ -1,10 +1,10 @@
 'use strict';
 
-var mongoose = require('mongoose');
-var Usuario = mongoose.model('Usuario');
+const mongoose = require('mongoose');
+const Usuario = mongoose.model('Usuario');
 
 module.exports.register = function (req, res) {
-  var user = new User(req.body);
+  const user = new User(req.body);
 
   Usuario.findOne({ username: user.username })
     .then(result => {
@@ -72,7 +72,7 @@ module.exports.getByUsername = function (req, res) {
 }
 
 module.exports.getPreferencias = function (req, res) {
-  var userId = new mongoose.Types.ObjectId(`${req.params.id}`);
+  const userId = new mongoose.Types.ObjectId(`${req.params.id}`);
   Usuario.findOne({ _id: userId }, { preferencias: 1 })
     .then(response => {
       if (response) {
@@ -121,7 +121,7 @@ module.exports.getFotoByUsername = function (req, res) {
 }
 
 module.exports.update = function (req, res) {
-  var userId = new mongoose.Types.ObjectId(`${req.body.id}`);
+  const userId = new mongoose.Types.ObjectId(`${req.body.id}`);
   const newUsuario = {
     ...req.body
   }
@@ -135,7 +135,7 @@ module.exports.update = function (req, res) {
 }
 
 module.exports.delete = function (req, res) {
-  var userId = req.params.id;
+  const userId = new mongoose.Types.ObjectId(`${req.params.id}`);
 
   Usuario.findOneAndDelete({ _id: userId })
     .then(result => res.jsonp({ data: result }))

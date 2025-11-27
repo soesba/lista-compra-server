@@ -1,5 +1,5 @@
 "use strict";
-var mongoose = require("mongoose");
+const mongoose = require("mongoose");
 
 module.exports.asignarUsuario = function (req, res) {
   let coleccion = ''
@@ -49,12 +49,10 @@ module.exports.asignarRol = function (req, res) {
   const rolId = req.body.rolId;
   const ids = req.body.ids;
 
-  switch (modelo) {
-    case 'Usuario':
+  if (modelo === 'Usuario') {
       coleccion = require('../usuarios/usuarioModel');
-      break;
-    default:
-      return res.status(400).send({ message: 'Modelo no soportado para asignar rol' });
+  } else {
+    return res.status(400).send({ message: 'Modelo no soportado para asignar rol' });
   }
 
   coleccion.updateMany(

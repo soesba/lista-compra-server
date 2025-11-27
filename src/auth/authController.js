@@ -49,26 +49,59 @@ module.exports.login = function (req, res) {
       })
       .catch(error => res.status(500).send({ message: error.message }));
   } catch (error) {
+    console.error('Error in login:', error);
     return res.status(500).json({ message: "Internal server error" });
   }
 }
 
+module.exports.changePassword = async function (req, res) {
+  const username = req.body.username;
+  const newPassword = req.body.newPassword;
+  if (!username || !newPassword) {
+    return res.status(400).json({ message: "Nombre de usuario y nueva contraseña son requeridos" });
+  }
+  const hashedPassword = await bcrypt.hash(newPassword, 10);
+  Usuario.findOneAndUpdate(
+    { username: username },
+    { $set: { password: hashedPassword } },
+    { new: true }
+  ).then(result => {
+    if (result) {
+      res.jsonp({ message: 'Contraseña actualizada correctamente' });
+    } else {
+      res.status(404).send({ message: 'El usuario no existe' });
+    }
+  }).catch(error => res.status(500).send({ message: error.message }));
+}
 
 module.exports.register = async function (req, res) {
-  const { username, password } = req.body;
+  const { username, password, email } = req.body;
+  let { rol } = req.body;
+  if (!rol) {
+    // Asignar rol por defecto 'usuario' si no se proporciona
+    const Rol = require('../roles/rolModel');
+    rol = (await Rol.findOne({ codigo: 'USER' }))._id;
+  }
 
   // Verificar si el usuario ya existe
   const userExists = await Usuario.findOne({ username });
-  if (userExists) return res.status(400).send('El usuario ya existe');
+  if (userExists) return res.status(400).send({ message: 'El usuario ya existe' });
+
+  const emailExists = await Usuario.findOne({ email });
+  if (emailExists) return res.status(400).send({ message: 'El correo electrónico ya está en uso' });
 
   // Encriptar la contraseña
   const hashedPassword = await bcrypt.hash(password, 10);
 
   // Guardar usuario en la base de datos simulada
-  const newUser = new Usuario({ username, password: hashedPassword });
-  await newUser.save();
-
-  res.status(201).send('Usuario registrado exitosamente');
+  const newUser = new Usuario({ username, password: hashedPassword, email, rol });
+  newUser.save().then((result) => {
+    console.log('Usuario registrado:', result);
+    res.status(201).send({ message: 'Usuario registrado exitosamente' });
+  }).catch((error) => {
+    console.error('Error al registrar usuario:', error);
+    res.status(500).send({ message: error.message });
+  });
 }
 
 module.exports.refreshToken = async function (req, res) {
@@ -111,6 +144,7 @@ module.exports.verifyToken = function (req, res, next) {
     req.user = payload;
     next(); // Continuar con la solicitud
   } catch (err) {
+    console.error('Error verifying token:', err);
     res.status(400).send('Token inválido');
   }
 }
