@@ -1,15 +1,15 @@
 "use strict";
 
-var mongoose = require("mongoose");
+const mongoose = require("mongoose");
 const TipoEstablecimiento = require("./tipoEstablecimientoModel");
 
 module.exports.get = function (req, res) {
   TipoEstablecimiento.find({
-     $or: [
-        { usuario: new mongoose.Types.ObjectId(`${req.user.id}`) },
-        { esMaestro: true }
-      ],
-    })
+    $or: [
+      { usuario: new mongoose.Types.ObjectId(`${req.user.id}`) },
+      { esMaestro: true }
+    ],
+  })
     .then((result) => res.jsonp({ data: result }))
     .catch((error) => res.status(500).send({ message: error.message }));
 };
@@ -25,14 +25,19 @@ module.exports.getById = function (req, res) {
 module.exports.getByAny = function (req, res) {
   const texto = new RegExp(req.params.texto);
   TipoEstablecimiento.find({
-    $or: [
-      { usuario: new mongoose.Types.ObjectId(`${req.user.id}`) },
-      { esMaestro: true }
-    ],
-    $or: [
-      { nombre: { $regex: texto, $options: "i" } },
-      { abreviatura: { $regex: texto, $options: "i" } },
-    ],
+    $and: [
+      {
+        $or: [
+          { usuario: new mongoose.Types.ObjectId(`${req.user.id}`) },
+          { esMaestro: true }
+        ]
+      },
+      {
+        $or: [
+          { nombre: { $regex: texto, $options: "i" } },
+          { abreviatura: { $regex: texto, $options: "i" } },
+        ]
+      }],
   })
     .then((result) => {
       if (result) {
@@ -53,7 +58,7 @@ module.exports.getDesplegable = function (req, res) {
       }
     },
     {
-      "$project":{
+      "$project": {
         _id: 0,
         "id": "$_id",
         "nombre": "$nombre"
@@ -104,11 +109,7 @@ module.exports.update = function (req, res) {
     { _id: new mongoose.Types.ObjectId(`${req.body.id}`) },
     { $set: tipoEstablecimiento },
     { new: true, runValidators: true }).then(result => {
-      if (result) {
-        res.jsonp({ data: result });
-      } else {
-        res.jsonp({ data: result });
-      }
+      res.jsonp({ data: result });
     }).catch((error) => res.status(500).send({ message: error.message }));
 };
 

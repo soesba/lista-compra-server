@@ -1,6 +1,6 @@
 'use strict'
 
-var mongoose = require('mongoose')
+const mongoose = require('mongoose')
 const Precio = require('./precioModel')
 
 module.exports.get = async function (req, res) {

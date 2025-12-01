@@ -2,7 +2,7 @@
 const verifyToken = require('../utils/verifyToken.js').verifyToken;
 const tipoUnidadController = require('./tipoUnidadController');
 
-module.exports = function (app) {
+module.exports = function tipoUnidadRoutes (app) {
 
   app.get('/api/tipos-unidad/checkData', verifyToken, (req, res) => tipoUnidadController.checkData(req, res)); // Chequear consistencia de datos
 

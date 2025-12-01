@@ -1,7 +1,7 @@
 'use strict';
 
-var mongoose = require('mongoose');
-var Rol = mongoose.model('Rol');
+const mongoose = require('mongoose');
+const Rol = mongoose.model('Rol');
 
 module.exports.get = function (req, res) {
   const query = req.query;
@@ -67,8 +67,8 @@ module.exports.getByNombre = function (req, res) {
 }
 
 module.exports.update = function (req, res) {
-  var modeloId = req.params.id;
-  var data = req.body;
+  const modeloId = req.params.id;
+  const data = req.body;
 
   Rol.updateOne({ _id: modeloId }, data)
     .then(response => res.jsonp({ data: response }))
@@ -79,7 +79,7 @@ module.exports.update = function (req, res) {
 }
 
 module.exports.delete = function (req, res) {
-  var modeloId = req.params.id;
+  const modeloId = req.params.id;
 
   Rol.findOneAndDelete({ _id: modeloId })
     .then(result => res.jsonp({ data: result }))
@@ -101,3 +101,21 @@ module.exports.checkUso = function (req, res) {
       res.status(500).send({ message: error.message });
     });
 };
+
+
+module.exports.getDesplegable = function (req, res) {
+  console.log('getDesplegable roles');
+  Rol.aggregate([
+    {
+      "$project":{
+        _id: 0,
+        "id": "$_id",
+        "nombre": "$nombre"
+      }
+    }
+  ]).then((result) => {
+    if (result) {
+      res.jsonp({ data: result });
+    }
+  }).catch((error) => res.status(500).send({ message: error.message }))
+}

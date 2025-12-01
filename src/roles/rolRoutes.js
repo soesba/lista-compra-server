@@ -2,7 +2,10 @@
 const verifyToken = require('../utils/verifyToken.js').verifyToken;
 const rolController = require('./rolController');
 
-module.exports = function (app) {
+module.exports = function rolRoutes(app) {
+
+  app.route('/api/roles/desplegable')
+    .get(verifyToken, (req, res) => rolController.getDesplegable(req, res)); // Para dropdowns
 
   app.route('/api/roles')
     .get(verifyToken, (req, res) => rolController.get(req, res)) // Obtener

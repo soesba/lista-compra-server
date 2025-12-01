@@ -1,6 +1,6 @@
 "use strict";
 
-var mongoose = require("mongoose");
+const mongoose = require("mongoose");
 const TipoUnidad = require("./tipoUnidadModel");
 
 module.exports.get = function (req, res) {
@@ -31,14 +31,19 @@ module.exports.getById = function (req, res) {
 module.exports.getByAny = function (req, res) {
   const texto = new RegExp(req.params.texto);
   TipoUnidad.find({
-     $or: [
-      { usuario: new mongoose.Types.ObjectId(`${req.user.id}`) },
-      { esMaestro: true }
-    ],
-    $or: [
-      { nombre: { $regex: texto, $options: "i" } },
-      { abreviatura: { $regex: texto, $options: "i" } },
-    ],
+    $and: [
+      {
+        $or: [
+          { usuario: new mongoose.Types.ObjectId(`${req.user.id}`) },
+          { esMaestro: true }
+        ]
+      },
+      {
+        $or: [
+          { nombre: { $regex: texto, $options: "i" } },
+          { abreviatura: { $regex: texto, $options: "i" } },
+        ]
+      }]
   })
     .then((result) => {
       if (result) {
@@ -109,7 +114,7 @@ module.exports.update = function (req, res) {
   TipoUnidad.findOneAndUpdate(
     { _id: new mongoose.Types.ObjectId(`${req.body.id}`) },
     { $set: tipoUnidad },
-    { new: true,  runValidators: true }).then(result => {
+    { new: true, runValidators: true }).then(result => {
       if (result) {
         res.jsonp({ data: result });
       } else {
@@ -126,9 +131,7 @@ module.exports.delete = function (req, res) {
   Articulo.find({
     tiposUnidad: { $all: [new mongoose.Types.ObjectId(`${tipoUnidadId}`)] }
   }).then((result) => {
-    if (result.length !== 0) {
-      res.status(409).send({ respuesta: 409, message: "El tipo de unidad está en uso" });
-    } else {
+    if (result.length > 0) {
       TipoUnidadEquivalencia.findOne({
         $or: [
           { from: tipoUnidadId },
@@ -149,6 +152,8 @@ module.exports.delete = function (req, res) {
             .catch((error) => res.status(500).send({ message: error.message }));
         }
       })
+    } else {
+      res.status(409).send({ respuesta: 409, message: "El tipo de unidad está en uso" });
     }
   })
     .catch((error) => res.status(500).send({ message: error.message }));

@@ -2,7 +2,7 @@
 const verifyToken = require('../utils/verifyToken.js').verifyToken;
 const articuloController = require('./articuloController');
 
-module.exports = function (app) {
+module.exports = function articuloRoutes (app) {
 
   app.get('/api/articulos/checkData', verifyToken, (req, res) => articuloController.checkData(req, res)); // Chequear consistencia de datos
 
