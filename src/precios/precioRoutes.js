@@ -16,6 +16,8 @@ module.exports = function (app) {
 
   app.post('/api/precios', verifyToken, (req, res) => precioController.insert(req, res)); // Crear nuevo
 
+  app.put('/api/precios/:id/unidadesMedida', verifyToken, (req, res) => precioController.updateUnidadesMedida(req, res)); // Actualizar unidades de medida por ID
+
   app.put('/api/precios/:id', verifyToken, (req, res) => precioController.update(req, res)); // Actualizar por ID
 
   app.delete('/api/precios/:id', verifyToken, (req, res) => precioController.delete(req, res)); // Eliminar por ID

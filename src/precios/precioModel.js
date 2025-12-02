@@ -65,7 +65,7 @@ const PrecioSchema = new Schema({
 
 // Duplicate the ID field.
 PrecioSchema.virtual('id').get(function () {
-  return this._id.toHexString();
+  return this._id ? this._id.toHexString() : null;
 });
 
 

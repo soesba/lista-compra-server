@@ -254,6 +254,29 @@ module.exports.update = function (req, res) {
     }).catch((error) => res.status(500).send({ message: error.message }))
 }
 
+module.exports.updateUnidadesMedida = function (req, res) {
+  if (req.body.unidadesMedida.length !== 0) {
+    req.body.unidadesMedida = req.body.unidadesMedida.map((item) => {
+      item._id = new mongoose.Types.ObjectId(`${item.id}`)
+      return item
+    })
+  }
+  req.body.usuario = new mongoose.Types.ObjectId(`${req.user.id}`)
+  Precio.findOneAndUpdate(
+    { _id: new mongoose.Types.ObjectId(`${req.params.id}`) },
+    { $set: {
+      unidadesMedida: req.body.unidadesMedida,
+      usuario: new mongoose.Types.ObjectId(`${req.user.id}`)
+    } },
+    { new: true, runValidators: true, returnOriginal: false }).then(result => {
+      if (result) {
+        res.jsonp({ data: result })
+      } else {
+        res.status(500).send({ message: 'Error al actualizar las unidades de medida del precio' })
+      }
+    }).catch((error) => res.status(500).send({ message: error.message }))
+}
+
 module.exports.delete = function (req, res) {
   Precio.deleteOne({ _id: req.params.id })
     .then((result) => {
