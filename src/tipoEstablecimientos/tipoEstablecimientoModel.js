@@ -59,4 +59,8 @@ TipoEstablecimientoSchema.pre('validate', function(next) {
     next();
   });
 
+// Índices simples
+TipoEstablecimientoSchema.index({ usuario: 1 });
+TipoEstablecimientoSchema.index({ esMaestro: 1 });
+
 module.exports = mongoose.model('TipoEstablecimiento', TipoEstablecimientoSchema, 'TipoEstablecimiento');

@@ -74,4 +74,7 @@ ArticuloSchema.pre("validate", function (next) {
   next();
 });
 
+// Índices simples
+ArticuloSchema.index({ usuario: 1 });
+ArticuloSchema.index({ esMaestro: 1 });
 module.exports = mongoose.model("Articulo", ArticuloSchema, "Articulo");

@@ -121,12 +121,15 @@ PrecioSchema.pre("find", function (next) {
 })
 
 PrecioSchema.post("aggregate", function (result) {
-  result.forEach(item => {
+  for (const item of result) {
     item.id = item._id;
     delete item._id;
     delete item.__v
-  })
+  }
 
 })
+
+// Índices simples
+PrecioSchema.index({ usuario: 1 });
 
 module.exports = mongoose.model("Precio", PrecioSchema, "Precio");

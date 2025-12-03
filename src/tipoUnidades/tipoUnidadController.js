@@ -9,9 +9,13 @@ module.exports.get = function (req, res) {
       { usuario: new mongoose.Types.ObjectId(`${req.user.id}`) },
       { esMaestro: true }
     ]
-  })
-    .then((result) => res.jsonp({ data: result }))
-    .catch((error) => res.status(500).send({ message: error.message }));
+  }).populate({
+    path: 'equivalencias.to',
+    select: 'nombre',
+    model: 'TipoUnidad'
+  }).lean({ virtuals: true }).then((result) => {
+    res.jsonp({ data: result });
+  }).catch((error) => res.status(500).send({ message: error.message }));
 };
 
 module.exports.getById = function (req, res) {
@@ -21,11 +25,13 @@ module.exports.getById = function (req, res) {
       { usuario: new mongoose.Types.ObjectId(`${req.user.id}`) },
       { esMaestro: true }
     ]
-  })
-    .then((result) => {
-      res.jsonp({ data: result });
-    })
-    .catch((error) => res.status(500).send({ message: error.message }));
+  }).populate({
+    path: 'equivalencias.to',
+    select: 'nombre',
+    model: 'TipoUnidad'
+  }).lean({ virtuals: true }).then((result) => {
+    res.jsonp({ data: result });
+  }).catch((error) => res.status(500).send({ message: error.message }));
 };
 
 module.exports.getByAny = function (req, res) {
@@ -44,13 +50,31 @@ module.exports.getByAny = function (req, res) {
           { abreviatura: { $regex: texto, $options: "i" } },
         ]
       }]
-  })
-    .then((result) => {
-      if (result) {
-        res.jsonp({ data: result });
-      }
-    })
-    .catch((error) => res.status(500).send({ message: error.message }));
+  }).populate({
+    path: 'equivalencias.to',
+    select: 'nombre',
+    model: 'TipoUnidad'
+  }).lean({ virtuals: true }).then((result) => {
+    res.jsonp({ data: result });
+  }).catch((error) => res.status(500).send({ message: error.message }));
+};
+
+module.exports.getEquivalencias = function (req, res) {
+  TipoUnidad.findOne({
+    _id: new mongoose.Types.ObjectId(`${req.params.id}`),
+    $or: [
+      { usuario: new mongoose.Types.ObjectId(`${req.user.id}`) },
+      { esMaestro: true }
+    ]
+  }).populate({
+    path: 'equivalencias.to',
+    select: 'nombre',
+    model: 'TipoUnidad'
+  }).lean({ virtuals: true }).then((result) => {
+    if (result) {
+      res.jsonp({ data: result.equivalencias || [] })
+    }
+  }).catch((error) => res.status(500).send({ message: error.message }));
 };
 
 module.exports.getDesplegable = function (req, res) {

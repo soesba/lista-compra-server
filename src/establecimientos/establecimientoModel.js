@@ -1,10 +1,10 @@
 'use strict'
 
-var mongoose = require('mongoose')
-var Schema = mongoose.Schema
-var ImageSchema = require('../common/imageSchema.js')
+const mongoose = require('mongoose')
+const Schema = mongoose.Schema
+const ImageSchema = require('../common/imageSchema.js')
 
-var DireccionSchema = new Schema({
+const DireccionSchema = new Schema({
   _id: {
     type: Schema.Types.ObjectId,
     required: true,
@@ -27,7 +27,7 @@ var DireccionSchema = new Schema({
   }
 })
 
-var EstablecimientoSchema = new Schema({
+const EstablecimientoSchema = new Schema({
   _id: {
     type: Schema.Types.ObjectId,
     required: true,
@@ -107,6 +107,9 @@ EstablecimientoSchema.pre('validate', function (next) {
   }
   next()
 })
+
+// Índices simples
+EstablecimientoSchema.index({ usuario: 1 });
 
 module.exports = mongoose.model(
   'Establecimiento',

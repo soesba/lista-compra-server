@@ -1,6 +1,6 @@
 "use strict";
 
-var mongoose = require("mongoose");
+const mongoose = require("mongoose");
 const TipoUnidadEquivalencia = require("./tipoUnidadEquivalenciaModel");
 
 module.exports.get = function (req, res) {

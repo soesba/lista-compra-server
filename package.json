@@ -23,7 +23,8 @@
     "lodash": "^4.17.20",
     "method-override": "^3.0.0",
     "moment": "^2.29.1",
-    "mongoose": "^8.19.0"
+    "mongoose": "^8.19.0",
+    "mongoose-lean-virtuals": "^2.1.0"
   },
   "devDependencies": {
     "eslint": "^7.12.1",

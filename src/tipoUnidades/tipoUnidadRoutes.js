@@ -10,6 +10,8 @@ module.exports = function tipoUnidadRoutes (app) {
 
   app.get('/api/tipos-unidad/search/:texto', verifyToken, (req, res) => tipoUnidadController.getByAny(req, res)); // Buscar por texto
 
+  app.get('/api/tipos-unidad/:id/equivalencias', verifyToken, (req, res) => tipoUnidadController.getEquivalencias(req, res)); // Obtener por ID
+
   app.get('/api/tipos-unidad/:id', verifyToken, (req, res) => tipoUnidadController.getById(req, res)); // Obtener por ID
 
   app.get('/api/tipos-unidad', verifyToken, (req, res) => tipoUnidadController.get(req, res)); // Obtener todos

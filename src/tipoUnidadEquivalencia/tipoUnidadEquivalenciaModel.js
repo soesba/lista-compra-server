@@ -11,14 +11,12 @@ const TipoUnidadEquivalenciaSchema = new Schema({
     from: {
       type: Schema.Types.ObjectId,
       required: true,
-      ref: "TipoUnidad",
-      required: true
+      ref: "TipoUnidad"
     },
     to: {
       type: Schema.Types.ObjectId,
       required: true,
-      ref: "TipoUnidad",
-      required: true
+      ref: "TipoUnidad"
     },
     factor: {
       type: Number,
@@ -72,5 +70,8 @@ TipoUnidadEquivalenciaSchema.pre("findOne", function (next) {
   next();
 })
 
+// Índices simples
+TipoUnidadEquivalenciaSchema.index({ usuario: 1 });
+TipoUnidadEquivalenciaSchema.index({ esMaestro: 1 });
 
 module.exports = mongoose.model('TipoUnidadEquivalencia', TipoUnidadEquivalenciaSchema, 'TipoUnidadEquivalencia');
