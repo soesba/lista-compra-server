@@ -55,7 +55,7 @@ const EstablecimientoSchema = new Schema({
   },
   direcciones: [DireccionSchema],
   fechaCreacion: {
-    type: String,
+    type: Date,
     required: true,
   },
   borrable: {
@@ -99,11 +99,7 @@ EstablecimientoSchema.pre('validate', function (next) {
     this.tipoEstablecimiento = new mongoose.Types.ObjectId(`${this.tipoEstablecimiento}`)
   }
   if (!this.fechaCreacion) {
-    this.fechaCreacion = new Intl.DateTimeFormat('es-ES', {
-      day: '2-digit',
-      month: '2-digit',
-      year: 'numeric',
-    }).format()
+    this.fechaCreacion = new Date();
   }
   next()
 })

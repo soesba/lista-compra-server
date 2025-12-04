@@ -2,15 +2,17 @@
 
 const mongoose = require('mongoose');
 const initCollections = require('./initCollections');
+const { repairCollections } = require('./repairCollections');
 const conexion =  mongoose.connection.db;
 const listaTablasMaestras = ['TipoEstablecimiento', 'TipoUnidad', 'Articulo', 'Establecimiento', 'Usuario'];
 
 module.exports.init = async function() {
   checkTablasMaestras();
+  // await repairCollections();
 }
 
-function checkTablasMaestras () {
-  listaTablasMaestras.forEach(async function (item) {
+async function checkTablasMaestras () {
+  for (const item of listaTablasMaestras) {
     const colecciones = await conexion.listCollections({ name: item }).toArray();
     if (colecciones.length > 0) {
       console.log(`La colección '${item}' existe.`);
@@ -25,7 +27,7 @@ function checkTablasMaestras () {
       console.log(`La colección '${item}' no existe.`);
       initCollections.initCollection(item);
     }
-  })
+  }
   initCollections.checkDataConsistency('Precio')
   initCollections.checkDataConsistency('Equivalencias');
 }

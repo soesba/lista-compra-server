@@ -3,7 +3,7 @@ const verifyToken = require('../utils/verifyToken.js').verifyToken;
 const accessFilter = require('../middleware/accesFilterController.js').accessFilter;
 const precioController = require('./precioController');
 
-module.exports = function (app) {
+module.exports = function precioRoutes (app) {
 
   app.get('/api/precios/checkData', verifyToken, (req, res) => precioController.checkData(req, res)); // Chequear consistencia de datos
 

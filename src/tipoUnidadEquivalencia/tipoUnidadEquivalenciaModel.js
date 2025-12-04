@@ -24,7 +24,7 @@ const TipoUnidadEquivalenciaSchema = new Schema({
       required: true
     },
     fechaCreacion: {
-        type: String,
+        type: Date,
         required: true
     },
     borrable: {
@@ -51,7 +51,7 @@ TipoUnidadEquivalenciaSchema.pre('validate', function(next) {
     this._id = new mongoose.Types.ObjectId()
   }
   if(!this.fechaCreacion) {
-      this.fechaCreacion =  new Intl.DateTimeFormat('es-ES', {day: '2-digit', month: '2-digit', year: 'numeric'}).format()
+      this.fechaCreacion = new Date();
   }
   next();
 });

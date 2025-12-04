@@ -3,7 +3,7 @@ const verifyToken = require('../utils/verifyToken.js').verifyToken;
 const accessFilter = require('../middleware/accesFilterController.js').accessFilter;
 const tipoEstablecimientoController = require('./tipoEstablecimientoController');
 
-module.exports = function (app) {
+module.exports = function tipoEstablecimientoRoutes (app) {
 
   app.get('/api/tipo-establecimientos/checkData', verifyToken, (req, res) => tipoEstablecimientoController.checkData(req, res)); // Chequear consistencia de datos
 

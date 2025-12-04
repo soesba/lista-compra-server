@@ -119,7 +119,7 @@ module.exports.delete = function (req, res) {
   Establecimiento.find({
     tipoEstablecimiento: { $all: [new mongoose.Types.ObjectId(`${tipoEstablecimientoId}`)] }
   }).then(result => {
-    if (result.length !== 0) {
+    if (result.length > 0) {
       res.status(409).send({ respuesta: 409, message: "El tipo de establecimiento está en uso" });
     } else {
       TipoEstablecimiento.deleteOne({ _id: req.params.id }).then((result) => {

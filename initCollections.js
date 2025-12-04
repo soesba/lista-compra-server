@@ -10,67 +10,65 @@ const {
   checkDataConsistencyEstablecimiento,
   checkDataConsistencyPrecio,
   checkDataConsistencyEquivalencias,
-  checkDataConsistencyUsuario: checkDataConsistencyUsuario,
+  checkDataConsistencyUsuario,
   checkDataConsistencyTipoUnidad,
   checkDataConsistencyTipoEstablecimiento } = require('./src/utils/checkConsistencia');
 
-
-
 module.exports.initCollection = async function(nombreColeccion) {
-  crearColeccion (nombreColeccion);
+  await crearColeccion (nombreColeccion);
 }
 
-function crearColeccion (nombreColeccion) {
+async function crearColeccion (nombreColeccion) {
   switch (nombreColeccion) {
     case 'Articulo':
-      crearColeccionArticulo();
+      await crearColeccionArticulo();
       break;
     case 'TipoUnidad':
-      crearColeccionTipoUnidad();
+      await crearColeccionTipoUnidad();
       break;
     case 'TipoEstablecimiento':
-      crearColeccionTipoEstablecimiento();
+      await crearColeccionTipoEstablecimiento();
       break;
     case 'Establecimiento':
-      crearColeccionEstablecimiento();
+      await crearColeccionEstablecimiento();
       break;
   }
 }
 
-function crearColeccionArticulo () {
-  ArticuloData.forEach(async function (item) {
+async function crearColeccionArticulo () {
+  for (const item of ArticuloData) {
     const Articulo = mongoose.model('Articulo')
     const nuevoArticulo = new Articulo(item);
     nuevoArticulo._id = new mongoose.Types.ObjectId(`${item._id}`)
-    const resultado = await nuevoArticulo.save();
-  })
+    await nuevoArticulo.save();
+  }
 }
 
-function crearColeccionTipoUnidad () {
-  TipoUnidadesData.forEach(async function (item) {
+async function crearColeccionTipoUnidad () {
+  for (const item of TipoUnidadesData) {
     const TipoUnidad = mongoose.model('TipoUnidad')
     const nuevoTipoUnidad = new TipoUnidad(item);
     nuevoTipoUnidad._id = new mongoose.Types.ObjectId(`${item._id}`)
-    const resultado = await nuevoTipoUnidad.save();
-  })
+    await nuevoTipoUnidad.save();
+  }
 }
 
-function crearColeccionTipoEstablecimiento () {
-  TipoEstablecimientosData.forEach(async function (item) {
+async function crearColeccionTipoEstablecimiento () {
+  for (const item of TipoEstablecimientosData) {
     const TipoEstablecimiento = mongoose.model('TipoEstablecimiento')
     const nuevoTipoEstablecimiento = new TipoEstablecimiento(item);
     nuevoTipoEstablecimiento._id = new mongoose.Types.ObjectId(`${item._id}`)
-    const resultado = await nuevoTipoEstablecimiento.save();
-  })
+    await nuevoTipoEstablecimiento.save();
+  }
 }
 
-function crearColeccionEstablecimiento () {
-  EstablecimientosData.forEach(async function (item) {
+async function crearColeccionEstablecimiento () {
+  for (const item of EstablecimientosData) {
     const Establecimiento = mongoose.model('Establecimiento')
     const nuevoEstablecimiento = new Establecimiento(item);
     nuevoEstablecimiento._id = new mongoose.Types.ObjectId(`${item._id}`)
-    const resultado = await nuevoEstablecimiento.save();
-  })
+    await nuevoEstablecimiento.save();
+  }
 }
 
 module.exports.checkDataConsistency = function (nombreColeccion) {
