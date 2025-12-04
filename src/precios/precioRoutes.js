@@ -1,5 +1,6 @@
 'use strict';
 const verifyToken = require('../utils/verifyToken.js').verifyToken;
+const accessFilter = require('../middleware/accesFilterController.js').accessFilter;
 const precioController = require('./precioController');
 
 module.exports = function (app) {
