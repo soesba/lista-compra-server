@@ -6,13 +6,13 @@ module.exports = function (app) {
 
   app.get('/api/tipo-establecimientos/checkData', verifyToken, (req, res) => tipoEstablecimientoController.checkData(req, res)); // Chequear consistencia de datos
 
-  app.get('/api/tipo-establecimientos/desplegable', verifyToken, (req, res) => tipoEstablecimientoController.getDesplegable(req, res)); // Para dropdowns
+  app.get('/api/tipo-establecimientos/desplegable', verifyToken, accessFilter, (req, res) => tipoEstablecimientoController.getDesplegable(req, res)); // Para dropdowns
 
-  app.get('/api/tipo-establecimientos/search/:texto', verifyToken, (req, res) => tipoEstablecimientoController.getByAny(req, res)); // Buscar por texto
+  app.get('/api/tipo-establecimientos/search/:texto', verifyToken, accessFilter, (req, res) => tipoEstablecimientoController.getByAny(req, res)); // Buscar por texto
 
-  app.get('/api/tipo-establecimientos/:id', verifyToken, (req, res) => tipoEstablecimientoController.getById(req, res)); // Obtener por ID
+  app.get('/api/tipo-establecimientos/:id', verifyToken, accessFilter, (req, res) => tipoEstablecimientoController.getById(req, res)); // Obtener por ID
 
-  app.get('/api/tipo-establecimientos', verifyToken, (req, res) => tipoEstablecimientoController.get(req, res)); // Obtener todos
+  app.get('/api/tipo-establecimientos', verifyToken, accessFilter, (req, res) => tipoEstablecimientoController.get(req, res)); // Obtener todos
 
   app.post('/api/tipo-establecimientos', verifyToken, (req, res) => tipoEstablecimientoController.insert(req, res)); // Crear nuevo
 

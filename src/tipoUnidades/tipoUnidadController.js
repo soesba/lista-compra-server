@@ -5,10 +5,7 @@ const TipoUnidad = require("./tipoUnidadModel");
 
 module.exports.get = function (req, res) {
   TipoUnidad.find({
-    $or: [
-      { usuario: new mongoose.Types.ObjectId(`${req.user.id}`) },
-      { esMaestro: true }
-    ]
+   ...req.accessFilter
   }).populate({
     path: 'equivalencias.to',
     select: 'nombre',
@@ -21,10 +18,7 @@ module.exports.get = function (req, res) {
 module.exports.getById = function (req, res) {
   TipoUnidad.findOne({
     _id: req.params.id,
-    $or: [
-      { usuario: new mongoose.Types.ObjectId(`${req.user.id}`) },
-      { esMaestro: true }
-    ]
+    ...req.accessFilter
   }).populate({
     path: 'equivalencias.to',
     select: 'nombre',
@@ -39,10 +33,7 @@ module.exports.getByAny = function (req, res) {
   TipoUnidad.find({
     $and: [
       {
-        $or: [
-          { usuario: new mongoose.Types.ObjectId(`${req.user.id}`) },
-          { esMaestro: true }
-        ]
+        ...req.accessFilter
       },
       {
         $or: [
@@ -62,10 +53,7 @@ module.exports.getByAny = function (req, res) {
 module.exports.getEquivalencias = function (req, res) {
   TipoUnidad.findOne({
     _id: new mongoose.Types.ObjectId(`${req.params.id}`),
-    $or: [
-      { usuario: new mongoose.Types.ObjectId(`${req.user.id}`) },
-      { esMaestro: true }
-    ]
+    ...req.accessFilter
   }).populate({
     path: 'equivalencias.to',
     select: 'nombre',
@@ -81,10 +69,7 @@ module.exports.getDesplegable = function (req, res) {
   TipoUnidad.aggregate([
     {
       $match: {
-        $or: [
-          { usuario: new mongoose.Types.ObjectId(`${req.user.id}`) },
-          { esMaestro: true }
-        ]
+       ...req.accessFilter
       }
     },
     {
