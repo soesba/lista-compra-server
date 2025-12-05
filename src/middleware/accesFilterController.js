@@ -2,7 +2,6 @@
 const mongoose = require('mongoose');
 
 module.exports.accessFilter = function accessFilter (req, res, next) {
-  console.log('Accessing accessFilter middleware', req.user);
   if (!req.user?.id) {
     return res.status(401).json({ message: 'No autenticado' });
   }

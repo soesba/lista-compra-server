@@ -109,13 +109,6 @@ PrecioSchema.pre("validate", function (next) {
   next();
 });
 
-PrecioSchema.pre("find", function (next) {
-  this
-  .populate("establecimiento", "_id nombre")
-  .populate("articulo", "_id nombre");
-  next();
-})
-
 PrecioSchema.post("aggregate", function (result) {
   for (const item of result) {
     item.id = item._id;
