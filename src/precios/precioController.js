@@ -217,6 +217,8 @@ module.exports.getByArticuloId = async function (req, res) {
 }
 
 module.exports.getByAny = async function (req, res) {
+  const orderBy = mappingOrderBy[req.query.orderBy] || req.query.orderBy; // Campo por defecto
+  const direction = req.query.direction === 'desc' ? -1 : 1; // 1 para asc, -1 para desc
   const texto = new RegExp(req.params.texto)
   const primerFiltro = await Precio.aggregate([
     {
@@ -260,7 +262,9 @@ module.exports.getByAny = async function (req, res) {
     }
   ])
   Precio.populate(primerFiltro, { path: 'establecimiento', select: { _id: 1, nombre: 1 } }).then(result => {
-    Precio.populate(result, { path: 'articulo', select: { _id: 1, nombre: 1 } }).then((result) => {
+    Precio.populate(result, { path: 'articulo', select: { _id: 1, nombre: 1 } })
+    .sort({ [orderBy]: direction, fechaCompra: 1 })
+    .then((result) => {
       res.jsonp({ data: result })
     }).catch(error => res.status(500).send({ message: error.message }));
   }).catch(error => res.status(500).send({ message: error.message }));

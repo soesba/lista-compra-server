@@ -4,13 +4,17 @@ const mongoose = require("mongoose");
 const TipoUnidad = require("./tipoUnidadModel");
 
 module.exports.get = function (req, res) {
+  const orderBy = req.query.orderBy || 'nombre'; // Campo por defecto
+  const direction = req.query.direction === 'desc' ? -1 : 1; // 1 para asc, -1 para desc
   TipoUnidad.find({
    ...req.accessFilter
   }).populate({
     path: 'equivalencias.to',
     select: 'nombre',
     model: 'TipoUnidad'
-  }).lean({ virtuals: true }).then((result) => {
+  })
+  .sort({ [orderBy]: direction, fechaCreacion: 1 })
+  .lean({ virtuals: true }).then((result) => {
     res.jsonp({ data: result });
   }).catch((error) => res.status(500).send({ message: error.message }));
 };
@@ -29,6 +33,8 @@ module.exports.getById = function (req, res) {
 };
 
 module.exports.getByAny = function (req, res) {
+  const orderBy = req.query.orderBy || 'nombre'; // Campo por defecto
+  const direction = req.query.direction === 'desc' ? -1 : 1; // 1 para asc, -1 para desc
   const texto = new RegExp(req.params.texto);
   TipoUnidad.find({
     $and: [
@@ -45,7 +51,9 @@ module.exports.getByAny = function (req, res) {
     path: 'equivalencias.to',
     select: 'nombre',
     model: 'TipoUnidad'
-  }).lean({ virtuals: true }).then((result) => {
+  })
+  .sort({ [orderBy]: direction, fechaCreacion: 1 })
+  .lean({ virtuals: true }).then((result) => {
     res.jsonp({ data: result });
   }).catch((error) => res.status(500).send({ message: error.message }));
 };
@@ -79,7 +87,9 @@ module.exports.getDesplegable = function (req, res) {
         "nombre": "$nombre"
       }
     }
-  ]).then((result) => {
+  ])
+  .sort({ nombre: 1 })
+  .then((result) => {
     if (result) {
       res.jsonp({ data: result })
     }

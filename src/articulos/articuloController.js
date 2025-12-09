@@ -4,6 +4,8 @@ const mongoose = require('mongoose')
 const Articulo = require('./articuloModel')
 
 module.exports.get = async function (req, res) {
+  const orderBy = req.query.orderBy || 'nombre'; // Campo por defecto
+  const direction = req.query.direction === 'desc' ? -1 : 1; // 1 para asc, -1 para desc
   const articulos = await Articulo.find({ usuario: new mongoose.Types.ObjectId(`${req.user.id}`) }).lean();
   Articulo.aggregate([
     {
@@ -29,7 +31,7 @@ module.exports.get = async function (req, res) {
         _id: 0
       }
     }
-  ]).then((result) => {
+  ]).sort({ [orderBy]: direction, fechaCreacion: 1 }).then((result) => {
     if (result) {
       res.jsonp({ data: result })
     }
@@ -91,6 +93,8 @@ module.exports.getById = async function (req, res) {
 }
 
 module.exports.getByAny = function (req, res) {
+  const orderBy = req.query.orderBy || 'nombre'; // Campo por defecto
+  const direction = req.query.direction === 'desc' ? -1 : 1; // 1 para asc, -1 para desc
   const texto = new RegExp(req.params.texto)
   Articulo.find({
     usuario: new mongoose.Types.ObjectId(`${req.user.id}`),
@@ -100,6 +104,7 @@ module.exports.getByAny = function (req, res) {
     ],
   })
     .populate('tiposUnidad')
+    .sort({ [orderBy]: direction, fechaCreacion: 1 })
     .then((result) => {
       if (result) {
         res.jsonp({ data: result })
@@ -120,7 +125,7 @@ module.exports.getDesplegable = function (req, res) {
         "nombre": "$nombre"
       }
     }
-  ]).then((result) => {
+  ]).sort({ nombre: 1 }).then((result) => {
     if (result) {
       res.jsonp({ data: result })
     }
