@@ -35,7 +35,7 @@ module.exports.getAll = function (req, res) {
     .populate({ path: 'rol', select: 'nombre' })
     .then(response => {
       if (response) {
-        res.jsonp({ data: response });
+        res.jsonp({ data: response.map(item => item.toJSON()) });
       } else {
         res.status(404).send({ message: 'No hay usuarios registrados' });
       }
@@ -49,7 +49,7 @@ module.exports.getById = function (req, res) {
     .populate({ path: 'rol', select: 'nombre' })
     .then(response => {
       if (response) {
-        res.jsonp({ data: response });
+        res.jsonp({ data: response.toJSON() });
       } else {
         res.status(404).send({ message: 'No existe un usuario con id ' + req.query.id });
       }
@@ -63,7 +63,7 @@ module.exports.getByUsername = function (req, res) {
     .populate({ path: 'rol', select: 'nombre' })
     .then(response => {
       if (response) {
-        res.jsonp({ data: response });
+        res.jsonp({ data: response.toJSON() });
       } else {
         res.status(404).send({ message: 'No existe un usuario con username ' + req.query.username });
       }
@@ -76,7 +76,7 @@ module.exports.getPreferencias = function (req, res) {
   Usuario.findOne({ _id: userId }, { preferencias: 1 })
     .then(response => {
       if (response) {
-        res.jsonp({ data: response.preferencias });
+        res.jsonp({ data: response.preferencias.map(item => item.toJSON()) });
       } else {
         res.status(404).send({ message: 'No existe un usuario con ese ID' });
       }

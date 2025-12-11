@@ -3,12 +3,10 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 const mongooseLeanVirtuals = require('mongoose-lean-virtuals');
+const transform = require('../utils/commonFunctions').transform;
 
 const EquivalenciaSchema = new Schema({
-   _id: {
-    type: Schema.Types.ObjectId,
-    required: true
-  },
+  _id: false,
   to: {
     type: Schema.Types.ObjectId,
     required: true,
@@ -22,10 +20,6 @@ const EquivalenciaSchema = new Schema({
 })
 
 const TipoUnidadSchema = new Schema({
-  _id: {
-    type: Schema.Types.ObjectId,
-    required: true
-  },
   nombre: {
     type: String,
     default: '',
@@ -62,24 +56,42 @@ const TipoUnidadSchema = new Schema({
 TipoUnidadSchema.plugin(mongooseLeanVirtuals);
 EquivalenciaSchema.plugin(mongooseLeanVirtuals);
 
-// Duplicate the ID field.
-TipoUnidadSchema.virtual('id').get(function () {
-  return this._id.toHexString();
+
+TipoUnidadSchema.virtual('id').set(function (val) {
+  if (val == null || val === '') return;
+  this._id = mongoose.Types.ObjectId.isValid(`${val}`) ? new mongoose.Types.ObjectId(`${val}`) : val;
 });
-EquivalenciaSchema.virtual('id').get(function () {
-  return this._id.toHexString();
-});
+
+
 // Ensure virtual fields are serialised.
 TipoUnidadSchema.set('toJSON', {
-  virtuals: true
+  virtuals: true,
+  versionKey: false,
+  transform
 });
+
+TipoUnidadSchema.set('toObject', {
+  virtuals: true,
+  versionKey: false,
+  transform
+});
+
+EquivalenciaSchema.set('toObject', {
+  virtuals: true,
+  versionKey: false,
+  transform
+});
+
 EquivalenciaSchema.set('toJSON', {
-  virtuals: true
+  virtuals: true,
+  versionKey: false,
+  transform
 });
 
 TipoUnidadSchema.pre('validate', function (next) {
-  if (!this._id) {
-    this._id = new mongoose.Types.ObjectId()
+  if (!this._id && this.id) {
+    this._id = new mongoose.Types.ObjectId(`${this.id}`);
+    delete this.id;
   }
   if (!this.fechaCreacion) {
     this.fechaCreacion = new Date();

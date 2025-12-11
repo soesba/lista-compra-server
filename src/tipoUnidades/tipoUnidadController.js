@@ -6,7 +6,7 @@ const TipoUnidad = require("./tipoUnidadModel");
 module.exports.get = function (req, res) {
   const orderBy = req.query.orderBy || 'nombre'; // Campo por defecto
   const direction = req.query.direction === 'desc' ? -1 : 1; // 1 para asc, -1 para desc
-  TipoUnidad.find({
+   TipoUnidad.find({
    ...req.accessFilter
   }).populate({
     path: 'equivalencias.to',
@@ -14,8 +14,8 @@ module.exports.get = function (req, res) {
     model: 'TipoUnidad'
   })
   .sort({ [orderBy]: direction, fechaCreacion: 1 })
-  .lean({ virtuals: true }).then((result) => {
-    res.jsonp({ data: result });
+    .then((result) => {
+    res.jsonp({ data: result.map(item => item.toJSON()) });
   }).catch((error) => res.status(500).send({ message: error.message }));
 };
 
@@ -27,8 +27,9 @@ module.exports.getById = function (req, res) {
     path: 'equivalencias.to',
     select: 'nombre',
     model: 'TipoUnidad'
-  }).lean({ virtuals: true }).then((result) => {
-    res.jsonp({ data: result });
+  })
+  .then((result) => {
+    res.jsonp({ data: result.toJSON() });
   }).catch((error) => res.status(500).send({ message: error.message }));
 };
 
@@ -52,10 +53,10 @@ module.exports.getByAny = function (req, res) {
     select: 'nombre',
     model: 'TipoUnidad'
   })
-  .sort({ [orderBy]: direction, fechaCreacion: 1 })
-  .lean({ virtuals: true }).then((result) => {
-    res.jsonp({ data: result });
-  }).catch((error) => res.status(500).send({ message: error.message }));
+    .sort({ [orderBy]: direction, fechaCreacion: 1 })
+    .then((result) => {
+      res.jsonp({ data: result.map(item => item.toJSON()) });
+    }).catch((error) => res.status(500).send({ message: error.message }));
 };
 
 module.exports.getEquivalencias = function (req, res) {
@@ -66,9 +67,9 @@ module.exports.getEquivalencias = function (req, res) {
     path: 'equivalencias.to',
     select: 'nombre',
     model: 'TipoUnidad'
-  }).lean({ virtuals: true }).then((result) => {
+  }).then((result) => {
     if (result) {
-      res.jsonp({ data: result.equivalencias || [] })
+      res.jsonp({ data: result.equivalencias ? result.equivalencias.map(item => item.toJSON()) : []});
     }
   }).catch((error) => res.status(500).send({ message: error.message }));
 };
@@ -77,7 +78,7 @@ module.exports.getDesplegable = function (req, res) {
   TipoUnidad.aggregate([
     {
       $match: {
-       ...req.accessFilter
+        ...req.accessFilter
       }
     },
     {
@@ -88,16 +89,20 @@ module.exports.getDesplegable = function (req, res) {
       }
     }
   ])
-  .sort({ nombre: 1 })
-  .then((result) => {
-    if (result) {
-      res.jsonp({ data: result })
-    }
-  }).catch((error) => res.status(500).send({ message: error.message }));
+    .sort({ nombre: 1 })
+    .then((result) => {
+      if (result) {
+        res.jsonp({ data: result })
+      }
+    }).catch((error) => res.status(500).send({ message: error.message }));
 };
 
 module.exports.insert = function (req, res) {
   req.body.usuario = new mongoose.Types.ObjectId(`${req.user.id}`);
+  req.body.equivalencias.forEach(eq => {
+    eq.to = new mongoose.Types.ObjectId(`${eq.to.id}`);
+    delete eq.id;
+  });
   const tipoUnidad = new TipoUnidad(req.body);
   TipoUnidad.findOne({
     usuario: new mongoose.Types.ObjectId(`${req.user.id}`),
@@ -129,6 +134,10 @@ module.exports.insert = function (req, res) {
 
 module.exports.update = function (req, res) {
   req.body.usuario = new mongoose.Types.ObjectId(`${req.user.id}`);
+  req.body.equivalencias.forEach(eq => {
+    eq.to = new mongoose.Types.ObjectId(`${eq.to.id}`);
+    delete eq.id;
+  });
   const tipoUnidad = new TipoUnidad(req.body);
   TipoUnidad.findOneAndUpdate(
     { _id: new mongoose.Types.ObjectId(`${req.body.id}`) },
@@ -145,37 +154,28 @@ module.exports.update = function (req, res) {
 module.exports.delete = function (req, res) {
   const tipoUnidadId = req.params.id
   const Articulo = require("../articulos/articuloModel");
-  const TipoUnidadEquivalencia = require('../tipoUnidadEquivalencia/tipoUnidadEquivalenciaModel');
 
   Articulo.find({
     tiposUnidad: { $all: [new mongoose.Types.ObjectId(`${tipoUnidadId}`)] }
   }).then((result) => {
-    if (result.length > 0) {
-      TipoUnidadEquivalencia.findOne({
-        $or: [
-          { from: tipoUnidadId },
-          { to: tipoUnidadId },
-        ],
-      }).then(result => {
-        if (result) {
-          res.status(409).send({ respuesta: 409, message: "El tipo de unidad está en uso" });
+    if (result.length === 0) {
+      TipoUnidad.exists({ "equivalencias.to": new mongoose.Types.ObjectId(`${tipoUnidadId}`) }).then(equivalenciaResult => {
+        if (equivalenciaResult) {
+          res.status(409).send({ respuesta: 409, message: "La unidad de medida está en uso" });
         } else {
-          TipoUnidad.deleteOne({ _id: req.params.id })
-            .then((result) => {
-              if (result) {
-                res.jsonp({ data: result });
-              } else {
-                res.status(500).send({ message: "TipoUnidad con id " + req.params.id + " no existe" });
-              }
-            })
-            .catch((error) => res.status(500).send({ message: error.message }));
+          TipoUnidad.deleteOne({ _id: req.params.id }).then((result) => {
+            if (result) {
+              res.jsonp({ data: result });
+            } else {
+              res.status(500).send({ message: "TipoUnidad con id " + req.params.id + " no existe" });
+            }
+          }).catch((error) => res.status(500).send({ message: error.message }));
         }
-      })
+      }).catch((error) => res.status(500).send({ message: error.message }));
     } else {
-      res.status(409).send({ respuesta: 409, message: "El tipo de unidad está en uso" });
+      res.status(409).send({ respuesta: 409, message: "La unidad de medida está en uso" });
     }
-  })
-    .catch((error) => res.status(500).send({ message: error.message }));
+  }).catch((error) => res.status(500).send({ message: error.message }));
 };
 
 module.exports.checkUso = function (req, res) {

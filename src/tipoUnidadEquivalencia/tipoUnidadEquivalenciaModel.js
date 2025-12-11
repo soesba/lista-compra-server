@@ -43,7 +43,23 @@ TipoUnidadEquivalenciaSchema.virtual('id').get(function(){
 });
 // Ensure virtual fields are serialised.
 TipoUnidadEquivalenciaSchema.set('toJSON', {
-  virtuals: true
+  virtuals: true,
+  versionKey: false,
+  transform: (doc, result) => {
+    delete result.__v;
+    delete result._id;
+    return result;
+  }
+});
+
+TipoUnidadEquivalenciaSchema.set('toObject', {
+  virtuals: true,
+  versionKey: false,
+  transform: (doc, result) => {
+    delete result.__v;
+    delete result._id;
+    return result;
+  }
 });
 
 TipoUnidadEquivalenciaSchema.pre('validate', function(next) {

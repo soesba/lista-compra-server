@@ -9,7 +9,7 @@ module.exports.get = function (req, res) {
   Establecimiento.find({ usuario: new mongoose.Types.ObjectId(`${req.user.id}`) })
     .populate('tipoEstablecimiento')
     .sort({ [orderBy]: direction, fechaCreacion: 1 })
-    .then((result) => res.jsonp({ data: result }))
+    .then((result) => res.jsonp({ data: result.map(item => item.toJSON()) }))
     .catch((error) => res.status(500).send({ message: error.message }));
 };
 
@@ -17,7 +17,7 @@ module.exports.getById = function (req, res) {
     Establecimiento.findOne({ _id: req.params.id, usuario: new mongoose.Types.ObjectId(`${req.user.id}`) })
     .populate('tipoEstablecimiento')
     .then((result) => {
-        res.jsonp({ data: result });
+        res.jsonp({ data: result.toJSON() });
     })
     .catch((error) => res.status(500).send({ message: error.message }));
 };
@@ -37,7 +37,7 @@ module.exports.getByAny = function (req, res) {
   .sort({ [orderBy]: direction, fechaCreacion: 1 })
   .then((result) => {
     if (result) {
-      res.jsonp({ data: result });
+      res.jsonp({ data: result.map(item => item.toJSON()) });
     }
   })
   .catch((error) => res.status(500).send({ message: error.message }));

@@ -2,12 +2,9 @@
 
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
+const transform = require('../utils/commonFunctions').transform;
 
 const RolSchema = new Schema({
-  _id: {
-    type: Schema.Types.ObjectId,
-    required: true,
-  },
   nombre: {
     type: String,
     required: true
@@ -26,23 +23,25 @@ const RolSchema = new Schema({
   }
 });
 
-// Duplicate the ID field.
-RolSchema.virtual('id').get(function(){
-  return this._id.toHexString();
+RolSchema.virtual('id').set(function(){
+ if (val == null || val === '') return;
+   this._id = mongoose.Types.ObjectId.isValid(`${val}`) ? new mongoose.Types.ObjectId(`${val}`) : val;
 });
 
 RolSchema.set('toJSON', {
+   virtuals: true,
+  versionKey: false,
+  transform
+});
+
+RolSchema.set('toObject', {
   virtuals: true,
-  transform: (doc, result) => {
-    return {
-      ...result,
-      id: result._id,
-    }
-  }
+  versionKey: false,
+  transform
 });
 
 RolSchema.pre("validate", function (next) {
-  if (!this._id) {
+  if (!this._id && this.id) {
     this._id = new mongoose.Types.ObjectId();
   }
   if (!this.fechaCreacion) {

@@ -19,7 +19,7 @@ module.exports.getAll = function (req, res) {
   Rol.find()
     .then(response => {
       if (response) {
-        res.jsonp({ data: response });
+        res.jsonp({ data: response.map(item => item.toJSON()) });
       } else {
         res.status(500).send({ message: 'No hay roles creados' });
       }
@@ -32,7 +32,7 @@ module.exports.getById = function (req, res) {
   Rol.findOne(params)
     .then(response => {
       if (response) {
-        res.jsonp({ data: response });
+        res.jsonp({ data: response.toJSON() });
       } else {
         res.status(500).send({ message: 'Rol con id ' + req.query.id + ' no existe' });
       }
@@ -45,7 +45,7 @@ module.exports.getByCodigo = function (req, res) {
   Rol.findOne(params)
     .then(response => {
       if (response) {
-        res.jsonp({ data: response });
+        res.jsonp({ data: response.toJSON() });
       } else {
         res.status(500).send({ message: 'Rol con codigo ' + req.query.codigo + ' no existe' });
       }
@@ -58,7 +58,7 @@ module.exports.getByNombre = function (req, res) {
   Rol.findOne(params)
     .then(response => {
       if (response) {
-        res.jsonp({ data: response });
+        res.jsonp({ data: response.toJSON() });
       } else {
         res.status(500).send({ message: 'Rol con nombre ' + req.query.nombre + ' no existe' });
       }
@@ -79,14 +79,18 @@ module.exports.update = function (req, res) {
 }
 
 module.exports.delete = function (req, res) {
-  const modeloId = req.params.id;
+  const rolId = req.params.id;
+  const enUso = checkUsoRol(rolId)
 
-  Rol.findOneAndDelete({ _id: modeloId })
-    .then(result => res.jsonp({ data: result }))
-    .catch(error => {
-      return res.status(500).send({ message: error.message })
-    });
-
+  if (enUso.length > 0) {
+    res.status(409).send({respuesta: 409, message: 'ElIl rol está en uso', data: enUso });
+  } else {
+    Rol.findOneAndDelete({ _id: rolId })
+      .then(result => res.jsonp({ data: result }))
+      .catch(error => {
+        return res.status(500).send({ message: error.message })
+      });
+    }
 }
 
 module.exports.checkUso = function (req, res) {

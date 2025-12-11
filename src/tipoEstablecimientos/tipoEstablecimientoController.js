@@ -13,14 +13,14 @@ module.exports.get = function (req, res) {
     ],
   })
     .sort({ [orderBy]: direction, fechaCreacion: 1 })
-    .then((result) => res.jsonp({ data: result }))
+    .then((result) => res.jsonp({ data: result.map(item => item.toJSON()) }))
     .catch((error) => res.status(500).send({ message: error.message }));
 };
 
 module.exports.getById = function (req, res) {
   TipoEstablecimiento.findOne({ _id: req.params.id })
     .then((result) => {
-      res.jsonp({ data: result });
+      res.jsonp({ data: result.toJSON()});
     })
     .catch((error) => res.status(500).send({ message: error.message }));
 };
@@ -47,7 +47,7 @@ module.exports.getByAny = function (req, res) {
     .sort({ [orderBy]: direction, fechaCreacion: 1 })
     .then((result) => {
       if (result) {
-        res.jsonp({ data: result });
+        res.jsonp({ data: result.map(item => item.toJSON()) });
       }
     })
     .catch((error) => res.status(500).send({ message: error.message }));

@@ -1,14 +1,11 @@
 'use strict';
 
 const mongoose = require('mongoose');
-const	Schema = mongoose.Schema;
+const Schema = mongoose.Schema;
 const ImageSchema = require('../common/imageSchema.js');
+const transform = require('../utils/commonFunctions').transform;
 
 const PermisoSchema = new Schema({
-  _id: {
-    type: Schema.Types.ObjectId,
-    required: true,
-  },
   modeloId: {
     type: Schema.Types.ObjectId,
     required: true,
@@ -39,21 +36,17 @@ const PreferenciaUserSchema = new Schema({
 });
 
 const UsuarioSchema = new Schema({
-  _id: {
-    type: Schema.Types.ObjectId,
-    required: true,
-  },
   rol: {
     type: Schema.Types.ObjectId,
     ref: 'Rol',
     required: true
   },
-	username: {
-		type: String,
-		unique: true,
-		required: true,
-		trim: true
-	},
+  username: {
+    type: String,
+    unique: true,
+    required: true,
+    trim: true
+  },
   email: {
     type: String,
     required: true,
@@ -73,14 +66,14 @@ const UsuarioSchema = new Schema({
     type: ImageSchema,
     default: null,
   },
-	password: {
-		type: String,
-		default: ''
-	},
-	fechaCreacion: {
-		type: Date,
+  password: {
+    type: String,
+    default: ''
+  },
+  fechaCreacion: {
+    type: Date,
     required: true
-	},
+  },
   permisos: {
     type: [PermisoSchema],
     default: null
@@ -92,37 +85,53 @@ const UsuarioSchema = new Schema({
 });
 
 // Duplicate the ID field.
-UsuarioSchema.virtual('id').get(function(){
-  return this._id.toHexString();
+UsuarioSchema.virtual('id').set(function (val) {
+  if (val == null || val === '') return;
+  this._id = mongoose.Types.ObjectId.isValid(`${val}`) ? new mongoose.Types.ObjectId(`${val}`) : val;
 });
 
-UsuarioSchema.virtual('esAdministrador').get(function() {
+UsuarioSchema.virtual('esAdministrador').get(function () {
   // El campo rol debe estar relleno
   return this.rol && this.rol.nombre?.toLowerCase() === 'administrador';
 });
 
 
-PreferenciaUserSchema.virtual('id').get(function(){
-  return this._id.toHexString();
+PreferenciaUserSchema.virtual('id').set(function (val) {
+  if (val == null || val === '') return;
+  this._id = mongoose.Types.ObjectId.isValid(`${val}`) ? new mongoose.Types.ObjectId(`${val}`) : val;
 });
 
-UsuarioSchema.set('toObject', { virtuals: true });
+UsuarioSchema.set('toObject', {
+  virtuals: true,
+  versionKey: false,
+  transform
+});
+
 UsuarioSchema.set('toJSON', {
   virtuals: true,
-  transform: (doc, result) => {
-    return {
-      ...result,
-      id: result._id
-    }
-  }
+  versionKey: false,
+  transform
+});
+
+PreferenciaUserSchema.set('toJSON', {
+  virtuals: true,
+  versionKey: false,
+  transform
+});
+
+PreferenciaUserSchema.set('toObject', {
+  virtuals: true,
+  versionKey: false,
+  transform
 });
 
 UsuarioSchema.pre("validate", function (next) {
-  if (!this._id) {
-    this._id = new mongoose.Types.ObjectId();
+  if (!this._id && this.id) {
+    this._id = new mongoose.Types.ObjectId(`${this.id}`);
+    delete this.id;
   }
   if (!this.fechaCreacion) {
-   this.fechaCreacion = new Date();
+    this.fechaCreacion = new Date();
   }
   next();
 });

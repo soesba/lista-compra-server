@@ -42,6 +42,11 @@ module.exports.get = async function (req, res) {
     },
     {
       $unwind: '$articulo'
+    },
+    {
+      $project: {
+        unidadesMedida: 0
+      }
     }
   ]
   Precio.aggregate(pipeline)
@@ -131,7 +136,8 @@ module.exports.getById = async function (req, res) {
     },
     {
       $project: {
-        um: 0
+        um: 0,
+        unidadesMedida: { _id: 0 }
       }
     }
   ]
@@ -208,12 +214,6 @@ module.exports.getByArticuloId = async function (req, res) {
       }).catch((error) => res.status(500).send({ message: error.message }));
     }).catch((error) => res.status(500).send({ message: error.message }));
   }).catch((error) => res.status(500).send({ message: error.message }));
-
-  // Precio.find({ articulo: req.params.articuloId })
-  //   .then((result) => {
-  //     res.jsonp(result)
-  //   })
-  //   .catch((error) => res.status(500).send({ message: error.message }))
 }
 
 module.exports.getByAny = async function (req, res) {
@@ -265,7 +265,7 @@ module.exports.getByAny = async function (req, res) {
     Precio.populate(result, { path: 'articulo', select: { _id: 1, nombre: 1 } })
     .sort({ [orderBy]: direction, fechaCompra: 1 })
     .then((result) => {
-      res.jsonp({ data: result })
+      res.jsonp({ data: result.map(item => item.toJSON()) });
     }).catch(error => res.status(500).send({ message: error.message }));
   }).catch(error => res.status(500).send({ message: error.message }));
 }
@@ -307,6 +307,7 @@ module.exports.insert = function (req, res) {
 }
 
 module.exports.update = function (req, res) {
+  console.log('LOG~ ~ :304 ~ req.body:', req.body)
   if (req.body.unidadesMedida.length !== 0) {
     req.body.unidadesMedida = req.body.unidadesMedida.map((item) => {
       item._id = new mongoose.Types.ObjectId(`${item.id}`)
@@ -314,6 +315,7 @@ module.exports.update = function (req, res) {
     })
   }
   req.body.usuario = new mongoose.Types.ObjectId(`${req.user.id}`)
+  console.log('LOG~ ~ :312 ~ req.body:', req.body)
   const precio = new Precio(req.body)
   Precio.findOneAndUpdate(
     { _id: new mongoose.Types.ObjectId(`${req.body.id}`) },
@@ -328,6 +330,7 @@ module.exports.update = function (req, res) {
 }
 
 module.exports.updateUnidadesMedida = function (req, res) {
+  console.log('LOG~ ~ :327 ~ req.body:', req.body)
   if (req.body.unidadesMedida.length !== 0) {
     req.body.unidadesMedida = req.body.unidadesMedida.map((item) => {
       item._id = new mongoose.Types.ObjectId(`${item.id}`)
@@ -335,6 +338,7 @@ module.exports.updateUnidadesMedida = function (req, res) {
     })
   }
   req.body.usuario = new mongoose.Types.ObjectId(`${req.user.id}`)
+  console.log('LOG~ ~ :334 ~ req.body:', req.body)
   Precio.findOneAndUpdate(
     { _id: new mongoose.Types.ObjectId(`${req.params.id}`) },
     { $set: {

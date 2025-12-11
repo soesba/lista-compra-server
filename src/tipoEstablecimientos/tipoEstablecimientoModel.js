@@ -2,12 +2,9 @@
 
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
+const transform = require('../utils/commonFunctions').transform;
 
 const TipoEstablecimientoSchema = new Schema({
-    _id: {
-        type: Schema.Types.ObjectId,
-        required: true
-    },
     nombre: {
         type: String,
         default: '',
@@ -40,18 +37,28 @@ const TipoEstablecimientoSchema = new Schema({
     }
 });
 
-// Duplicate the ID field.
-TipoEstablecimientoSchema.virtual('id').get(function(){
-  return this._id.toHexString();
+
+TipoEstablecimientoSchema.virtual('id').set(function (val) {
+  if (val == null || val === '') return;
+  this._id = mongoose.Types.ObjectId.isValid(`${val}`) ? new mongoose.Types.ObjectId(`${val}`) : val;
 });
-// Ensure virtual fields are serialised.
+
 TipoEstablecimientoSchema.set('toJSON', {
-  virtuals: true
+  virtuals: true,
+  versionKey: false,
+  transform
+});
+
+TipoEstablecimientoSchema.set('toObject', {
+  virtuals: true,
+  versionKey: false,
+  transform
 });
 
 TipoEstablecimientoSchema.pre('validate', function(next) {
-    if (!this._id) {
-      this._id = new mongoose.Types.ObjectId()
+    if (!this._id && this.id) {
+      this._id = new mongoose.Types.ObjectId(`${this.id}`);
+      delete this.id;
     }
     if(!this.fechaCreacion) {
         this.fechaCreacion = new Date();

@@ -2,13 +2,9 @@
 
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
+const { transform, postAggregate } = require('../utils/commonFunctions');
 
 const UnidadMedidaSchema = new Schema({
-  _id: {
-    type: Schema.Types.ObjectId,
-    required: true,
-    ref: "TipoUnidad"
-  },
   valor: {
     type: Number,
     required: true
@@ -16,10 +12,6 @@ const UnidadMedidaSchema = new Schema({
 });
 
 const PrecioSchema = new Schema({
-  _id: {
-    type: Schema.Types.ObjectId,
-    required: true
-  },
   articulo: {
     type: Schema.Types.ObjectId,
     required: true,
@@ -63,40 +55,39 @@ const PrecioSchema = new Schema({
   }
 });
 
-// Duplicate the ID field.
-PrecioSchema.virtual('id').get(function () {
-  return this._id ? this._id.toHexString() : null;
+PrecioSchema.virtual('id').set(function (val) {
+  if (val == null || val === '') return;
+  this._id = mongoose.Types.ObjectId.isValid(`${val}`) ? new mongoose.Types.ObjectId(`${val}`) : val;
 });
 
 
-UnidadMedidaSchema.virtual('id').get(function () {
-  return this._id ? this._id.toHexString() : null;
+UnidadMedidaSchema.virtual('id').set(function (val) {
+  if (val == null || val === '') return;
+  this._id = mongoose.Types.ObjectId.isValid(`${val}`) ? new mongoose.Types.ObjectId(`${val}`) : val;
 });
 
 
-// Ensure virtual fields are serialised.
 PrecioSchema.set('toJSON', {
   virtuals: true,
-  versionKey: true ,
-  transform: (doc, result) => {
-    return {
-      ...result,
-      id: result._id,
-    }
-  }
+  versionKey: false,
+  transform
 });
 PrecioSchema.set('toObject', {
   virtuals: true,
-  versionKey: true
+  versionKey: false,
+  transform
 });
 
 UnidadMedidaSchema.set('toJSON', {
-  transform: (doc, result) => {
-    return {
-      ...result,
-      id: result._id,
-    }
-  }
+   virtuals: true,
+  versionKey: false,
+  transform
+});
+
+UnidadMedidaSchema.set('toObject', {
+  virtuals: true,
+  versionKey: false,
+  transform
 });
 
 PrecioSchema.pre("validate", function (next) {
@@ -109,14 +100,7 @@ PrecioSchema.pre("validate", function (next) {
   next();
 });
 
-PrecioSchema.post("aggregate", function (result) {
-  for (const item of result) {
-    item.id = item._id;
-    delete item._id;
-    delete item.__v
-  }
-
-})
+PrecioSchema.post("aggregate", (result) => postAggregate(result))
 
 // Índices simples
 PrecioSchema.index({ usuario: 1 });
