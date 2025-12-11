@@ -1,6 +1,6 @@
 "use strict";
 
-var mongoose = require("mongoose");
+const mongoose = require("mongoose");
 const TipoUnidadEquivalencia = require("./tipoUnidadEquivalenciaModel");
 
 module.exports.get = function (req, res) {
@@ -12,7 +12,7 @@ module.exports.get = function (req, res) {
 module.exports.getById = function (req, res) {
   TipoUnidadEquivalencia.findOne({ _id: req.params.id, usuario: new mongoose.Types.ObjectId(`${req.user.id}`) })
     .then((result) => {
-      res.jsonp({ data: result });
+      res.jsonp({ data: result.toJSON() });
     })
     .catch((error) => res.status(500).send({ message: error.message }));
 };
@@ -21,7 +21,7 @@ module.exports.getByFrom = function (req, res) {
   TipoUnidadEquivalencia.find({ from: req.params.from, usuario: new mongoose.Types.ObjectId(`${req.user.id}`) })
     .then((result) => {
       if (result) {
-        res.jsonp({ data: result });
+        res.jsonp({ data: result.map(item => item.toJSON()) });
       }
     })
     .catch((error) => res.status(500).send({ message: error.message }));
@@ -36,7 +36,7 @@ module.exports.getByFromMultiple = function (req, res) {
     from: { $in: fromToObjectId }
   }).then((result) => {
     if (result) {
-      res.jsonp({ data: result });
+      res.jsonp({ data: result.map(item => item.toJSON()) });
     }
   })
     .catch((error) => res.status(500).send({ message: error.message }));
@@ -51,7 +51,7 @@ module.exports.getByAny = function (req, res) {
     ],
   }).then((result) => {
     if (result) {
-      res.jsonp({ data: result });
+      res.jsonp({ data: result.map(item => item.toJSON()) });
     }
   })
     .catch((error) => res.status(500).send({ message: error.message }));

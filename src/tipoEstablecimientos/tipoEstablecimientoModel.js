@@ -2,12 +2,9 @@
 
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
+const transform = require('../utils/commonFunctions').transform;
 
 const TipoEstablecimientoSchema = new Schema({
-    _id: {
-        type: Schema.Types.ObjectId,
-        required: true
-    },
     nombre: {
         type: String,
         default: '',
@@ -23,7 +20,7 @@ const TipoEstablecimientoSchema = new Schema({
       index: true
     },
     fechaCreacion: {
-        type: String,
+        type: Date,
         required: true
     },
     borrable: {
@@ -40,23 +37,37 @@ const TipoEstablecimientoSchema = new Schema({
     }
 });
 
-// Duplicate the ID field.
-TipoEstablecimientoSchema.virtual('id').get(function(){
-  return this._id.toHexString();
+
+TipoEstablecimientoSchema.virtual('id').set(function (val) {
+  if (val == null || val === '') return;
+  this._id = mongoose.Types.ObjectId.isValid(`${val}`) ? new mongoose.Types.ObjectId(`${val}`) : val;
 });
-// Ensure virtual fields are serialised.
+
 TipoEstablecimientoSchema.set('toJSON', {
-  virtuals: true
+  virtuals: true,
+  versionKey: false,
+  transform
+});
+
+TipoEstablecimientoSchema.set('toObject', {
+  virtuals: true,
+  versionKey: false,
+  transform
 });
 
 TipoEstablecimientoSchema.pre('validate', function(next) {
-    if (!this._id) {
-      this._id = new mongoose.Types.ObjectId()
+    if (!this._id && this.id) {
+      this._id = new mongoose.Types.ObjectId(`${this.id}`);
+      delete this.id;
     }
     if(!this.fechaCreacion) {
-        this.fechaCreacion =  new Intl.DateTimeFormat('es-ES', {day: '2-digit', month: '2-digit', year: 'numeric'}).format()
+        this.fechaCreacion = new Date();
     }
     next();
   });
+
+// Índices simples
+TipoEstablecimientoSchema.index({ usuario: 1 });
+TipoEstablecimientoSchema.index({ esMaestro: 1 });
 
 module.exports = mongoose.model('TipoEstablecimiento', TipoEstablecimientoSchema, 'TipoEstablecimiento');

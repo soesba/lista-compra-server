@@ -1,8 +1,10 @@
 'use strict';
 const verifyToken = require('../utils/verifyToken.js').verifyToken;
-var usuarioController = require('./usuarioController');
+const usuarioController = require('./usuarioController');
 
-module.exports = function (app) {
+module.exports = function usuariosRoutes (app) {
+
+  app.get('/api/usuarios/checkData', verifyToken, (req, res) => usuarioController.checkData(req, res)); // Chequear consistencia de datos
 
   app.get('/api/usuarios/desplegable', verifyToken, (req, res) => usuarioController.getDesplegable(req, res)); // Para dropdowns
 

@@ -1,10 +1,11 @@
 'use strict';
 
-var mongoose = require('mongoose');
-var	Schema = mongoose.Schema;
-var ImageSchema = require('../common/imageSchema.js');
+const mongoose = require('mongoose');
+const	Schema = mongoose.Schema;
+const ImageSchema = require('../common/imageSchema.js');
+const transform = require('../utils/commonFunctions').transform;
 
-var AvatarSchema = new Schema({
+const AvatarSchema = new Schema({
   _id: {
     type: Schema.Types.ObjectId,
     required: true,
@@ -14,36 +15,35 @@ var AvatarSchema = new Schema({
     default: null,
   },
   fechaSubida: {
-    type: String,
+    type: Date,
     required: true
   }
 });
 
-// Duplicate the ID field.
-AvatarSchema.virtual('id').get(function(){
-  return this._id.toHexString();
+AvatarSchema.virtual('id').set(function (val) {
+  if (val == null || val === '') return;
+  this._id = mongoose.Types.ObjectId.isValid(`${val}`) ? new mongoose.Types.ObjectId(`${val}`) : val;
 });
 
 AvatarSchema.set('toJSON', {
   virtuals: true,
-  transform: (doc, result) => {
-    return {
-      ...result,
-      id: result._id,
-    }
-  }
+  versionKey: false,
+  transform
+});
+
+AvatarSchema.set('toObject', {
+  virtuals: true,
+  versionKey: false,
+  transform
 });
 
 AvatarSchema.pre("validate", function (next) {
-  if (!this._id) {
-    this._id = new mongoose.Types.ObjectId();
+   if (!this._id && this.id) {
+    this._id = new mongoose.Types.ObjectId(`${this.id}`);
+    delete this.id;
   }
   if (!this.fechaSubida) {
-    this.fechaSubida = new Intl.DateTimeFormat("es-ES", {
-      day: "2-digit",
-      month: "2-digit",
-      year: "numeric",
-    }).format();
+    this.fechaSubida = new Date();
   }
   next();
 });

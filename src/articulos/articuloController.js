@@ -1,10 +1,12 @@
 'use strict'
 
-var mongoose = require('mongoose')
+const mongoose = require('mongoose')
 const Articulo = require('./articuloModel')
 
 module.exports.get = async function (req, res) {
-  const articulos = await Articulo.find({ usuario: new mongoose.Types.ObjectId(`${req.user.id}`) }).lean();
+  const orderBy = req.query.orderBy || 'nombre'; // Campo por defecto
+  const direction = req.query.direction === 'desc' ? -1 : 1; // 1 para asc, -1 para desc
+  const articulos = await Articulo.find({ ...req.accessFilter }).lean({ virtuals: true });
   Articulo.aggregate([
     {
       $match: { _id: { $in: articulos.map(p => p._id) } } // Filtrar por los pedidos encontrados
@@ -26,10 +28,11 @@ module.exports.get = async function (req, res) {
     {
       $project: {
         itemsRelacionados: 0,  // Opcional: Ocultar el arreglo de items relacionados,
-        _id: 0
+        _id: 0,
+        __v: 0
       }
     }
-  ]).then((result) => {
+  ]).sort({ [orderBy]: direction, fechaCreacion: 1 }).then((result) => {
     if (result) {
       res.jsonp({ data: result })
     }
@@ -91,6 +94,8 @@ module.exports.getById = async function (req, res) {
 }
 
 module.exports.getByAny = function (req, res) {
+  const orderBy = req.query.orderBy || 'nombre'; // Campo por defecto
+  const direction = req.query.direction === 'desc' ? -1 : 1; // 1 para asc, -1 para desc
   const texto = new RegExp(req.params.texto)
   Articulo.find({
     usuario: new mongoose.Types.ObjectId(`${req.user.id}`),
@@ -100,9 +105,10 @@ module.exports.getByAny = function (req, res) {
     ],
   })
     .populate('tiposUnidad')
+    .sort({ [orderBy]: direction, fechaCreacion: 1 })
     .then((result) => {
       if (result) {
-        res.jsonp({ data: result })
+        res.jsonp({ data: result.map(item => item.toJSON()) })
       }
     })
     .catch((error) => res.status(500).send({ message: error.message }))
@@ -120,7 +126,7 @@ module.exports.getDesplegable = function (req, res) {
         "nombre": "$nombre"
       }
     }
-  ]).then((result) => {
+  ]).sort({ nombre: 1 }).then((result) => {
     if (result) {
       res.jsonp({ data: result })
     }
@@ -171,17 +177,27 @@ module.exports.update = function (req, res) {
 }
 
 module.exports.delete = function (req, res) {
-  Articulo.deleteOne({ _id: req.params.id })
+  const Precio = require('../precios/precioModel.js');
+
+  Precio.find({ articulo: new mongoose.Types.ObjectId(`${req.params.id}`) }).then(result => {
+    if (result.length > 0) {
+      res.status(409).send({
+        respuesta: 409,
+        message: 'El articulo tiene precios asociados',
+      })
+      return
+    } else {
+       Articulo.deleteOne({ _id: req.params.id })
     .then((result) => {
       if (result) {
         res.jsonp({ data: result })
       } else {
-        res
-          .status(500)
-          .send({ message: 'Articulo con id ' + req.params.id + ' no existe' })
+        res.status(500).send({ message: 'Articulo con id ' + req.params.id + ' no existe' })
       }
     })
     .catch((error) => res.status(500).send({ message: error.message }))
+    }
+  }).catch((error) => res.status(500).send({ message: error.message }));
 }
 
 module.exports.checkData = async function (req, res) {

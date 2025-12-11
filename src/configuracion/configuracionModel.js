@@ -1,13 +1,10 @@
 'use strict';
 
-var mongoose = require('mongoose');
-var	Schema = mongoose.Schema;
+const mongoose = require('mongoose');
+const Schema = mongoose.Schema;
+const transform = require('../utils/commonFunctions').transform;
 
-var ConfiguracionSchema = new Schema({
-  _id: {
-    type: Schema.Types.ObjectId,
-    required: true,
-  },
+const ConfiguracionSchema = new Schema({
   categoria: {
     type: String,
     required: true
@@ -31,30 +28,30 @@ var ConfiguracionSchema = new Schema({
 });
 
 // Duplicate the ID field.
-ConfiguracionSchema.virtual('id').get(function(){
-  return this._id.toHexString();
+ConfiguracionSchema.virtual('id').set(function (val) {
+  if (val == null || val === '') return;
+  this._id = mongoose.Types.ObjectId.isValid(`${val}`) ? new mongoose.Types.ObjectId(`${val}`) : val;
 });
 
 ConfiguracionSchema.set('toJSON', {
   virtuals: true,
-  transform: (doc, result) => {
-    return {
-      ...result,
-      id: result._id,
-    }
-  }
+  versionKey: false,
+  transform
+});
+
+ConfiguracionSchema.set('toObject', {
+  virtuals: true,
+  versionKey: false,
+  transform
 });
 
 ConfiguracionSchema.pre("validate", function (next) {
-  if (!this._id) {
-    this._id = new mongoose.Types.ObjectId();
+  if (!this._id && this.id) {
+    this._id = new mongoose.Types.ObjectId(`${this.id}`);
+    delete this.id;
   }
   if (!this.fechaCreacion) {
-    this.fechaCreacion = new Intl.DateTimeFormat("es-ES", {
-      day: "2-digit",
-      month: "2-digit",
-      year: "numeric",
-    }).format();
+    this.fechaCreacion = new Date();
   }
   next();
 });

@@ -2,11 +2,11 @@
 
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
+const mongooseLeanVirtuals = require('mongoose-lean-virtuals');
+const transform = require('../utils/commonFunctions').transform;
+
 const EquivalenciaSchema = new Schema({
-  _id: {
-    type: Schema.Types.ObjectId,
-    required: true
-  },
+  _id: false,
   to: {
     type: Schema.Types.ObjectId,
     required: true,
@@ -20,71 +20,88 @@ const EquivalenciaSchema = new Schema({
 })
 
 const TipoUnidadSchema = new Schema({
-    _id: {
-        type: Schema.Types.ObjectId,
-        required: true
-    },
-    nombre: {
-        type: String,
-        default: '',
-        trim: true,
-        required: true,
-        index: true
-    },
-    abreviatura: {
-      type: String,
-      default: '',
-      trim: true,
-      required: true,
-      index: true
-    },
-    equivalencias: [EquivalenciaSchema],
-    fechaCreacion: {
-        type: String,
-        required: true
-    },
-    borrable: {
-      type: Boolean,
-      default: true
-    },
-    esMaestro: {
-      type: Boolean,
-      default: false
-    },
-    usuario: {
-      type: Schema.Types.ObjectId,
-      required: true,
-    }
+  nombre: {
+    type: String,
+    default: '',
+    trim: true,
+    required: true,
+    index: true
+  },
+  abreviatura: {
+    type: String,
+    default: '',
+    trim: true,
+    required: true,
+    index: true
+  },
+  equivalencias: [EquivalenciaSchema],
+  fechaCreacion: {
+    type: Date,
+    required: true
+  },
+  borrable: {
+    type: Boolean,
+    default: true
+  },
+  esMaestro: {
+    type: Boolean,
+    default: false
+  },
+  usuario: {
+    type: Schema.Types.ObjectId,
+    required: true,
+  }
 });
 
-// Duplicate the ID field.
-TipoUnidadSchema.virtual('id').get(function(){
-  return this._id.toHexString();
+TipoUnidadSchema.plugin(mongooseLeanVirtuals);
+EquivalenciaSchema.plugin(mongooseLeanVirtuals);
+
+
+TipoUnidadSchema.virtual('id').set(function (val) {
+  if (val == null || val === '') return;
+  this._id = mongoose.Types.ObjectId.isValid(`${val}`) ? new mongoose.Types.ObjectId(`${val}`) : val;
 });
-EquivalenciaSchema.virtual('id').get(function(){
-  return this._id.toHexString();
-});
+
+
 // Ensure virtual fields are serialised.
 TipoUnidadSchema.set('toJSON', {
-  virtuals: true
-});
-EquivalenciaSchema.set('toJSON', {
-  transform: (doc, result) => {
-    return {
-      ...result,
-      id: result._id,
-    }
-  },
+  virtuals: true,
+  versionKey: false,
+  transform
 });
 
-TipoUnidadSchema.pre('validate', function(next) {
-  if (!this._id) {
-    this._id = new mongoose.Types.ObjectId()
+TipoUnidadSchema.set('toObject', {
+  virtuals: true,
+  versionKey: false,
+  transform
+});
+
+EquivalenciaSchema.set('toObject', {
+  virtuals: true,
+  versionKey: false,
+  transform
+});
+
+EquivalenciaSchema.set('toJSON', {
+  virtuals: true,
+  versionKey: false,
+  transform
+});
+
+TipoUnidadSchema.pre('validate', function (next) {
+  if (!this._id && this.id) {
+    this._id = new mongoose.Types.ObjectId(`${this.id}`);
+    delete this.id;
   }
-  if(!this.fechaCreacion) {
-      this.fechaCreacion =  new Intl.DateTimeFormat('es-ES', {day: '2-digit', month: '2-digit', year: 'numeric'}).format()
+  if (!this.fechaCreacion) {
+    this.fechaCreacion = new Date();
   }
   next();
 });
+
+
+// Índices simples
+TipoUnidadSchema.index({ usuario: 1 });
+TipoUnidadSchema.index({ esMaestro: 1 });
 
 module.exports = mongoose.model('TipoUnidad', TipoUnidadSchema, 'TipoUnidad');

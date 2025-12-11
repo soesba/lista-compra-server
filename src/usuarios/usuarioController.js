@@ -1,10 +1,10 @@
 'use strict';
 
-var mongoose = require('mongoose');
-var Usuario = mongoose.model('Usuario');
+const mongoose = require('mongoose');
+const Usuario = mongoose.model('Usuario');
 
 module.exports.register = function (req, res) {
-  var user = new User(req.body);
+  const user = new User(req.body);
 
   Usuario.findOne({ username: user.username })
     .then(result => {
@@ -32,9 +32,10 @@ module.exports.get = function (req, res) {
 
 module.exports.getAll = function (req, res) {
   Usuario.find({}, { password: 0 })
+    .populate({ path: 'rol', select: 'nombre' })
     .then(response => {
       if (response) {
-        res.jsonp({ data: response });
+        res.jsonp({ data: response.map(item => item.toJSON()) });
       } else {
         res.status(404).send({ message: 'No hay usuarios registrados' });
       }
@@ -45,9 +46,10 @@ module.exports.getAll = function (req, res) {
 module.exports.getById = function (req, res) {
   const params = { _id: new mongoose.Types.ObjectId(`${req.query.id}`) };
   Usuario.findOne(params, { password: 0 })
+    .populate({ path: 'rol', select: 'nombre' })
     .then(response => {
       if (response) {
-        res.jsonp({ data: response });
+        res.jsonp({ data: response.toJSON() });
       } else {
         res.status(404).send({ message: 'No existe un usuario con id ' + req.query.id });
       }
@@ -58,9 +60,10 @@ module.exports.getById = function (req, res) {
 module.exports.getByUsername = function (req, res) {
   const params = { username: req.query.username };
   Usuario.findOne(params, { password: 0 })
+    .populate({ path: 'rol', select: 'nombre' })
     .then(response => {
       if (response) {
-        res.jsonp({ data: response });
+        res.jsonp({ data: response.toJSON() });
       } else {
         res.status(404).send({ message: 'No existe un usuario con username ' + req.query.username });
       }
@@ -69,11 +72,11 @@ module.exports.getByUsername = function (req, res) {
 }
 
 module.exports.getPreferencias = function (req, res) {
-  var userId = new mongoose.Types.ObjectId(`${req.params.id}`);
+  const userId = new mongoose.Types.ObjectId(`${req.params.id}`);
   Usuario.findOne({ _id: userId }, { preferencias: 1 })
     .then(response => {
       if (response) {
-        res.jsonp({ data: response.preferencias });
+        res.jsonp({ data: response.preferencias.map(item => item.toJSON()) });
       } else {
         res.status(404).send({ message: 'No existe un usuario con ese ID' });
       }
@@ -118,7 +121,7 @@ module.exports.getFotoByUsername = function (req, res) {
 }
 
 module.exports.update = function (req, res) {
-  var userId = new mongoose.Types.ObjectId(`${req.body.id}`);
+  const userId = new mongoose.Types.ObjectId(`${req.body.id}`);
   const newUsuario = {
     ...req.body
   }
@@ -132,7 +135,7 @@ module.exports.update = function (req, res) {
 }
 
 module.exports.delete = function (req, res) {
-  var userId = req.params.id;
+  const userId = new mongoose.Types.ObjectId(`${req.params.id}`);
 
   Usuario.findOneAndDelete({ _id: userId })
     .then(result => res.jsonp({ data: result }))
@@ -156,4 +159,10 @@ module.exports.getDesplegable = function (req, res) {
       res.jsonp({ data: result })
     }
   }).catch((error) => res.status(500).send({ message: error.message }));
+};
+
+module.exports.checkData = async function (req, res) {
+  const checkModule = require('../utils/checkConsistencia.js');
+  const resultado = await checkModule.checkDataConsistencyUsuario();
+  res.jsonp({ data: resultado });
 };

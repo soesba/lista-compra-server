@@ -1,18 +1,95 @@
 'use strict'
 
-var mongoose = require('mongoose')
+const mongoose = require('mongoose')
 const Precio = require('./precioModel')
 
+
+const mappingOrderBy = {
+  articulo: 'articulo.nombre',
+  establecimiento: 'establecimiento.nombre'
+}
+
 module.exports.get = async function (req, res) {
-  Precio.find({ usuario: new mongoose.Types.ObjectId(`${req.user.id}`) })
+  const orderBy = mappingOrderBy[req.query.orderBy] || req.query.orderBy; // Campo por defecto
+  const direction = req.query.direction === 'desc' ? -1 : 1; // 1 para asc, -1 para desc
+  const pipeline = [
+    {
+      $lookup: {
+        from: 'Establecimiento',
+        localField: 'establecimiento',
+        foreignField: '_id',
+        as: 'establecimiento',
+        pipeline: [
+          { $project: { establecimiento: { id: '$_id', nombre: '$nombre' } } },
+          { $replaceRoot: { newRoot: '$establecimiento' } }
+        ]
+      }
+    },
+    {
+      $unwind: '$establecimiento'
+    },
+    {
+      $lookup: {
+        from: 'Articulo',
+        localField: 'articulo',
+        foreignField: '_id',
+        as: 'articulo',
+        pipeline: [
+          { $project: { articulo: { id: '$_id', nombre: '$nombre' } } },
+          { $replaceRoot: { newRoot: '$articulo' } }
+        ]
+      }
+    },
+    {
+      $unwind: '$articulo'
+    },
+    {
+      $project: {
+        unidadesMedida: 0
+      }
+    }
+  ]
+  Precio.aggregate(pipeline)
+    .sort({ [orderBy]: direction, fechaCompra: 1 })
+    .collation({ locale: 'es', strength: 1, numericOrdering: true })
     .then((result) => res.jsonp({ data: result }))
     .catch((error) => res.status(500).send({ message: error.message }))
 }
 
 module.exports.getById = async function (req, res) {
   const id = new mongoose.Types.ObjectId(`${req.params.id}`);
-  const filtroUM = await Precio.aggregate([
-    { $match: { _id: id, usuario: new mongoose.Types.ObjectId(`${req.user.id}`) } },
+  const pipeline = [
+    { $match: { _id: id} },
+    {
+      $lookup: {
+        from: 'Establecimiento',
+        localField: 'establecimiento',
+        foreignField: '_id',
+        as: 'establecimiento',
+        pipeline: [
+          { $project: { establecimiento: { id: '$_id', nombre: '$nombre' } } },
+          { $replaceRoot: { newRoot: '$establecimiento' } }
+        ]
+      }
+    },
+    {
+      $unwind: '$establecimiento'
+    },
+    {
+      $lookup: {
+        from: 'Articulo',
+        localField: 'articulo',
+        foreignField: '_id',
+        as: 'articulo',
+        pipeline: [
+          { $project: { articulo: { id: '$_id', nombre: '$nombre' } } },
+          { $replaceRoot: { newRoot: '$articulo' } }
+        ]
+      }
+    },
+    {
+      $unwind: '$articulo'
+    },
     {
       $lookup: {
         from: 'TipoUnidad',
@@ -59,16 +136,14 @@ module.exports.getById = async function (req, res) {
     },
     {
       $project: {
-        um: 0
+        um: 0,
+        unidadesMedida: { _id: 0 }
       }
     }
-  ]).catch((error) => res.status(500).send({ message: error.message }));
-
-  Precio.populate(filtroUM, { path: "establecimiento", select: { _id: 1, nombre: 1 } }).then(filtroEstablecimiento => {
-    Precio.populate(filtroEstablecimiento, { path: "articulo", select: { _id: 1, nombre: 1 } }).then(result => {
-      res.jsonp({ data: result[0] });
-    }).catch(error => res.status(500).send({ message: error.message }));
-  }).catch(error => res.status(500).send({ message: error.message }));
+  ]
+  Precio.aggregate(pipeline)
+    .then((result) => res.jsonp({ data: result[0] }))
+    .catch((error) => res.status(500).send({ message: error.message }))
 }
 
 module.exports.getByArticuloId = async function (req, res) {
@@ -139,15 +214,11 @@ module.exports.getByArticuloId = async function (req, res) {
       }).catch((error) => res.status(500).send({ message: error.message }));
     }).catch((error) => res.status(500).send({ message: error.message }));
   }).catch((error) => res.status(500).send({ message: error.message }));
-
-  // Precio.find({ articulo: req.params.articuloId })
-  //   .then((result) => {
-  //     res.jsonp(result)
-  //   })
-  //   .catch((error) => res.status(500).send({ message: error.message }))
 }
 
 module.exports.getByAny = async function (req, res) {
+  const orderBy = mappingOrderBy[req.query.orderBy] || req.query.orderBy; // Campo por defecto
+  const direction = req.query.direction === 'desc' ? -1 : 1; // 1 para asc, -1 para desc
   const texto = new RegExp(req.params.texto)
   const primerFiltro = await Precio.aggregate([
     {
@@ -191,8 +262,10 @@ module.exports.getByAny = async function (req, res) {
     }
   ])
   Precio.populate(primerFiltro, { path: 'establecimiento', select: { _id: 1, nombre: 1 } }).then(result => {
-    Precio.populate(result, { path: 'articulo', select: { _id: 1, nombre: 1 } }).then((result) => {
-      res.jsonp({ data: result })
+    Precio.populate(result, { path: 'articulo', select: { _id: 1, nombre: 1 } })
+    .sort({ [orderBy]: direction, fechaCompra: 1 })
+    .then((result) => {
+      res.jsonp({ data: result.map(item => item.toJSON()) });
     }).catch(error => res.status(500).send({ message: error.message }));
   }).catch(error => res.status(500).send({ message: error.message }));
 }
@@ -234,6 +307,7 @@ module.exports.insert = function (req, res) {
 }
 
 module.exports.update = function (req, res) {
+  console.log('LOG~ ~ :304 ~ req.body:', req.body)
   if (req.body.unidadesMedida.length !== 0) {
     req.body.unidadesMedida = req.body.unidadesMedida.map((item) => {
       item._id = new mongoose.Types.ObjectId(`${item.id}`)
@@ -241,6 +315,7 @@ module.exports.update = function (req, res) {
     })
   }
   req.body.usuario = new mongoose.Types.ObjectId(`${req.user.id}`)
+  console.log('LOG~ ~ :312 ~ req.body:', req.body)
   const precio = new Precio(req.body)
   Precio.findOneAndUpdate(
     { _id: new mongoose.Types.ObjectId(`${req.body.id}`) },
@@ -250,6 +325,31 @@ module.exports.update = function (req, res) {
         res.jsonp({ data: result })
       } else {
         res.status(500).send({ message: 'Error al actualizar el registro de precio' })
+      }
+    }).catch((error) => res.status(500).send({ message: error.message }))
+}
+
+module.exports.updateUnidadesMedida = function (req, res) {
+  console.log('LOG~ ~ :327 ~ req.body:', req.body)
+  if (req.body.unidadesMedida.length !== 0) {
+    req.body.unidadesMedida = req.body.unidadesMedida.map((item) => {
+      item._id = new mongoose.Types.ObjectId(`${item.id}`)
+      return item
+    })
+  }
+  req.body.usuario = new mongoose.Types.ObjectId(`${req.user.id}`)
+  console.log('LOG~ ~ :334 ~ req.body:', req.body)
+  Precio.findOneAndUpdate(
+    { _id: new mongoose.Types.ObjectId(`${req.params.id}`) },
+    { $set: {
+      unidadesMedida: req.body.unidadesMedida,
+      usuario: new mongoose.Types.ObjectId(`${req.user.id}`)
+    } },
+    { new: true, runValidators: true, returnOriginal: false }).then(result => {
+      if (result) {
+        res.jsonp({ data: result })
+      } else {
+        res.status(500).send({ message: 'Error al actualizar las unidades de medida del precio' })
       }
     }).catch((error) => res.status(500).send({ message: error.message }))
 }

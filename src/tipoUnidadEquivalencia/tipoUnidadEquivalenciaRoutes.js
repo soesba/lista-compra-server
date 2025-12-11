@@ -2,7 +2,7 @@
 const verifyToken = require('../utils/verifyToken.js').verifyToken;
 const tipoUnidadEquivalenciaController = require('./tipoUnidadEquivalenciaController');
 
-module.exports = function (app) {
+module.exports = function tipoUnidadEquivalenciaRoutes (app) {
 
   app.get('/api/tipos-unidad-equivalencia/checkData', verifyToken, (req, res) => tipoUnidadEquivalenciaController.checkData(req, res)); // Chequear consistencia de datos
 

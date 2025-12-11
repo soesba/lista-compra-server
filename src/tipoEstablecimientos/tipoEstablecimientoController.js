@@ -1,42 +1,53 @@
 "use strict";
 
-var mongoose = require("mongoose");
+const mongoose = require("mongoose");
 const TipoEstablecimiento = require("./tipoEstablecimientoModel");
 
 module.exports.get = function (req, res) {
+  const orderBy = req.query.orderBy || 'nombre'; // Campo por defecto
+  const direction = req.query.direction === 'desc' ? -1 : 1; // 1 para asc, -1 para desc
   TipoEstablecimiento.find({
-     $or: [
-        { usuario: new mongoose.Types.ObjectId(`${req.user.id}`) },
-        { esMaestro: true }
-      ],
-    })
-    .then((result) => res.jsonp({ data: result }))
+    $or: [
+      { usuario: new mongoose.Types.ObjectId(`${req.user.id}`) },
+      { esMaestro: true }
+    ],
+  })
+    .sort({ [orderBy]: direction, fechaCreacion: 1 })
+    .then((result) => res.jsonp({ data: result.map(item => item.toJSON()) }))
     .catch((error) => res.status(500).send({ message: error.message }));
 };
 
 module.exports.getById = function (req, res) {
   TipoEstablecimiento.findOne({ _id: req.params.id })
     .then((result) => {
-      res.jsonp({ data: result });
+      res.jsonp({ data: result.toJSON()});
     })
     .catch((error) => res.status(500).send({ message: error.message }));
 };
 
 module.exports.getByAny = function (req, res) {
+  const orderBy = req.query.orderBy || 'nombre'; // Campo por defecto
+  const direction = req.query.direction === 'desc' ? -1 : 1; // 1 para asc, -1 para desc
   const texto = new RegExp(req.params.texto);
   TipoEstablecimiento.find({
-    $or: [
-      { usuario: new mongoose.Types.ObjectId(`${req.user.id}`) },
-      { esMaestro: true }
-    ],
-    $or: [
-      { nombre: { $regex: texto, $options: "i" } },
-      { abreviatura: { $regex: texto, $options: "i" } },
-    ],
+    $and: [
+      {
+        $or: [
+          { usuario: new mongoose.Types.ObjectId(`${req.user.id}`) },
+          { esMaestro: true }
+        ]
+      },
+      {
+        $or: [
+          { nombre: { $regex: texto, $options: "i" } },
+          { abreviatura: { $regex: texto, $options: "i" } },
+        ]
+      }],
   })
+    .sort({ [orderBy]: direction, fechaCreacion: 1 })
     .then((result) => {
       if (result) {
-        res.jsonp({ data: result });
+        res.jsonp({ data: result.map(item => item.toJSON()) });
       }
     })
     .catch((error) => res.status(500).send({ message: error.message }));
@@ -53,13 +64,15 @@ module.exports.getDesplegable = function (req, res) {
       }
     },
     {
-      "$project":{
+      "$project": {
         _id: 0,
         "id": "$_id",
         "nombre": "$nombre"
       }
     }
-  ]).then((result) => {
+  ])
+  .sort({ nombre: 1 })
+  .then((result) => {
     if (result) {
       res.jsonp({ data: result });
     }
@@ -104,11 +117,7 @@ module.exports.update = function (req, res) {
     { _id: new mongoose.Types.ObjectId(`${req.body.id}`) },
     { $set: tipoEstablecimiento },
     { new: true, runValidators: true }).then(result => {
-      if (result) {
-        res.jsonp({ data: result });
-      } else {
-        res.jsonp({ data: result });
-      }
+      res.jsonp({ data: result });
     }).catch((error) => res.status(500).send({ message: error.message }));
 };
 
@@ -118,7 +127,7 @@ module.exports.delete = function (req, res) {
   Establecimiento.find({
     tipoEstablecimiento: { $all: [new mongoose.Types.ObjectId(`${tipoEstablecimientoId}`)] }
   }).then(result => {
-    if (result.length !== 0) {
+    if (result.length > 0) {
       res.status(409).send({ respuesta: 409, message: "El tipo de establecimiento está en uso" });
     } else {
       TipoEstablecimiento.deleteOne({ _id: req.params.id }).then((result) => {

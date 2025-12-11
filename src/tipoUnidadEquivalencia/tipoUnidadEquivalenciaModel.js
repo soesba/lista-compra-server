@@ -11,14 +11,12 @@ const TipoUnidadEquivalenciaSchema = new Schema({
     from: {
       type: Schema.Types.ObjectId,
       required: true,
-      ref: "TipoUnidad",
-      required: true
+      ref: "TipoUnidad"
     },
     to: {
       type: Schema.Types.ObjectId,
       required: true,
-      ref: "TipoUnidad",
-      required: true
+      ref: "TipoUnidad"
     },
     factor: {
       type: Number,
@@ -26,7 +24,7 @@ const TipoUnidadEquivalenciaSchema = new Schema({
       required: true
     },
     fechaCreacion: {
-        type: String,
+        type: Date,
         required: true
     },
     borrable: {
@@ -45,7 +43,23 @@ TipoUnidadEquivalenciaSchema.virtual('id').get(function(){
 });
 // Ensure virtual fields are serialised.
 TipoUnidadEquivalenciaSchema.set('toJSON', {
-  virtuals: true
+  virtuals: true,
+  versionKey: false,
+  transform: (doc, result) => {
+    delete result.__v;
+    delete result._id;
+    return result;
+  }
+});
+
+TipoUnidadEquivalenciaSchema.set('toObject', {
+  virtuals: true,
+  versionKey: false,
+  transform: (doc, result) => {
+    delete result.__v;
+    delete result._id;
+    return result;
+  }
 });
 
 TipoUnidadEquivalenciaSchema.pre('validate', function(next) {
@@ -53,7 +67,7 @@ TipoUnidadEquivalenciaSchema.pre('validate', function(next) {
     this._id = new mongoose.Types.ObjectId()
   }
   if(!this.fechaCreacion) {
-      this.fechaCreacion =  new Intl.DateTimeFormat('es-ES', {day: '2-digit', month: '2-digit', year: 'numeric'}).format()
+      this.fechaCreacion = new Date();
   }
   next();
 });
@@ -72,5 +86,8 @@ TipoUnidadEquivalenciaSchema.pre("findOne", function (next) {
   next();
 })
 
+// Índices simples
+TipoUnidadEquivalenciaSchema.index({ usuario: 1 });
+TipoUnidadEquivalenciaSchema.index({ esMaestro: 1 });
 
 module.exports = mongoose.model('TipoUnidadEquivalencia', TipoUnidadEquivalenciaSchema, 'TipoUnidadEquivalencia');

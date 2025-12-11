@@ -74,3 +74,28 @@ module.exports.checkUsoTipoUnidad = async function (tipoUnidadId) {
     console.error(`Error al comprobar uso del tipo de unidad ${tipoUnidadId}:`, error);
   }
 }
+
+module.exports.checkUsoRol = async function (rolId) {
+  // Entidad a verificar
+  const Rol = mongoose.model('Rol');
+  // Entidades donde puede aparecer el rol
+  const Usuario = mongoose.model('Usuario');
+
+  try {
+    let resultados = [];
+    // Buscar en Usuario
+    const usuarios = await Usuario.find({ rol: rolId }, { _id: 1, nombre: 1 }).lean();
+    resultados = resultados.concat(usuarios.map(item => ({
+      entidad: 'Usuario',
+      id: item._id,
+      nombre: item.nombre
+    })));
+    resultados = resultados.map(item => {
+      return `Entidad: ${item.entidad}, ID: ${item.id}, Nombre: ${item.nombre}`;
+    });
+
+    return resultados;
+  } catch (error) {
+    console.error(`Error al comprobar uso del rol ${rolId}:`, error);
+  }
+}

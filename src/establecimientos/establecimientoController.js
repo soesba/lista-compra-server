@@ -1,12 +1,15 @@
 "use strict";
 
-var mongoose = require("mongoose");
+const mongoose = require("mongoose");
 const Establecimiento = require("./establecimientoModel");
 
 module.exports.get = function (req, res) {
+  const orderBy = req.query.orderBy || 'nombre'; // Campo por defecto
+  const direction = req.query.direction === 'desc' ? -1 : 1; // 1 para asc, -1 para desc
   Establecimiento.find({ usuario: new mongoose.Types.ObjectId(`${req.user.id}`) })
     .populate('tipoEstablecimiento')
-    .then((result) => res.jsonp({ data: result }))
+    .sort({ [orderBy]: direction, fechaCreacion: 1 })
+    .then((result) => res.jsonp({ data: result.map(item => item.toJSON()) }))
     .catch((error) => res.status(500).send({ message: error.message }));
 };
 
@@ -14,12 +17,14 @@ module.exports.getById = function (req, res) {
     Establecimiento.findOne({ _id: req.params.id, usuario: new mongoose.Types.ObjectId(`${req.user.id}`) })
     .populate('tipoEstablecimiento')
     .then((result) => {
-        res.jsonp({ data: result });
+        res.jsonp({ data: result.toJSON() });
     })
     .catch((error) => res.status(500).send({ message: error.message }));
 };
 
 module.exports.getByAny = function (req, res) {
+  const orderBy = req.query.orderBy || 'nombre'; // Campo por defecto
+  const direction = req.query.direction === 'desc' ? -1 : 1; // 1 para asc, -1 para desc
   const texto = new RegExp(req.params.texto);
   Establecimiento.find({
     usuario: new mongoose.Types.ObjectId(`${req.user.id}`),
@@ -29,9 +34,10 @@ module.exports.getByAny = function (req, res) {
     ],
   })
   .populate('tipoEstablecimiento')
+  .sort({ [orderBy]: direction, fechaCreacion: 1 })
   .then((result) => {
     if (result) {
-      res.jsonp({ data: result });
+      res.jsonp({ data: result.map(item => item.toJSON()) });
     }
   })
   .catch((error) => res.status(500).send({ message: error.message }));
@@ -49,7 +55,9 @@ module.exports.getDesplegable = function (req, res) {
         "nombre": "$nombre"
       }
     }
-  ]).then((result) => {
+  ])
+  .sort({ nombre: 1 })
+  .then((result) => {
     if (result) {
       res.jsonp({ data: result })
     }

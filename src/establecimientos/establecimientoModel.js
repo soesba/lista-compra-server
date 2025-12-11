@@ -1,14 +1,11 @@
 'use strict'
 
-var mongoose = require('mongoose')
-var Schema = mongoose.Schema
-var ImageSchema = require('../common/imageSchema.js')
+const mongoose = require('mongoose')
+const Schema = mongoose.Schema
+const ImageSchema = require('../common/imageSchema.js')
+const transform = require('../utils/commonFunctions').transform;
 
-var DireccionSchema = new Schema({
-  _id: {
-    type: Schema.Types.ObjectId,
-    required: true,
-  },
+const DireccionSchema = new Schema({
   direccion: {
     type: String,
     required: true,
@@ -27,11 +24,7 @@ var DireccionSchema = new Schema({
   }
 })
 
-var EstablecimientoSchema = new Schema({
-  _id: {
-    type: Schema.Types.ObjectId,
-    required: true,
-  },
+const EstablecimientoSchema = new Schema({
   tipoEstablecimiento: {
     type: Schema.Types.ObjectId,
     required: true,
@@ -55,7 +48,7 @@ var EstablecimientoSchema = new Schema({
   },
   direcciones: [DireccionSchema],
   fechaCreacion: {
-    type: String,
+    type: Date,
     required: true,
   },
   borrable: {
@@ -68,45 +61,56 @@ var EstablecimientoSchema = new Schema({
   }
 })
 
-// Duplicate the ID field.
-EstablecimientoSchema.virtual('id').get(function () {
-  return this._id.toHexString()
-})
+EstablecimientoSchema.virtual('id').set(function (val) {
+  if (val == null || val === '') return;
+  this._id = mongoose.Types.ObjectId.isValid(`${val}`) ? new mongoose.Types.ObjectId(`${val}`) : val;
+});
 
-DireccionSchema.virtual('id').get(function () {
-  return this._id.toHexString()
-})
+DireccionSchema.virtual('id').set(function (val) {
+  if (val == null || val === '') return;
+  this._id = mongoose.Types.ObjectId.isValid(`${val}`) ? new mongoose.Types.ObjectId(`${val}`) : val;
+});
 
-// Ensure virtual fields are serialised.
 EstablecimientoSchema.set('toJSON', {
   virtuals: true,
-})
+  versionKey: false,
+  transform
+});
+
+EstablecimientoSchema.set('toObject', {
+  virtuals: true,
+  versionKey: false,
+  transform
+});
 
 DireccionSchema.set('toJSON', {
-  transform: (doc, result) => {
-    return {
-      ...result,
-      id: result._id,
-    }
-  },
+  virtuals: true,
+  versionKey: false,
+  transform
+});
+
+EstablecimientoSchema.set('toObject', {
+  virtuals: true,
+  versionKey: false,
+  transform
 });
 
 EstablecimientoSchema.pre('validate', function (next) {
-  if (!this._id) {
-    this._id = new mongoose.Types.ObjectId()
+  if (!this._id && this.id) {
+    this._id = new mongoose.Types.ObjectId(`${this.id}`);
+    delete this.id;
   }
   if (this.tipoEstablecimiento) {
     this.tipoEstablecimiento = new mongoose.Types.ObjectId(`${this.tipoEstablecimiento}`)
   }
   if (!this.fechaCreacion) {
-    this.fechaCreacion = new Intl.DateTimeFormat('es-ES', {
-      day: '2-digit',
-      month: '2-digit',
-      year: 'numeric',
-    }).format()
+    this.fechaCreacion = new Date();
   }
   next()
 })
+
+// Índices simples
+EstablecimientoSchema.index({ usuario: 1 });
 
 module.exports = mongoose.model(
   'Establecimiento',

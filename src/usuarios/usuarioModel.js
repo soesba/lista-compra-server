@@ -1,14 +1,11 @@
 'use strict';
 
-var mongoose = require('mongoose');
-var	Schema = mongoose.Schema;
-var ImageSchema = require('../common/imageSchema.js');
+const mongoose = require('mongoose');
+const Schema = mongoose.Schema;
+const ImageSchema = require('../common/imageSchema.js');
+const transform = require('../utils/commonFunctions').transform;
 
-var PermisoSchema = new Schema({
-  _id: {
-    type: Schema.Types.ObjectId,
-    required: true,
-  },
+const PermisoSchema = new Schema({
   modeloId: {
     type: Schema.Types.ObjectId,
     required: true,
@@ -23,7 +20,7 @@ var PermisoSchema = new Schema({
   }
 });
 
-var PreferenciaUserSchema = new Schema({
+const PreferenciaUserSchema = new Schema({
   configuracionId: {
     type: Schema.Types.ObjectId,
     required: true
@@ -38,20 +35,26 @@ var PreferenciaUserSchema = new Schema({
   }
 });
 
-var UsuarioSchema = new Schema({
-  _id: {
+const UsuarioSchema = new Schema({
+  rol: {
     type: Schema.Types.ObjectId,
-    required: true,
+    ref: 'Rol',
+    required: true
   },
-	username: {
-		type: String,
-		unique: true,
-		required: true,
-		trim: true
-	},
+  username: {
+    type: String,
+    unique: true,
+    required: true,
+    trim: true
+  },
+  email: {
+    type: String,
+    required: true,
+    unique: true,
+    trim: true
+  },
   nombre: {
     type: String,
-    required: true
   },
   primerApellido: {
     type: String
@@ -63,17 +66,13 @@ var UsuarioSchema = new Schema({
     type: ImageSchema,
     default: null,
   },
-	password: {
-		type: String,
-		default: ''
-	},
-	fechaCreacion: {
-		type: String,
+  password: {
+    type: String,
+    default: ''
+  },
+  fechaCreacion: {
+    type: Date,
     required: true
-	},
-  esAdministrador: {
-    type: Boolean,
-    default: false
   },
   permisos: {
     type: [PermisoSchema],
@@ -86,34 +85,53 @@ var UsuarioSchema = new Schema({
 });
 
 // Duplicate the ID field.
-UsuarioSchema.virtual('id').get(function(){
-  return this._id.toHexString();
+UsuarioSchema.virtual('id').set(function (val) {
+  if (val == null || val === '') return;
+  this._id = mongoose.Types.ObjectId.isValid(`${val}`) ? new mongoose.Types.ObjectId(`${val}`) : val;
 });
 
-PreferenciaUserSchema.virtual('id').get(function(){
-  return this._id.toHexString();
+UsuarioSchema.virtual('esAdministrador').get(function () {
+  // El campo rol debe estar relleno
+  return this.rol && this.rol.nombre?.toLowerCase() === 'administrador';
+});
+
+
+PreferenciaUserSchema.virtual('id').set(function (val) {
+  if (val == null || val === '') return;
+  this._id = mongoose.Types.ObjectId.isValid(`${val}`) ? new mongoose.Types.ObjectId(`${val}`) : val;
+});
+
+UsuarioSchema.set('toObject', {
+  virtuals: true,
+  versionKey: false,
+  transform
 });
 
 UsuarioSchema.set('toJSON', {
   virtuals: true,
-  transform: (doc, result) => {
-    return {
-      ...result,
-      id: result._id
-    }
-  }
+  versionKey: false,
+  transform
+});
+
+PreferenciaUserSchema.set('toJSON', {
+  virtuals: true,
+  versionKey: false,
+  transform
+});
+
+PreferenciaUserSchema.set('toObject', {
+  virtuals: true,
+  versionKey: false,
+  transform
 });
 
 UsuarioSchema.pre("validate", function (next) {
-  if (!this._id) {
-    this._id = new mongoose.Types.ObjectId();
+  if (!this._id && this.id) {
+    this._id = new mongoose.Types.ObjectId(`${this.id}`);
+    delete this.id;
   }
   if (!this.fechaCreacion) {
-    this.fechaCreacion = new Intl.DateTimeFormat("es-ES", {
-      day: "2-digit",
-      month: "2-digit",
-      year: "numeric",
-    }).format();
+    this.fechaCreacion = new Date();
   }
   next();
 });
