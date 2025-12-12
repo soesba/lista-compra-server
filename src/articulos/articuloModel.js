@@ -39,6 +39,10 @@ const ArticuloSchema = new Schema({
     type: Boolean,
     default: true,
   },
+  notas: {
+    type: String,
+    default: ''
+  }
 });
 
 
