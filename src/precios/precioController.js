@@ -307,7 +307,6 @@ module.exports.insert = function (req, res) {
 }
 
 module.exports.update = function (req, res) {
-  console.log('LOG~ ~ :304 ~ req.body:', req.body)
   if (req.body.unidadesMedida.length !== 0) {
     req.body.unidadesMedida = req.body.unidadesMedida.map((item) => {
       item._id = new mongoose.Types.ObjectId(`${item.id}`)
@@ -315,7 +314,6 @@ module.exports.update = function (req, res) {
     })
   }
   req.body.usuario = new mongoose.Types.ObjectId(`${req.user.id}`)
-  console.log('LOG~ ~ :312 ~ req.body:', req.body)
   const precio = new Precio(req.body)
   Precio.findOneAndUpdate(
     { _id: new mongoose.Types.ObjectId(`${req.body.id}`) },
@@ -330,7 +328,6 @@ module.exports.update = function (req, res) {
 }
 
 module.exports.updateUnidadesMedida = function (req, res) {
-  console.log('LOG~ ~ :327 ~ req.body:', req.body)
   if (req.body.unidadesMedida.length !== 0) {
     req.body.unidadesMedida = req.body.unidadesMedida.map((item) => {
       item._id = new mongoose.Types.ObjectId(`${item.id}`)
@@ -338,7 +335,6 @@ module.exports.updateUnidadesMedida = function (req, res) {
     })
   }
   req.body.usuario = new mongoose.Types.ObjectId(`${req.user.id}`)
-  console.log('LOG~ ~ :334 ~ req.body:', req.body)
   Precio.findOneAndUpdate(
     { _id: new mongoose.Types.ObjectId(`${req.params.id}`) },
     { $set: {
