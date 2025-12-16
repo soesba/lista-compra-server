@@ -45,7 +45,7 @@ function startServer(config) {
         exports = module.exports = app;
         app.listen(config.port, () => {
             console.log('Lista compra started using the "' + process.env.NODE_ENV + '" environment configuration on port ' + config.port + '!');
-            initDB();
+            // initDB();
         })
     })
     .catch((err) => {

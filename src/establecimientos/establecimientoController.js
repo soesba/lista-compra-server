@@ -66,12 +66,12 @@ module.exports.getDesplegable = function (req, res) {
 
 module.exports.insert = function (req, res) {
   req.body.usuario = new mongoose.Types.ObjectId(`${req.user.id}`);
-  req.body.direcciones =  req.body.direcciones.map(element => {
-    if (!element._id) {
-      element._id =  mongoose.Types.ObjectId()
-    }
-    return element
-  });
+  // req.body.direcciones =  req.body.direcciones.map(element => {
+  //   if (!element._id) {
+  //     element._id =  mongoose.Types.ObjectId()
+  //   }
+  //   return element
+  // });
   const establecimiento = new Establecimiento(req.body);
   Establecimiento.findOne({
     usuario: new mongoose.Types.ObjectId(`${req.user.id}`),
@@ -102,8 +102,8 @@ module.exports.insert = function (req, res) {
 
 module.exports.update = function(req, res) {
     req.body.direcciones =  req.body.direcciones.map(element => {
-      if (!element._id) {
-        element._id =  mongoose.Types.ObjectId()
+      if (!element.id) {
+        element._id = new mongoose.Types.ObjectId()
       }
       return element
     });
