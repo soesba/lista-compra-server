@@ -21,21 +21,24 @@ module.exports.checkUsoModelo = async function (modeloId) {
     {
       _id: 1,
       nombre: 1,
+      username: 1,
       preferencias: 1,
       permisos: 1
     }).lean();
     resultados = resultados.concat(usuarios);
-    const resultadosString = resultados.map(result => {
-      const usuarioId = `Usuario ID: ${result._id}`;
-      const nombre = `Nombre: ${result.nombre}`;
-      const preferencias = result.preferencias.length > 0 ? 'Preferencias: Sí' : '';
-      const permisos = result.permisos.length > 0 ? 'Permisos: Sí' : '';
-      return `${usuarioId}, ${nombre}, ${preferencias}, ${permisos}`;
-    })
-    return resultadosString.length ? [ {
-      entidad: 'Usuario',
-      detalles: resultadosString
-    }] : null;
+    const resultadosPreferencias = usuarios.filter(result => result.preferencias.length > 0).map(result => `Usuario ID: ${result._id} Username: ${result.username}`);
+    const resultadosPermisos = usuarios.filter(result => result.permisos.length > 0).map(result => `Usuario ID: ${result._id} Username: ${result.username}`);
+
+    return ([
+      {
+        entidad: 'Preferencias de usuario',
+        detalles: resultadosPreferencias
+      },
+      {
+        entidad: 'Permisos de usuario',
+        detalles: resultadosPermisos
+      }
+    ]).filter(r => r.detalles.length > 0);
   } catch (error) {
     console.error(`Error al comprobar uso del modelo ${modeloId}:`, error);
   }
