@@ -43,6 +43,18 @@ module.exports.getByAny = function (req, res) {
   .catch((error) => res.status(500).send({ message: error.message }));
 };
 
+module.exports.getLogo = function (req, res) {
+    Establecimiento.findOne({ _id: req.params.id, usuario: new mongoose.Types.ObjectId(`${req.user.id}`) })
+    .then((result) => {
+        if (result && result.logo) {
+            res.jsonp({ data: result.logo });
+        } else {
+            res.send(null);
+        }
+    })
+    .catch((error) => res.status(500).send({ message: error.message }));
+};
+
 module.exports.getDesplegable = function (req, res) {
   Establecimiento.aggregate([
     {

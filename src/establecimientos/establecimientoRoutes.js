@@ -11,6 +11,8 @@ module.exports = function  establecimientoRoutes (app) {
 
   app.get('/api/establecimientos/search/:texto', verifyToken, accessFilter, (req, res) => establecimientoController.getByAny(req, res)); // Buscar por texto
 
+  app.get('/api/establecimientos/:id/logo', verifyToken, accessFilter, (req, res) => establecimientoController.getLogo(req, res)); // Obtener logo por ID
+
   app.get('/api/establecimientos/:id', verifyToken, accessFilter, (req, res) => establecimientoController.getById(req, res)); // Obtener por ID
 
   app.get('/api/establecimientos', verifyToken, accessFilter, (req, res) => establecimientoController.get(req, res)); // Obtener todos

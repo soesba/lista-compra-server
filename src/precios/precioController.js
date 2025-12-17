@@ -274,7 +274,6 @@ module.exports.getByAny = async function (req, res) {
   .sort({ [orderBy]: direction, fechaCompra: 1 })
   .collation({ locale: 'es', strength: 1, numericOrdering: true })
   .then((result) => {
-    console.log('LOG~ ~ :273 ~ result:', result)
     res.jsonp({ data: result });
   }).catch(error => res.status(500).send({ message: error.message }));
 }
