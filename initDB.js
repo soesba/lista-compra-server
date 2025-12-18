@@ -4,11 +4,11 @@ const mongoose = require('mongoose');
 const initCollections = require('./initCollections');
 const { repairCollections } = require('./repairCollections');
 const conexion =  mongoose.connection.db;
-const listaTablasMaestras = ['TipoEstablecimiento', 'TipoUnidad', 'Articulo', 'Establecimiento', 'Usuario'];
+const listaTablasMaestras = ['TipoEstablecimiento', 'TipoUnidad'];
 
 module.exports.init = async function() {
   checkTablasMaestras();
-  // await repairCollections();
+  await repairCollections();
 }
 
 async function checkTablasMaestras () {
@@ -28,6 +28,5 @@ async function checkTablasMaestras () {
       initCollections.initCollection(item);
     }
   }
-  initCollections.checkDataConsistency('Precio')
-  initCollections.checkDataConsistency('Equivalencias');
+  // initCollections.checkDataConsistency('Precio');
 }

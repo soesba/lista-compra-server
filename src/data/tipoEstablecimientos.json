@@ -1,32 +1,61 @@
-[
-    {
-        "_id": "668bc28394e11a32b4278a84",
-        "abreviatura": "super",
-        "nombre": "Supermercado",
-        "borrable": false
-    },
-    {
-        "_id": "668bc29fc5a573a80a2de6c4",
-        "abreviatura": "gas",
-        "nombre": "Gasolinera",
-        "borrable": false
-    },
-    {
-        "_id": "668bc2aa957c8c52c99ac4b4",
-        "abreviatura": "far",
-        "nombre": "Farmacia",
-        "borrable": false
-    },
-    {
-        "_id": "668bc2b528cd7ed5011548aa",
-        "abreviatura": "hiper",
-        "nombre": "Hipermercado",
-        "borrable": false
-    },
-    {
-        "_id": "668bc2beca6c9ac5bcee192a",
-        "abreviatura": "res",
-        "nombre": "Restaurante",
-        "borrable": false
-    }
-]
+[{
+  "_id": {
+    "$oid": "668bc28394e11a32b4278a84"
+  },
+  "nombre": "Supermercado",
+  "abreviatura": "super",
+  "borrable": false,
+  "fechaCreacion": {
+    "$date": "2024-07-18T22:00:00Z"
+  },
+  "__v": 0,
+  "esMaestro": true
+},{
+  "_id": {
+    "$oid": "668bc29fc5a573a80a2de6c4"
+  },
+  "nombre": "Gasolinera",
+  "abreviatura": "gas",
+  "borrable": false,
+  "fechaCreacion": {
+    "$date": "2024-07-18T22:00:00Z"
+  },
+  "__v": 0,
+  "esMaestro": true
+},{
+  "_id": {
+    "$oid": "668bc2b528cd7ed5011548aa"
+  },
+  "nombre": "Hipermercado",
+  "abreviatura": "hiper",
+  "borrable": false,
+  "fechaCreacion": {
+    "$date": "2024-07-18T22:00:00Z"
+  },
+  "__v": 0,
+  "esMaestro": true
+},{
+  "_id": {
+    "$oid": "668bc2aa957c8c52c99ac4b4"
+  },
+  "nombre": "Farmacia",
+  "abreviatura": "farm",
+  "borrable": false,
+  "fechaCreacion": {
+    "$date": "2024-07-18T22:00:00Z"
+  },
+  "__v": 0,
+  "esMaestro": true
+},{
+  "_id": {
+    "$oid": "668bc2beca6c9ac5bcee192a"
+  },
+  "nombre": "Restauración",
+  "abreviatura": "rest",
+  "borrable": false,
+  "fechaCreacion": {
+    "$date": "2024-07-18T22:00:00Z"
+  },
+  "__v": 0,
+  "esMaestro": true
+}]

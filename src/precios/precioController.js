@@ -59,7 +59,7 @@ module.exports.get = async function (req, res) {
 module.exports.getById = async function (req, res) {
   const id = new mongoose.Types.ObjectId(`${req.params.id}`);
   const pipeline = [
-    { $match: { _id: id} },
+    { $match: { _id: id } },
     {
       $lookup: {
         from: 'Establecimiento',
@@ -220,53 +220,61 @@ module.exports.getByAny = async function (req, res) {
   const orderBy = mappingOrderBy[req.query.orderBy] || req.query.orderBy; // Campo por defecto
   const direction = req.query.direction === 'desc' ? -1 : 1; // 1 para asc, -1 para desc
   const texto = new RegExp(req.params.texto)
-  const primerFiltro = await Precio.aggregate([
+  const pipeline = [
     {
       $lookup: {
         from: 'Establecimiento',
         localField: 'establecimiento',
         foreignField: '_id',
-        as: 'establecimiento_lookup',
+        as: 'establecimiento',
         pipeline: [
-          { $match: { nombre: { $regex: texto, $options: 'i' } } },
           {
-            $project: { raiz: { id: '$_id', nombre: '$nombre', _id: '$_id' } }
+            $project: { establecimiento: { id: '$_id', nombre: '$nombre' } }
           },
-          { $replaceRoot: { newRoot: '$raiz' } }
+          { $replaceRoot: { newRoot: '$establecimiento' } }
         ],
       },
+    },
+    {
+      $unwind: {
+        path: '$establecimiento',
+        preserveNullAndEmptyArrays: true
+      }
     },
     {
       $lookup: {
         from: 'Articulo',
         localField: 'articulo',
         foreignField: '_id',
-        as: 'articulo_lookup',
+        as: 'articulo',
         pipeline: [
-          { $match: { nombre: { $regex: texto, $options: 'i' } } },
           {
-            $project: { raiz: { id: '$_id', nombre: '$nombre', _id: '$_id' } }
+            $project: { articulo: { id: '$_id', nombre: '$nombre' } }
           },
-          { $replaceRoot: { newRoot: '$raiz' } }
+          { $replaceRoot: { newRoot: '$articulo' } }
         ]
       }
     },
     {
+      $unwind: {
+        path: '$articulo',
+        preserveNullAndEmptyArrays: true
+      }
+    },
+     {
       $match: {
-        _id: id, usuario: new mongoose.Types.ObjectId(`${req.user.id}`),
         $or: [
-          { establecimiento_lookup: { $ne: [] } },
-          { articulo_lookup: { $ne: [] } }
+          { 'establecimiento.nombre': { $regex: texto, $options: 'i' } },
+          { 'articulo.nombre': { $regex: texto, $options: 'i' } }
         ]
       }
     }
-  ])
-  Precio.populate(primerFiltro, { path: 'establecimiento', select: { _id: 1, nombre: 1 } }).then(result => {
-    Precio.populate(result, { path: 'articulo', select: { _id: 1, nombre: 1 } })
-    .sort({ [orderBy]: direction, fechaCompra: 1 })
-    .then((result) => {
-      res.jsonp({ data: result.map(item => item.toJSON()) });
-    }).catch(error => res.status(500).send({ message: error.message }));
+  ]
+  Precio.aggregate(pipeline)
+  .sort({ [orderBy]: direction, fechaCompra: 1 })
+  .collation({ locale: 'es', strength: 1, numericOrdering: true })
+  .then((result) => {
+    res.jsonp({ data: result });
   }).catch(error => res.status(500).send({ message: error.message }));
 }
 
@@ -307,7 +315,6 @@ module.exports.insert = function (req, res) {
 }
 
 module.exports.update = function (req, res) {
-  console.log('LOG~ ~ :304 ~ req.body:', req.body)
   if (req.body.unidadesMedida.length !== 0) {
     req.body.unidadesMedida = req.body.unidadesMedida.map((item) => {
       item._id = new mongoose.Types.ObjectId(`${item.id}`)
@@ -315,7 +322,6 @@ module.exports.update = function (req, res) {
     })
   }
   req.body.usuario = new mongoose.Types.ObjectId(`${req.user.id}`)
-  console.log('LOG~ ~ :312 ~ req.body:', req.body)
   const precio = new Precio(req.body)
   Precio.findOneAndUpdate(
     { _id: new mongoose.Types.ObjectId(`${req.body.id}`) },
@@ -330,7 +336,6 @@ module.exports.update = function (req, res) {
 }
 
 module.exports.updateUnidadesMedida = function (req, res) {
-  console.log('LOG~ ~ :327 ~ req.body:', req.body)
   if (req.body.unidadesMedida.length !== 0) {
     req.body.unidadesMedida = req.body.unidadesMedida.map((item) => {
       item._id = new mongoose.Types.ObjectId(`${item.id}`)
@@ -338,13 +343,14 @@ module.exports.updateUnidadesMedida = function (req, res) {
     })
   }
   req.body.usuario = new mongoose.Types.ObjectId(`${req.user.id}`)
-  console.log('LOG~ ~ :334 ~ req.body:', req.body)
   Precio.findOneAndUpdate(
     { _id: new mongoose.Types.ObjectId(`${req.params.id}`) },
-    { $set: {
-      unidadesMedida: req.body.unidadesMedida,
-      usuario: new mongoose.Types.ObjectId(`${req.user.id}`)
-    } },
+    {
+      $set: {
+        unidadesMedida: req.body.unidadesMedida,
+        usuario: new mongoose.Types.ObjectId(`${req.user.id}`)
+      }
+    },
     { new: true, runValidators: true, returnOriginal: false }).then(result => {
       if (result) {
         res.jsonp({ data: result })

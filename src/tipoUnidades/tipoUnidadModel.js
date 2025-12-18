@@ -49,7 +49,9 @@ const TipoUnidadSchema = new Schema({
   },
   usuario: {
     type: Schema.Types.ObjectId,
-    required: true,
+    required: function() {
+      return this.esMaestro === false;
+     }
   }
 });
 

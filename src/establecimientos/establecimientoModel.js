@@ -109,11 +109,15 @@ EstablecimientoSchema.pre('validate', function (next) {
   next()
 })
 
+DireccionSchema.pre('validate', function (next) {
+  if (!this._id && this.id) {
+    this._id = new mongoose.Types.ObjectId(`${this.id}`);
+    delete this.id;
+  }
+  next()
+})
+
 // Índices simples
 EstablecimientoSchema.index({ usuario: 1 });
 
-module.exports = mongoose.model(
-  'Establecimiento',
-  EstablecimientoSchema,
-  'Establecimiento'
-)
+module.exports = mongoose.model('Establecimiento', EstablecimientoSchema, 'Establecimiento')
