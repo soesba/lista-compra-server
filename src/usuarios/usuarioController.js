@@ -21,7 +21,7 @@ module.exports.register = function (req, res) {
 
 module.exports.get = function (req, res) {
   const query = req.query;
- if (Object.keys(query).length === 0) {
+  if (Object.keys(query).length === 0) {
     return this.getAll(req, res);
   } else {
     const params = req.query;
@@ -134,15 +134,49 @@ module.exports.update = function (req, res) {
   });
 }
 
-module.exports.delete = function (req, res) {
+module.exports.delete = async function (req, res) {
   const userId = new mongoose.Types.ObjectId(`${req.params.id}`);
 
-  Usuario.findOneAndDelete({ _id: userId })
-    .then(result => res.jsonp({ data: result }))
-    .catch(error => {
-      return res.status(500).send({ message: error.message })
-    });
+  const Precio = mongoose.model('Precio');
+  const Articulo = mongoose.model('Articulo');
+  const TipoUnidad = mongoose.model('TipoUnidad');
+  const Establecimiento = mongoose.model('Establecimiento');
+  const TipoEstablecimiento = mongoose.model('TipoEstablecimiento');
 
+  try {
+
+    // Eliminar precios
+    const resultDeletePrecio = (await Precio.deleteMany({ usuario: userId })).deletedCount;
+
+    // Eliminar articulos
+    const resultDeleteArticulo = (await Articulo.deleteMany({ usuario: userId })).deletedCount;
+
+    // Eliminar tipos de unidad de medida (si es dato maestro eliminar campo usuario de los precios)
+    const resultUpdateTipoUnidad = (await TipoUnidad.updateMany(
+      { $or: [{ usuario: userId }, { esDatoMaestro: true }] },
+      { $unset: { usuario: "" } }
+    )).modifiedCount;
+    const resultDeleteTipoUnidad = (await TipoUnidad.deleteMany({ usuario: userId })).deletedCount;
+
+    // Eliminar establecimientos
+    const resultEstablecimiento = (await Establecimiento.deleteMany({ usuario: userId })).deletedCount;
+
+    // Eliminar tipos de establecimiento (si es dato maestro eliminar campo usuario de los establecimientos)
+    const resultUpdateTipoEstablecimiento = (await TipoEstablecimiento.updateMany(
+      { $or: [{ usuario: userId }, { esDatoMaestro: true }] },
+      { $unset: { usuario: "" } }
+    )).modifiedCount;
+    const resultDeleteTipoEstablecimiento = (await TipoEstablecimiento.deleteMany({ usuario: userId })).deletedCount;
+
+    // Eliminar usuario
+    Usuario.findOneAndDelete({ _id: userId })
+      .then(result => res.jsonp({ data: { result, resultDeletePrecio, resultDeleteArticulo, resultUpdateTipoUnidad, resultDeleteTipoUnidad, resultEstablecimiento, resultUpdateTipoEstablecimiento, resultDeleteTipoEstablecimiento } }))
+      .catch(error => {
+        return res.status(500).send({ message: error.message })
+      });
+  } catch (error) {
+    return res.status(500).send({ message: error.message })
+  }
 }
 
 module.exports.getDesplegable = function (req, res) {
