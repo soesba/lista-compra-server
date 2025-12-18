@@ -300,17 +300,18 @@ module.exports.checkDataConsistencyTipoUnidad = async function () {
       const current = {
         id: tipo._id,
         nombre: tipo.nombre,
-        usuario: tipo.usuario
+        usuario: tipo.usuario,
+        esMaestro: tipo.esMaestro
       };
 
      // Comprobacion de existencia del usuario asociado al tipo de unidad
-      if (!current.usuario) {
+      if (!current.usuario && !current.esMaestro) {
         resultados.push({
           id: current.id,
           nombre: current.nombre,
           mensaje: `no tiene usuario asociado`
         });
-      } else {
+      } else if (current.usuario){
         const existeUsuario = await mongoose.model('Usuario').exists({ _id: current.usuario });
         if (!existeUsuario) {
           resultados.push({
@@ -346,17 +347,18 @@ module.exports.checkDataConsistencyTipoEstablecimiento = async function () {
       const current = {
         id: tipo._id,
         nombre: tipo.nombre,
-        usuario: tipo.usuario
+        usuario: tipo.usuario,
+        esMaestro: tipo.esMaestro
       };
 
      // Comprobacion de existencia del usuario asociado al tipo de unidad
-      if (!current.usuario) {
+      if (!current.usuario && !current.esMaestro) {
         resultados.push({
           id: current.id,
           nombre: current.nombre,
           mensaje: `no tiene usuario asociado`
         });
-      } else {
+      } else if (current.usuario){
         const existeUsuario = await mongoose.model('Usuario').exists({ _id: current.usuario });
         if (!existeUsuario) {
           resultados.push({

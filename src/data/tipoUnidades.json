@@ -1,32 +1,98 @@
 [
   {
-    "_id": "6644cb9386c5a2b7bc02c2a0",
-    "abreviatura": "kg",
+    "_id": {
+      "$oid": "6644cb9386c5a2b7bc02c2a0"
+    },
     "nombre": "kilo",
-    "borrable": false
+    "abreviatura": "kg",
+    "borrable": false,
+    "fechaCreacion": {
+      "$date": "2024-07-18T22:00:00Z"
+    },
+    "esMaestro": true,
+    "equivalencias": [
+      {
+        "to": {
+          "$oid": "6644cbc686c5a2b7bc02c2a3"
+        },
+        "factor": 1000,
+        "_id": {
+          "$oid": "692fd1e57797d03ebe985367"
+        }
+      }
+    ]
   },
   {
-    "_id": "6644cbac86c5a2b7bc02c2a1",
-    "abreviatura": "l",
+    "_id": {
+      "$oid": "6644cbac86c5a2b7bc02c2a1"
+    },
     "nombre": "litro",
-    "borrable": false
+    "abreviatura": "l",
+    "borrable": false,
+    "fechaCreacion": {
+      "$date": "2024-07-18T22:00:00Z"
+    },
+    "esMaestro": true
   },
   {
-    "_id": "6644cbba86c5a2b7bc02c2a2",
-    "abreviatura": "ud",
+    "_id": {
+      "$oid": "6644cbba86c5a2b7bc02c2a2"
+    },
     "nombre": "unidad",
-    "borrable": false
+    "abreviatura": "ud",
+    "borrable": false,
+    "fechaCreacion": {
+      "$date": "2024-07-18T22:00:00Z"
+    },
+    "esMaestro": true
   },
   {
-    "_id": "6644cbc686c5a2b7bc02c2a3",
-    "abreviatura": "gr",
+    "_id": {
+      "$oid": "6644cbc686c5a2b7bc02c2a3"
+    },
     "nombre": "gramo",
-    "borrable": false
+    "abreviatura": "gr",
+    "borrable": false,
+    "fechaCreacion": {
+      "$date": "2024-07-18T22:00:00Z"
+    },
+    "esMaestro": true,
+    "equivalencias": [
+      {
+        "to": {
+          "$oid": "6644cb9386c5a2b7bc02c2a0"
+        },
+        "_id": {
+          "$oid": "692fd2e8fedca6352041141e"
+        },
+        "factor": 0.001
+      }
+    ]
   },
   {
-    "_id": "6644cbd586c5a2b7bc02c2a4",
-    "abreviatura": "ml",
+    "_id": {
+      "$oid": "6644cbd586c5a2b7bc02c2a4"
+    },
     "nombre": "mililitro",
-    "borrable": false
+    "abreviatura": "ml",
+    "borrable": false,
+    "fechaCreacion": {
+      "$date": "2024-07-18T22:00:00Z"
+    },
+    "esMaestro": true,
+    "equivalencias": [
+      {
+        "to": {
+          "$oid": "6644cbac86c5a2b7bc02c2a1"
+        },
+        "factor": 0.001
+      },
+      {
+        "to": {
+          "$oid": "6938403309ed5eab87e7b793"
+        },
+        "factor": 1
+      }
+    ]
   }
 ]
